@@ -18,16 +18,7 @@ $(document).ready(function(){
             }
         })
     });
-/*
-    $(function(){
-        $('#aux1_toggle').switchbutton({
-            checked: false,
-            onChange: function(checked){
-                $("#aux1").css("color", state_colour(checked));
-            }
-        })
-    });
-*/
+
     /*
         helper methods
     */
