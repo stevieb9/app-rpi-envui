@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-    setInterval(call, 3000);
+    // setInterval(call, 3000);
 
     function call(){
             jQuery.get('http://localhost:5000/call/aux1/HIGH', function(data){
@@ -10,6 +10,16 @@ $(document).ready(function(){
     };
 
     $(function(){
+        $('.button').switchbutton({
+            checked: false,
+            onChange: function(checked){
+                var id = $(this).attr('id') + '_msg';
+                $('#' + id).css("color", state_colour(checked));
+            }
+        })
+    });
+/*
+    $(function(){
         $('#aux1_toggle').switchbutton({
             checked: false,
             onChange: function(checked){
@@ -17,7 +27,7 @@ $(document).ready(function(){
             }
         })
     });
-
+*/
     /*
         helper methods
     */

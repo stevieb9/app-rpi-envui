@@ -12,9 +12,11 @@
 
 </head>
 <body>
-<input id="aux1_toggle" style="width:100px;height:30px">
+<input id="aux1" class="button" style="width:100px;height:30px">
+<input id="aux2" class="button" style="width:100px;height:30px">
 
-<div id="aux1">aux1</div>
+<div id="aux1_msg">aux1</div>
+<div id="aux2_msg">aux1</div>
 
 </body>
 </html>
