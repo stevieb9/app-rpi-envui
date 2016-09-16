@@ -13,13 +13,21 @@ $(document).ready(function(){
         $('#aux1_toggle').switchbutton({
             checked: false,
             onChange: function(checked){
-
-                if (checked)
-                    $("#aux1").css("color", "green");
-                else
-                    $("#aux1").css("color", "red");
-
+                $("#aux1").css("color", state_colour(checked));
             }
         })
-    })
+    });
+
+    /*
+        helper methods
+    */
+
+    // on/off colours
+
+    function state_colour(state){
+        if (state)
+            return "green"
+        else
+            return "red"
+    };
 });
