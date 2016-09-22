@@ -6,25 +6,28 @@ use Dancer2::Plugin::Database;
 our $VERSION = '0.1';
 
 my $id = _get_last_id();
+my $auxs = _generate_aux();
 
 get '/' => sub {
         insert(10,20);
         return template 'main';
     };
 
-get '/call/:aux/:state' => sub {
+get '/set_aux/:aux/:state' => sub {
         my $aux = params->{aux};
-        my $state = params->{state};
-        return to_json {state => $state};
+        my $state = _bool(params->{state});
+
+        _aux_state($aux, $state);
+        _aux_override($aux, 1);
+
+        return to_json {aux => $aux, state => _bool($state)};
     };
 
 get '/fetch' => sub {
         my $data = fetch();
-        open my $fh, '>', 'a.txt' or die $!;
-        print $fh $data->{temp};
         return to_json {
-                temp => $data->{temp},
-                humidity => $data->{humidity}
+            temp => $data->{temp},
+            humidity => $data->{humidity}
         };
     };
 
@@ -42,6 +45,48 @@ sub fetch {
         stats => {id => $id}, ['temp', 'humidity']
     );
     return $row;
+}
+sub _bool {
+    # translates javascript true/false to 1/0
+
+    my $bool = shift;
+    return $bool eq 'true' ? 1 : 0;
+}
+sub _aux_state {
+    # maintains the auxillary state (on/off)
+
+    my ($aux, $state) = @_;
+    die if $state != 0 || $state != 1;
+    return $auxs->{$aux}{state} if ! defined $state;
+    $auxs->{$aux}{state} = $state;
+    return $state;
+}
+sub _aux_override {
+    # sets a manual override flag if an aux is turned on manually (via button)
+
+    my ($aux, $override) = @_;
+    die if $override != 0 || $override != 1;
+    return $auxs->{$aux}{override} if ! defined $override;
+    $auxs->{$aux}{override} = $override;
+    return $override;
+}
+sub _generate_aux {
+    # generate the auxillary control objects
+
+    my %auxillaries;
+
+    for (1..4){
+        my $name = "aux$_";
+
+        $auxillaries{$name} = {
+            state => 0,
+            on_time => 0,
+            override => 0,
+            name => $name,
+        };
+    }
+
+    return \%auxillaries;
 }
 sub _get_last_id {
     # fetches and returns the most recent row id in the DB

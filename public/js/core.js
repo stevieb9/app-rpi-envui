@@ -1,21 +1,27 @@
 $(document).ready(function(){
 
+    var host = 'http://localhost:5000';
+
     setInterval(fetch, 3000);
 
     function fetch(){
-        $.get('http://localhost:5000/fetch', function(data){
+        $.get(host +'/fetch', function(data){
             var json = $.parseJSON(data);
             display_temp(json.temp);
             display_humidity(json.humidity);
-            //alert(json.temp +':'+ json.humidity);
         });
     };
 
     $(function(){
+
         $('.button').switchbutton({
             checked: false,
             onChange: function(checked){
-                // code here
+                var id = $(this).attr('id');
+                $.get(host +'/set_aux/'+ id +'/'+ checked, function(data){
+                    var json = $.parseJSON(data);
+                    alert(json.aux +':'+ json.state);
+                });
             }
         });
     });
@@ -23,8 +29,6 @@ $(document).ready(function(){
     /*
         helper methods
     */
-
-    // on/off colours
 
     function display_temp(temp){
         if (temp > 15){
