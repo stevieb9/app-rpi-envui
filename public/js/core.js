@@ -1,29 +1,17 @@
 $(document).ready(function(){
 
     var host = 'http://localhost:5000';
-
+    var aux1 = aux_state('aux1');
+    alert(aux1);
     //setInterval(fetch, 3000);
 
-    $.get(host +'/get_aux/aux2', function(data){
-        var json = $.parseJSON(data);
-        alert(json.state);
-    });
-    function fetch(){
-        $.get(host +'/fetch', function(data){
-            var json = $.parseJSON(data);
-            display_temp(json.temp);
-            display_humidity(json.humidity);
-        });
-    };
-
     $(function(){
-        $('.button').switchbutton({
-            checked: false,
+        $('#aux1').switchbutton({
+            checked: aux1,
             onChange: function(checked){
-                var id = $(this).attr('id');
-                $.get(host +'/set_aux/'+ id +'/'+ checked, function(data){
+                $.get(host +'/set_aux/aux1/'+ checked, function(data){
                     var json = $.parseJSON(data);
-                    alert(json.aux +':'+ json.state);
+                    //alert(json.state);
                 });
             }
         });
@@ -32,6 +20,22 @@ $(document).ready(function(){
     /*
         helper methods
     */
+
+    function fetch(){
+        $.get(host +'/fetch', function(data){
+            var json = $.parseJSON(data);
+            display_temp(json.temp);
+            display_humidity(json.humidity);
+        });
+    };
+
+    function aux_state(aux){
+        var data;
+        $.get(host +'/get_aux/' + aux, function(state){
+            data = state;
+        });
+        return data;
+    }
 
     function display_temp(temp){
         if (temp > 15){

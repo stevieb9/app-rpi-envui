@@ -15,6 +15,7 @@
 </head>
 <body>
 
+<div id="aux1_state"></div>
 <table>
     <th>Temperature</th>
     <th>Humidity</th>

@@ -15,7 +15,7 @@ get '/' => sub {
 
 get '/get_aux/:aux' => sub {
         my $aux = params->{aux};
-        return to_json {state => $auxs->{$aux}{state}};
+        return _aux_state($aux);
     };
 
 get '/set_aux/:aux/:state' => sub {
@@ -102,4 +102,5 @@ sub _get_last_id {
     my @rows = database->quick_select('stats', {}, ['id']);
     return $rows[-1]->{id};
 }
+
 true;
