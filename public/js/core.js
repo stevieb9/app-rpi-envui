@@ -1,22 +1,23 @@
 $(document).ready(function(){
 
-    // setInterval(call, 3000);
+    setInterval(fetch, 3000);
 
-    function call(){
-            jQuery.get('http://localhost:5000/call/aux1/HIGH', function(data){
-                var json = jQuery.parseJSON(data);
-                alert(json.state);
-            });
+    function fetch(){
+        $.get('http://localhost:5000/fetch', function(data){
+            var json = $.parseJSON(data);
+            display_temp(json.temp);
+            display_humidity(json.humidity);
+            //alert(json.temp +':'+ json.humidity);
+        });
     };
 
     $(function(){
         $('.button').switchbutton({
             checked: false,
             onChange: function(checked){
-                var id = $(this).attr('id') + '_msg';
-                $('#' + id).css("color", state_colour(checked));
+                // code here
             }
-        })
+        });
     });
 
     /*
@@ -25,10 +26,24 @@ $(document).ready(function(){
 
     // on/off colours
 
-    function state_colour(state){
-        if (state)
-            return "green"
-        else
-            return "red"
-    };
+    function display_temp(temp){
+        if (temp > 15){
+            $('#temp').css('color', 'red');
+        }
+        else {
+            $('#temp').css('color', 'green')
+        }
+        $('#temp').text(temp);
+    }
+
+    function display_humidity(humidity){
+        if (humidity < 22){
+            $('#humidity').css('color', 'red');
+        }
+        else {
+            $('#humidity').css('color', 'green')
+        }
+        $('#humidity').text(humidity);
+    }
+
 });
