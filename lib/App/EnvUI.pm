@@ -99,7 +99,7 @@ sub _generate_aux {
 sub _get_last_id {
     # fetches and returns the most recent row id in the DB
 
-    my @rows = database->quick_select('stats', {}, ['id']);
+    my @rows = database->quick_select('stats', {}, ['id']) || {id => 0};
     return $rows[-1]->{id};
 }
 
