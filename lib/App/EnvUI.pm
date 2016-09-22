@@ -13,14 +13,24 @@ get '/' => sub {
         return template 'main';
     };
 
+get '/get_aux/:aux' => sub {
+        my $aux = params->{aux};
+        return to_json {state => $auxs->{$aux}{state}};
+    };
+
 get '/set_aux/:aux/:state' => sub {
         my $aux = params->{aux};
         my $state = _bool(params->{state});
 
         _aux_state($aux, $state);
-        _aux_override($aux, 1);
 
-        return to_json {aux => $aux, state => _bool($state)};
+        my $override = $state ? 1 : 0;
+        _aux_override($aux, $override);
+
+        return to_json {
+            aux => $aux,
+            state => $auxs->{$aux}{state}
+        };
     };
 
 get '/fetch' => sub {
@@ -56,7 +66,6 @@ sub _aux_state {
     # maintains the auxillary state (on/off)
 
     my ($aux, $state) = @_;
-    die if $state != 0 || $state != 1;
     return $auxs->{$aux}{state} if ! defined $state;
     $auxs->{$aux}{state} = $state;
     return $state;
@@ -65,7 +74,6 @@ sub _aux_override {
     # sets a manual override flag if an aux is turned on manually (via button)
 
     my ($aux, $override) = @_;
-    die if $override != 0 || $override != 1;
     return $auxs->{$aux}{override} if ! defined $override;
     $auxs->{$aux}{override} = $override;
     return $override;

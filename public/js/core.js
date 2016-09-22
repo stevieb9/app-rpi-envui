@@ -2,8 +2,12 @@ $(document).ready(function(){
 
     var host = 'http://localhost:5000';
 
-    setInterval(fetch, 3000);
+    //setInterval(fetch, 3000);
 
+    $.get(host +'/get_aux/aux2', function(data){
+        var json = $.parseJSON(data);
+        alert(json.state);
+    });
     function fetch(){
         $.get(host +'/fetch', function(data){
             var json = $.parseJSON(data);
@@ -13,7 +17,6 @@ $(document).ready(function(){
     };
 
     $(function(){
-
         $('.button').switchbutton({
             checked: false,
             onChange: function(checked){
