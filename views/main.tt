@@ -15,7 +15,6 @@
 </head>
 <body>
 
-<div id="aux1_state"></div>
 <table>
     <th>Temperature</th>
     <th>Humidity</th>
@@ -28,5 +27,6 @@
         <td><input id="aux2" class="button" style="width:100px;height:30px"></td>
     </tr>
 </table>
+
 </body>
 </html>

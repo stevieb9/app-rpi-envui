@@ -3,11 +3,10 @@ $(document).ready(function(){
     var host = 'http://localhost:5000';
     //setInterval(fetch, 3000);
 
-
-
-    /*
-        helper methods
-    */
+    for(i = 1; i < 5; i++){
+        var aux = 'aux'+ i;
+        aux_state(aux);
+    }
 
     function fetch(){
         $.get(host +'/fetch', function(data){
@@ -19,8 +18,14 @@ $(document).ready(function(){
 
     function aux_state(aux){
         $.get(host +'/get_aux/' + aux, function(state){
-            alert(state);
-            return state;
+            $('#'+ aux).switchbutton({
+                checked: state,
+                onChange: function(checked){
+                    $.get(host +'/set_aux/'+ aux +'/'+ checked, function(data){
+                        // ...
+                    });
+                }
+            });
         });
     }
 
