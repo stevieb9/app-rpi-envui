@@ -33,8 +33,8 @@ get '/set_aux/:aux/:state' => sub {
         };
     };
 
-get '/fetch' => sub {
-        my $data = fetch();
+get '/fetch_env' => sub {
+        my $data = fetch_env();
         return to_json {
             temp => $data->{temp},
             humidity => $data->{humidity}
@@ -50,7 +50,7 @@ sub insert {
     );
     $id++;
 }
-sub fetch {
+sub fetch_env {
     my $row = database->quick_select(
         stats => {id => $id}, ['temp', 'humidity']
     );

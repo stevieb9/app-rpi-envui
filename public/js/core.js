@@ -1,7 +1,9 @@
 $(document).ready(function(){
 
     var host = 'http://localhost:5000';
-    //setInterval(fetch, 3000);
+
+    fetch();
+    setInterval(display_env, 10000);
 
     $(function(){
         for(i = 1; i < 4; i++){
@@ -23,8 +25,8 @@ $(document).ready(function(){
         });
     }
 
-    function fetch(){
-        $.get(host +'/fetch', function(data){
+    function display_env(){
+        $.get(host +'/fetch_env', function(data){
             var json = $.parseJSON(data);
             display_temp(json.temp);
             display_humidity(json.humidity);
