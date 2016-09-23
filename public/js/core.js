@@ -12,12 +12,11 @@ $(document).ready(function(){
 
     function aux_state(aux){
         $.get(host +'/get_aux/' + aux, function(state){
-            alert(aux +' '+state);
             $('#'+ aux).switchbutton({
-                checked: state,
+                checked: parseInt(state),
                 onChange: function(checked){
                     $.get(host +'/set_aux/'+ aux +'/'+ checked, function(data){
-                        //alert(data);
+                        alert(data);
                     });
                 }
             });
