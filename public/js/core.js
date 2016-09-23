@@ -2,7 +2,7 @@ $(document).ready(function(){
 
     var host = 'http://localhost:5000';
 
-    fetch();
+    display_env();
     setInterval(display_env, 10000);
 
     $(function(){
