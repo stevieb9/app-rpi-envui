@@ -87,7 +87,7 @@ sub _generate_aux {
         my $name = "aux$_";
 
         $auxillaries{$name} = {
-            state => 1,
+            state => 0,
             on_time => 0,
             override => 0,
             name => $name,

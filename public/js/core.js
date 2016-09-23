@@ -3,9 +3,25 @@ $(document).ready(function(){
     var host = 'http://localhost:5000';
     //setInterval(fetch, 3000);
 
-    for(i = 1; i < 5; i++){
-        var aux = 'aux'+ i;
-        aux_state(aux);
+    $(function(){
+        for(i = 1; i < 4; i++){
+            var aux = 'aux'+ i;
+            aux_state(aux);
+        }
+    });
+
+    function aux_state(aux){
+        $.get(host +'/get_aux/' + aux, function(state){
+            alert(aux +' '+state);
+            $('#'+ aux).switchbutton({
+                checked: state,
+                onChange: function(checked){
+                    $.get(host +'/set_aux/'+ aux +'/'+ checked, function(data){
+                        //alert(data);
+                    });
+                }
+            });
+        });
     }
 
     function fetch(){
@@ -15,19 +31,6 @@ $(document).ready(function(){
             display_humidity(json.humidity);
         });
     };
-
-    function aux_state(aux){
-        $.get(host +'/get_aux/' + aux, function(state){
-            $('#'+ aux).switchbutton({
-                checked: state,
-                onChange: function(checked){
-                    $.get(host +'/set_aux/'+ aux +'/'+ checked, function(data){
-                        // ...
-                    });
-                }
-            });
-        });
-    }
 
     function display_temp(temp){
         if (temp > 15){
