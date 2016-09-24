@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-    var host = 'http://localhost:5000';
+    var host = 'http://192.168.1.147:5000';
 
     display_env();
     setInterval(display_env, 10000);
