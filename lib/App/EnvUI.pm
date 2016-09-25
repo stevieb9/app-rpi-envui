@@ -1,15 +1,32 @@
 package App::EnvUI;
 
+use Async::Event::Interval;
+use IPC::Shareable;
 use Dancer2;
 use Dancer2::Plugin::Database;
 
 our $VERSION = '0.1';
 
-my $id = _get_last_id();
 my $auxs = _generate_aux();
 
+my $x = 10;
+my $y = 20;
+
+my $event = Async::Event::Interval->new(
+    5,
+    sub {
+        $x++;
+        $y++;
+        database->quick_insert(stats => {
+            temp => $x,
+            humidity => $y,
+        });
+    }
+);
+$event->start;
+
 get '/' => sub {
-        insert(10,20);
+        my $m = $event;
         return template 'main';
     };
 
@@ -48,12 +65,15 @@ sub insert {
             humidity => $hum,
         }
     );
-    $id++;
 }
 sub fetch_env {
+    my $id = database->selectrow_arrayref(
+        "select seq from sqlite_sequence where name='stats';"
+    )->[0];
     my $row = database->quick_select(
         stats => {id => $id}, ['temp', 'humidity']
     );
+    print "**** $id :: $row->{temp}\n";
     return $row;
 }
 sub _bool {
@@ -93,14 +113,7 @@ sub _generate_aux {
             name => $name,
         };
     }
-
     return \%auxillaries;
-}
-sub _get_last_id {
-    # fetches and returns the most recent row id in the DB
-
-    my @rows = database->quick_select('stats', {}, ['id']) || {id => 0};
-    return $rows[-1]->{id};
 }
 
 true;

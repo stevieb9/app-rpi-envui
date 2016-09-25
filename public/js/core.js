@@ -3,7 +3,7 @@ $(document).ready(function(){
     var host = 'http://192.168.1.147:5000';
 
     display_env();
-    setInterval(display_env, 10000);
+    setInterval(display_env, 5000);
 
     $(function(){
         for(i = 1; i < 4; i++){
