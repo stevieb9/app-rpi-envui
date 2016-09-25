@@ -6,19 +6,22 @@ $(document).ready(function(){
     setInterval(display_env, 5000);
 
     $(function(){
-        for(i = 1; i < 4; i++){
+        aux_update();
+    });
+
+    function aux_update(){
+        for(i = 1; i < 5; i++){
             var aux = 'aux'+ i;
             aux_state(aux);
         }
-    });
-
+    }
     function aux_state(aux){
         $.get(host +'/get_aux/' + aux, function(state){
             $('#'+ aux).switchbutton({
                 checked: parseInt(state),
                 onChange: function(checked){
                     $.get(host +'/set_aux/'+ aux +'/'+ checked, function(data){
-                        alert(data);
+                        // ...
                     });
                 }
             });
@@ -31,10 +34,11 @@ $(document).ready(function(){
             display_temp(json.temp);
             display_humidity(json.humidity);
         });
+        aux_update();
     };
 
     function display_temp(temp){
-        if (temp > 15){
+        if (temp > 78){
             $('#temp').css('color', 'red');
         }
         else {

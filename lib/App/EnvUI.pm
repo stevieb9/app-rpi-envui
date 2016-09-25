@@ -9,8 +9,8 @@ our $VERSION = '0.1';
 
 my $auxs = _generate_aux();
 
-my $x = 10;
-my $y = 20;
+my $x = 65;
+my $y = 0;
 
 my $event = Async::Event::Interval->new(
     5,
@@ -20,6 +20,7 @@ my $event = Async::Event::Interval->new(
         insert($x, $y);
     }
 );
+
 $event->start;
 
 get '/' => sub {
