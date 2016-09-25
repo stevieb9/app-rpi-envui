@@ -16,11 +16,25 @@ $(document).ready(function(){
         }
     }
     function aux_state(aux){
-        $.get(host +'/get_aux/' + aux, function(state){
+        $.get(host +'/get_aux/' + aux, function(data){
+            var json = $.parseJSON(data);
+            var ontxt;
+            var offtxt;
+            if (json.override){
+                ontxt = 'OVERRIDE';
+                offtxt = 'OVERRIDE';
+            }
+            else {
+                ontxt = 'ON';
+                offtxt = 'OFF';
+            }
             $('#'+ aux).switchbutton({
-                checked: parseInt(state),
+                onText: ontxt,
+                offText: offtxt,
+                checked: parseInt(json.state),
                 onChange: function(checked){
                     $.get(host +'/set_aux/'+ aux +'/'+ checked, function(data){
+
                         // ...
                     });
                 }

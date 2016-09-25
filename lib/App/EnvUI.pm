@@ -26,7 +26,12 @@ get '/' => sub {
 
 get '/get_aux/:aux' => sub {
         my $aux = params->{aux};
-        return _aux_state($aux);
+        my $state = _aux_state($aux);
+        my $override = _aux_override($aux);
+        return to_json {
+                state => $state,
+                override => $override,
+        };
     };
 
 get '/set_aux/:aux/:state' => sub {
