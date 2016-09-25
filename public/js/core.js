@@ -34,6 +34,7 @@ $(document).ready(function(){
             display_temp(json.temp);
             display_humidity(json.humidity);
         });
+
         aux_update();
     };
 
@@ -56,5 +57,4 @@ $(document).ready(function(){
         }
         $('#humidity').text(humidity);
     }
-
 });

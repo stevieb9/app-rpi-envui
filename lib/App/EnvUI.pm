@@ -1,7 +1,6 @@
 package App::EnvUI;
 
 use Async::Event::Interval;
-use IPC::Shareable;
 use Dancer2;
 use Dancer2::Plugin::Database;
 
@@ -9,22 +8,19 @@ our $VERSION = '0.1';
 
 my $auxs = _generate_aux();
 
-my $x = 65;
-my $y = 0;
-
 my $event = Async::Event::Interval->new(
     5,
     sub {
-        $x++;
-        $y++;
-        insert($x, $y);
+        my $temp = int(rand(100));
+        my $humidity = int(rand(100));
+        insert($temp, $humidity);
     }
 );
 
 $event->start;
 
 get '/' => sub {
-        my $m = $event;
+        my $e = $event;
         return template 'main';
     };
 

@@ -27,6 +27,14 @@
         <td><input id="aux2" class="button" style="width:100px;height:30px"></td>
     </tr>
 </table>
-
+<br><br>
+<table>
+    <th>Auxillary #3</th>
+    <th>Auxillary #4</th>
+    <tr>
+        <td><input id="aux3" class="button" style="width:100px;height:30px"></td>
+        <td><input id="aux4" class="button" style="width:100px;height:30px"></td>
+    </tr>
+</table>
 </body>
 </html>
