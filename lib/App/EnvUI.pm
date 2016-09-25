@@ -17,10 +17,7 @@ my $event = Async::Event::Interval->new(
     sub {
         $x++;
         $y++;
-        database->quick_insert(stats => {
-            temp => $x,
-            humidity => $y,
-        });
+        insert($x, $y);
     }
 );
 $event->start;
@@ -67,13 +64,12 @@ sub insert {
     );
 }
 sub fetch_env {
-    my $id = database->selectrow_arrayref(
-        "select seq from sqlite_sequence where name='stats';"
-    )->[0];
+    my $id = _get_last_id();
+
     my $row = database->quick_select(
         stats => {id => $id}, ['temp', 'humidity']
     );
-    print "**** $id :: $row->{temp}\n";
+
     return $row;
 }
 sub _bool {
@@ -114,6 +110,12 @@ sub _generate_aux {
         };
     }
     return \%auxillaries;
+}
+sub _get_last_id {
+    my $id = database->selectrow_arrayref(
+        "select seq from sqlite_sequence where name='stats';"
+    )->[0];
+    return $id;
 }
 
 true;
