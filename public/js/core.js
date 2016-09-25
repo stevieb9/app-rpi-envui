@@ -20,7 +20,7 @@ $(document).ready(function(){
             var json = $.parseJSON(data);
             var ontxt;
             var offtxt;
-            if (json.override){
+            if (json.override && aux == 'aux1' || aux == 'aux2'){
                 ontxt = 'OVERRIDE';
                 offtxt = 'OVERRIDE';
             }
