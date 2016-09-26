@@ -1,14 +1,16 @@
 package App::EnvUI;
 
 use Async::Event::Interval;
+use IPC::Shareable;
 use Dancer2;
 use Dancer2::Plugin::Database;
 
 our $VERSION = '0.1';
 
 my $auxs = _generate_aux();
+tie $auxs, 'IPC::Shareable', undef;
 
-my $event = Async::Event::Interval->new(
+my $event_get_env = Async::Event::Interval->new(
     5,
     sub {
         my $temp = int(rand(100));
@@ -17,11 +19,25 @@ my $event = Async::Event::Interval->new(
     }
 );
 
-$event->start;
+my $event_action_env = Async::Event::Interval->new(
+    10,
+    sub {
+        my $env = fetch_env();
+    }
+);
+
+$event_get_env->start;
+$event_action_env->start;
 
 get '/' => sub {
-        my $e = $event;
         return template 'main';
+
+        # the following events have to be referenced to within a route.
+        # we do it after return as we don't need this code reached in actual
+        # client calls
+
+        my $evt_get_env = $event_get_env;
+        my $evt_action_env = $event_action_env;
     };
 
 get '/get_aux/:aux' => sub {
@@ -94,7 +110,6 @@ sub _aux_override {
     my ($aux, $override) = @_;
     return $auxs->{$aux}{override} if ! defined $override;
     $auxs->{$aux}{override} = $override;
-    print "*** $auxs->{$aux}{override}\n";
     return $override;
 }
 sub _generate_aux {
