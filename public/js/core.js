@@ -18,6 +18,10 @@ $(document).ready(function(){
     function aux_state(aux){
         $.get(host +'/get_aux/' + aux, function(data){
             var json = $.parseJSON(data);
+            if (parseInt(json.pin) == '-1'){
+                $('.opt_'+aux).hide();
+                //return;
+            }
             var ontxt;
             var offtxt;
             if (parseInt(json.override) == 1 && (aux == 'aux1' || aux == 'aux2')){

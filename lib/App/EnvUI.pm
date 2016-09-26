@@ -1,16 +1,21 @@
 package App::EnvUI;
 
 use Async::Event::Interval;
+use Data::Dumper;
 use IPC::Shareable;
 use Dancer2;
 use Dancer2::Plugin::Database;
+use JSON::XS;
 
 our $VERSION = '0.1';
 
-my $auxs = _generate_aux();
-tie $auxs, 'IPC::Shareable', undef;
+my $conf = parse_config();
 
-my $event_get_env = Async::Event::Interval->new(
+my $auxs;
+$auxs = _generate_aux();
+tie $auxs, 'IPC::Shareable', undef, {destroy => 1};
+
+my $event_env_to_db = Async::Event::Interval->new(
     5,
     sub {
         my $temp = int(rand(100));
@@ -20,23 +25,25 @@ my $event_get_env = Async::Event::Interval->new(
 );
 
 my $event_action_env = Async::Event::Interval->new(
-    10,
+    2,
     sub {
         my $env = fetch_env();
+        print "*** $auxs->{aux3}{pin}, $auxs->{aux3}{state} ***\n";
     }
 );
 
-$event_get_env->start;
+$event_env_to_db->start;
 $event_action_env->start;
 
 get '/' => sub {
+        $auxs = _generate_aux();
         return template 'main';
 
         # the following events have to be referenced to within a route.
         # we do it after return as we don't need this code reached in actual
         # client calls
 
-        my $evt_get_env = $event_get_env;
+        my $evt_env_to_db = $event_env_to_db;
         my $evt_action_env = $event_action_env;
     };
 
@@ -44,9 +51,12 @@ get '/get_aux/:aux' => sub {
         my $aux = params->{aux};
         my $state = _aux_state($aux);
         my $override = _aux_override($aux);
+        my $pin = _aux_pin($aux);
         return to_json {
+                pin => $pin,
                 state => $state,
                 override => $override,
+                pin => $auxs->{$aux}{pin},
         };
     };
 
@@ -112,19 +122,26 @@ sub _aux_override {
     $auxs->{$aux}{override} = $override;
     return $override;
 }
+sub _aux_pin {
+    # returns the auxillary's GPIO pin number
+
+    my $aux = shift;
+    return $auxs->{$aux}{pin};
+}
 sub _generate_aux {
     # generate the auxillary control objects
 
     my %auxillaries;
 
     for (1..4){
-        my $name = "aux$_";
-
-        $auxillaries{$name} = {
+        my $aux = "aux$_";
+        $auxillaries{$aux} = {
+            pin => $conf->{$aux}{pin},
+            default => $conf->{$aux}{default},
             state => 0,
             on_time => 0,
             override => 0,
-            name => $name,
+            name => $aux,
         };
     }
     return \%auxillaries;
@@ -135,5 +152,14 @@ sub _get_last_id {
     )->[0];
     return $id;
 }
-
+sub parse_config {
+    my $json;
+    {
+        local $/;
+        open my $fh, '<', 'config/envui.json' or die $!;
+        $json = <$fh>;
+    }
+    my $conf = decode_json $json;
+    return $conf;
+}
 true;

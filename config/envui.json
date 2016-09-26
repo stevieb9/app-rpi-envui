@@ -1,0 +1,18 @@
+{
+  "aux1": {
+    "pin": "0",
+    "default": "temp"
+  },
+  "aux2": {
+    "pin": "0",
+    "default": "humidity"
+  },
+  "aux3": {
+    "pin": "-1",
+    "default": ""
+  },
+  "aux4": {
+    "pin": "-1",
+    "default": ""
+  }
+}
