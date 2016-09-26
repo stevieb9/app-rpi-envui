@@ -10,7 +10,8 @@ use RPi::WiringPi::Constant qw(:all);
 
 our $VERSION = '0.1';
 
-parse_config();
+_parse_config();
+_reset();
 
 my $event_env_to_db = Async::Event::Interval->new(
     5,
@@ -28,9 +29,6 @@ my $event_action_env = Async::Event::Interval->new(
         my $auxs = auxs();
         my $t_aux = $auxs->{'aux1'};
         my $h_aux = $auxs->{'aux2'};
-
-        my $t_limit = 50;
-        print "****** ". aux_time($t_aux->{id}) . "\n";
 
         action_temp($t_aux, $env->{temp});
 
@@ -112,7 +110,7 @@ sub aux_state {
 
     my ($aux, $state) = @_;
     if (defined $state){
-        db_update_aux('state', $state);
+        db_update('aux', 'state', $state);
     }
     return aux($aux)->{state};
 }
@@ -121,7 +119,7 @@ sub aux_time {
 
     my ($aux, $time) = @_;
     if (defined $time){
-        db_update_aux('on_time', $time);
+        db_update('aux', 'on_time', $time);
     }
     my $on_time = aux($aux)->{on_time};
     return $on_time == 0 ? 0 : time - $on_time;
@@ -132,7 +130,7 @@ sub aux_override {
     my ($aux, $override) = @_;
 
     if (defined $override){
-        db_update_aux('override', $override);
+        db_update('aux', 'override', $override);
     }
     return aux($aux)->{override};
 }
@@ -142,7 +140,7 @@ sub aux_pin {
     my ($aux, $pin) = @_;
 
     if (defined $pin){
-        update_aux_db('aux', $aux, $pin);
+        update_db('aux', $aux, $pin);
     }
     return aux($aux)->{pin};
 }
@@ -163,19 +161,19 @@ sub db_insert_env {
         }
     );
 }
-sub db_update_aux {
-    my ($col, $value) = @_;
-    my $table = 'aux';
+sub db_update {
+    my ($table, $col, $value, $where_col, $where_val) = @_;
 
-    database->do("UPDATE $table SET $col='$value'");
+    if (! defined $where_col){
+        database->do("UPDATE $table SET $col='$value'");
+    }
+    else {
+        database->do(
+            "UPDATE $table SET $col='$value' WHERE $where_col='$where_val"
+        );
+    }
 }
-sub db_update_control {
-    my ($col, $value) = @_;
-    my $table = 'control';
-
-    database->do("UPDATE $table SET $col='$value'");
-}
-sub parse_config {
+sub _parse_config {
     my $json;
     {
         local $/;
@@ -186,14 +184,17 @@ sub parse_config {
 
     for (1..4){
         my $aux = "aux$_";
-        db_update_aux('pin', $conf->{$aux}{pin});
+        db_update('aux', 'pin', $conf->{$aux}{pin});
     }
 
     for my $opt (keys %{ $conf->{control} }){
-        print "$opt: $conf->{control}{$opt}\n";
-
-        db_update_control($opt, $conf->{control}{$opt});
+        db_update('control', $opt, $conf->{control}{$opt});
     }
+}
+sub _reset {
+    # reset dynamic db attributes
+    # aux_time('aux1', 0);
+    # aux_time('aux2', 0);
 }
 sub _bool {
     # translates javascript true/false to 1/0
