@@ -40,7 +40,7 @@ get '/set_aux/:aux/:state' => sub {
 
         _aux_state($aux, $state);
 
-        my $override = $state ? 1 : 0;
+        my $override = _aux_override($aux) ? 0 : 1;
         _aux_override($aux, $override);
 
         return to_json {
@@ -94,6 +94,7 @@ sub _aux_override {
     my ($aux, $override) = @_;
     return $auxs->{$aux}{override} if ! defined $override;
     $auxs->{$aux}{override} = $override;
+    print "*** $auxs->{$aux}{override}\n";
     return $override;
 }
 sub _generate_aux {
