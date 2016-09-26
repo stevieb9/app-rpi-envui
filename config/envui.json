@@ -1,9 +1,9 @@
 {
   "control": {
-    "temp_limit": "50",
+    "temp_limit": "78",
     "humidity_limit": "20",
-    "temp_aux_on_time": "100",
-    "humidity_aux_on_time": "100"
+    "temp_aux_on_time": "20",
+    "humidity_aux_on_time": "20"
   },
   "aux1": {
     "pin": "0",

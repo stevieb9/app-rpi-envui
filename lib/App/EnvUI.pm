@@ -16,8 +16,10 @@ _reset();
 my $event_env_to_db = Async::Event::Interval->new(
     5,
     sub {
-        my $temp = int(rand(100));
-        my $humidity = int(rand(100));
+        #my $temp = int(rand(100));
+        my $temp = 76;
+        #my $humidity = int(rand(100));
+        my $humidity = 21;
         db_insert_env($temp, $humidity);
     }
 );
@@ -30,30 +32,47 @@ my $event_action_env = Async::Event::Interval->new(
         my $t_aux = $auxs->{'aux1'};
         my $h_aux = $auxs->{'aux2'};
 
-        action_temp($t_aux, $env->{temp});
+        my $env_ctl = database->quick_select('control', {id => 1});
 
-        if ($env->{humidity} < 50){
-            aux_state($h_aux->{id}, HIGH);
-        }
-        else {
-            aux_state($h_aux->{id}, LOW);
-        }
+        action_temp($t_aux, $env->{temp}, $env_ctl);
+        action_humidity($h_aux, $env->{humidity}, $env_ctl);
     }
 );
+sub action_humidity {
+    my ($aux, $humidity, $env_ctl) = @_;
 
-sub action_temp {
-    my ($aux, $temp) = @_;
-    my $limit = 50;
+    my $min_run = $env_ctl->{humidity_aux_on_time};
+    my $limit = $env_ctl->{humidity_limit};
 
-    if ($temp > $limit && aux_time($aux->{id}) == 0){
+    if ($humidity < $limit && aux_time($aux->{id}) == 0){
+        print "h on\n";
         aux_state($aux->{id}, HIGH);
         aux_time($aux->{id}, time);
     }
-    elsif ($temp < $limit && aux_time($aux->{id}) >= 900){
+    elsif ($humidity >= $limit && aux_time($aux->{id}) >= $min_run){
+        print "h off\n";
         aux_state($aux->{id}, LOW);
         aux_time($aux->{id}, 0);
     }
 }
+sub action_temp {
+    my ($aux, $temp, $env_ctl) = @_;
+    my $limit = $env_ctl->{temp_limit};
+    my $min_run = $env_ctl->{temp_aux_on_time};
+
+    print "$temp ::::: $limit\n";
+    if ($temp >= $limit && aux_time($aux->{id}) == 0){
+        print "t on\n";
+        aux_state($aux->{id}, HIGH);
+        aux_time($aux->{id}, time);
+    }
+    elsif ($temp < $limit && aux_time($aux->{id}) >= $min_run){
+        print "t off\n";
+        aux_state($aux->{id}, LOW);
+        aux_time($aux->{id}, 0);
+    }
+}
+
 $event_env_to_db->start;
 $event_action_env->start;
 
@@ -150,7 +169,7 @@ sub env {
     my $id = _get_last_id();
 
     my $row = database->quick_select(
-        stats => {id => $id}, ['temp', 'humidity']
+        stats => {id => $id}
     );
 
     return $row;
@@ -195,10 +214,10 @@ sub _parse_config {
 }
 sub _reset {
     # reset dynamic db attributes
-    #aux_time('aux1', 0);
-    #aux_time('aux2', 0);
-    #aux_time('aux3', 0);
-    #aux_time('aux4', 0);
+    aux_time('aux1', 0);
+    aux_time('aux2', 0);
+    aux_time('aux3', 0);
+    aux_time('aux4', 0);
 }
 sub _bool {
     # translates javascript true/false to 1/0
