@@ -119,9 +119,11 @@ sub aux_time {
 
     my ($aux, $time) = @_;
     if (defined $time){
-        db_update('aux', 'on_time', $time);
+        db_update('aux', 'on_time', $time, 'id', $aux);
     }
     my $on_time = aux($aux)->{on_time};
+    my $x = time - $on_time;
+    print "$aux: $x\n";
     return $on_time == 0 ? 0 : time - $on_time;
 }
 sub aux_override {
@@ -169,7 +171,7 @@ sub db_update {
     }
     else {
         database->do(
-            "UPDATE $table SET $col='$value' WHERE $where_col='$where_val"
+            "UPDATE $table SET $col='$value' WHERE $where_col='$where_val'"
         );
     }
 }
@@ -193,10 +195,10 @@ sub _parse_config {
 }
 sub _reset {
     # reset dynamic db attributes
-    aux_time('aux1', 0);
-    aux_time('aux2', 0);
-    aux_time('aux3', 0);
-    aux_time('aux4', 0);
+    #aux_time('aux1', 0);
+    #aux_time('aux2', 0);
+    #aux_time('aux3', 0);
+    #aux_time('aux4', 0);
 }
 sub _bool {
     # translates javascript true/false to 1/0
