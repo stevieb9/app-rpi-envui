@@ -12,3 +12,15 @@ CREATE TABLE IF NOT EXISTS aux (
     override TINYINT(1),
     on_time INTEGER
 );
+
+DROP TABLE control;
+
+CREATE TABLE control (
+    id INTEGER primary key autoincrement,
+    temp_limit TINYINT(3),
+    humidity_limit TINYINT(3),
+    temp_aux_on_time INTEGER,
+    humidity_aux_on_time INTEGER
+);
+
+INSERT INTO control VALUES (NULL, 80, 20, 900, 900);

@@ -31,14 +31,8 @@ my $event_action_env = Async::Event::Interval->new(
 
         my $t_limit = 50;
         print "****** ". aux_time($t_aux->{id}) . "\n";
-        if ($env->{temp} > $t_limit && (aux_time($t_aux->{id}) == 0)){
-            aux_state($t_aux->{id}, HIGH);
-            aux_time($t_aux->{id}, time);
-        }
-        elsif ($env->{temp} < $t_limit && aux_time($t_aux->{id}) >= 900){
-            aux_state($t_aux->{id}, LOW);
-            aux_time($t_aux->{id}, 0);
-        }
+
+        action_temp($t_aux, $env->{temp});
 
         if ($env->{humidity} < 50){
             aux_state($h_aux->{id}, HIGH);
@@ -49,6 +43,19 @@ my $event_action_env = Async::Event::Interval->new(
     }
 );
 
+sub action_temp {
+    my ($aux, $temp) = @_;
+    my $limit = 50;
+
+    if ($temp > $limit && aux_time($aux->{id}) == 0){
+        aux_state($aux->{id}, HIGH);
+        aux_time($aux->{id}, time);
+    }
+    elsif ($temp < $limit && aux_time($aux->{id}) >= 900){
+        aux_state($aux->{id}, LOW);
+        aux_time($aux->{id}, 0);
+    }
+}
 $event_env_to_db->start;
 $event_action_env->start;
 
@@ -105,7 +112,7 @@ sub aux_state {
 
     my ($aux, $state) = @_;
     if (defined $state){
-        db_update_aux('state', $aux, $state);
+        db_update_aux('state', $state);
     }
     return aux($aux)->{state};
 }
@@ -114,7 +121,7 @@ sub aux_time {
 
     my ($aux, $time) = @_;
     if (defined $time){
-        db_update_aux('on_time', $aux, $time);
+        db_update_aux('on_time', $time);
     }
     my $on_time = aux($aux)->{on_time};
     return $on_time == 0 ? 0 : time - $on_time;
@@ -125,7 +132,7 @@ sub aux_override {
     my ($aux, $override) = @_;
 
     if (defined $override){
-        db_update_aux('override', $aux, $override);
+        db_update_aux('override', $override);
     }
     return aux($aux)->{override};
 }
@@ -157,11 +164,16 @@ sub db_insert_env {
     );
 }
 sub db_update_aux {
-    my ($col, $aux, $value) = @_;
+    my ($col, $value) = @_;
     my $table = 'aux';
 
-    database->do("UPDATE $table SET $col='$value' where id='$aux'");
-#    $sth->execute($value, $aux);
+    database->do("UPDATE $table SET $col='$value'");
+}
+sub db_update_control {
+    my ($col, $value) = @_;
+    my $table = 'control';
+
+    database->do("UPDATE $table SET $col='$value'");
 }
 sub parse_config {
     my $json;
@@ -174,7 +186,13 @@ sub parse_config {
 
     for (1..4){
         my $aux = "aux$_";
-        db_update_aux('pin', $aux, $conf->{$aux}{pin});
+        db_update_aux('pin', $conf->{$aux}{pin});
+    }
+
+    for my $opt (keys %{ $conf->{control} }){
+        print "$opt: $conf->{control}{$opt}\n";
+
+        db_update_control($opt, $conf->{control}{$opt});
     }
 }
 sub _bool {
