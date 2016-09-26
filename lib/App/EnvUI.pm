@@ -193,8 +193,10 @@ sub _parse_config {
 }
 sub _reset {
     # reset dynamic db attributes
-    # aux_time('aux1', 0);
-    # aux_time('aux2', 0);
+    aux_time('aux1', 0);
+    aux_time('aux2', 0);
+    aux_time('aux3', 0);
+    aux_time('aux4', 0);
 }
 sub _bool {
     # translates javascript true/false to 1/0
