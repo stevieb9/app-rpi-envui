@@ -6,6 +6,7 @@ use IPC::Shareable;
 use Dancer2;
 use Dancer2::Plugin::Database;
 use JSON::XS;
+use RPi::WiringPi::Constant qw(:all);
 
 our $VERSION = '0.1';
 
@@ -21,10 +22,31 @@ my $event_env_to_db = Async::Event::Interval->new(
 );
 
 my $event_action_env = Async::Event::Interval->new(
-    2,
+    3,
     sub {
-        my $env = fetch_env();
-    },
+        my $env = env();
+        my $auxs = auxs();
+        my $t_aux = $auxs->{'aux1'};
+        my $h_aux = $auxs->{'aux2'};
+
+        my $t_limit = 50;
+        print "****** ". aux_time($t_aux->{id}) . "\n";
+        if ($env->{temp} > $t_limit && (aux_time($t_aux->{id}) == 0)){
+            aux_state($t_aux->{id}, HIGH);
+            aux_time($t_aux->{id}, time);
+        }
+        elsif ($env->{temp} < $t_limit && aux_time($t_aux->{id}) >= 900){
+            aux_state($t_aux->{id}, LOW);
+            aux_time($t_aux->{id}, 0);
+        }
+
+        if ($env->{humidity} < 50){
+            aux_state($h_aux->{id}, HIGH);
+        }
+        else {
+            aux_state($h_aux->{id}, LOW);
+        }
+    }
 );
 
 $event_env_to_db->start;
@@ -42,18 +64,7 @@ get '/' => sub {
     };
 
 get '/get_aux/:aux' => sub {
-        my $aux = params->{aux};
-        my $state = aux_state($aux);
-        my $override = aux_override($aux);
-        my $pin = aux_pin($aux);
-
-        print "!!! $aux, $state, $override, $pin\n";
-        return to_json {
-                pin => $pin,
-                state => $state,
-                override => $override,
-                pin => $pin,
-        };
+        return to_json aux(params->{aux});
     };
 
 get '/set_aux/:aux/:state' => sub {
@@ -62,7 +73,7 @@ get '/set_aux/:aux/:state' => sub {
         my $state = _bool(params->{state});
         $state = aux_state($aux, $state);
 
-        my $override = aux_override($aux) ? 0 : 1;
+        my $override = aux_override($aux) ? OFF : ON;
         $override = aux_override($aux, $override);
 
         return to_json {
@@ -72,44 +83,41 @@ get '/set_aux/:aux/:state' => sub {
     };
 
 get '/fetch_env' => sub {
-        my $data = fetch_env();
+        my $data = env();
         return to_json {
             temp => $data->{temp},
             humidity => $data->{humidity}
         };
     };
 
-sub db_insert_env {
-    my ($temp, $hum) = @_;
-    database->quick_insert(stats => {
-            temp => $temp,
-            humidity => $hum,
-        }
-    );
+sub aux {
+    my $aux = shift;
+    my $aux_obj
+        = database->selectrow_hashref("select * from aux where id='$aux'");
+    return $aux_obj;
 }
-sub fetch_env {
-    my $id = _get_last_id();
-
-    my $row = database->quick_select(
-        stats => {id => $id}, ['temp', 'humidity']
-    );
-
-    return $row;
-}
-sub _bool {
-    # translates javascript true/false to 1/0
-
-    my $bool = shift;
-    return $bool eq 'true' ? 1 : 0;
+sub auxs {
+    my $auxs = database->selectall_hashref("select * from aux", 'id');
+    return $auxs;
 }
 sub aux_state {
     # maintains the auxillary state (on/off)
 
     my ($aux, $state) = @_;
     if (defined $state){
-        update_aux_db('state', $aux, $state);
+        db_update_aux('state', $aux, $state);
     }
-    return fetch_aux($aux)->{state};
+    return aux($aux)->{state};
+}
+sub aux_time {
+    # maintains the auxillary state (on/off)
+
+    my ($aux, $time) = @_;
+    if (defined $time){
+        db_update_aux('on_time', $aux, $time);
+    }
+    my $on_time = aux($aux)->{on_time};
+    return $on_time == 0 ? 0 : time - $on_time;
 }
 sub aux_override {
     # sets a manual override flag if an aux is turned on manually (via button)
@@ -117,9 +125,9 @@ sub aux_override {
     my ($aux, $override) = @_;
 
     if (defined $override){
-        update_aux_db('override', $aux, $override);
+        db_update_aux('override', $aux, $override);
     }
-    return fetch_aux($aux)->{override};
+    return aux($aux)->{override};
 }
 sub aux_pin {
     # returns the auxillary's GPIO pin number
@@ -129,20 +137,31 @@ sub aux_pin {
     if (defined $pin){
         update_aux_db('aux', $aux, $pin);
     }
-    return fetch_aux($aux)->{pin};
+    return aux($aux)->{pin};
 }
-sub update_aux_db {
+sub env {
+    my $id = _get_last_id();
+
+    my $row = database->quick_select(
+        stats => {id => $id}, ['temp', 'humidity']
+    );
+
+    return $row;
+}
+sub db_insert_env {
+    my ($temp, $hum) = @_;
+    database->quick_insert(stats => {
+            temp => $temp,
+            humidity => $hum,
+        }
+    );
+}
+sub db_update_aux {
     my ($col, $aux, $value) = @_;
     my $table = 'aux';
 
     database->do("UPDATE $table SET $col='$value' where id='$aux'");
 #    $sth->execute($value, $aux);
-}
-sub _get_last_id {
-    my $id = database->selectrow_arrayref(
-        "select seq from sqlite_sequence where name='stats';"
-    )->[0];
-    return $id;
 }
 sub parse_config {
     my $json;
@@ -155,11 +174,20 @@ sub parse_config {
 
     for (1..4){
         my $aux = "aux$_";
-        update_aux_db('pin', $aux, $conf->{$aux}{pin});
+        db_update_aux('pin', $aux, $conf->{$aux}{pin});
     }
 }
-sub fetch_aux {
-    my $aux = shift;
-    my $aux_obj = database->selectrow_hashref("select * from aux where id='$aux'");
+sub _bool {
+    # translates javascript true/false to 1/0
+
+    my $bool = shift;
+    return $bool eq 'true' ? 1 : 0;
 }
+sub _get_last_id {
+    my $id = database->selectrow_arrayref(
+        "select seq from sqlite_sequence where name='stats';"
+    )->[0];
+    return $id;
+}
+
 true;
