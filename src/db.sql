@@ -34,4 +34,13 @@ CREATE TABLE control (
 
 INSERT INTO control VALUES (NULL, 80, 20, 900, 900, 'aux1', 'aux2');
 
+DROP TABLE IF EXISTS core;
+
+CREATE TABLE core (
+    id VARCHAR(20),
+    value VARCHAR(50)
+);
+
+INSERT INTO core VALUES ('x_host', 'http://localhost');
+INSERT INTO core VALUES ('x_port', 5000);
 

@@ -166,6 +166,11 @@ sub _config {
     my $env_ctl = database->quick_select('control', {id => 1});
     return $env_ctl->{$want};
 }
+sub _config_core {
+    my $want = shift;
+    my $core = database->quick_select('core', {id => $want});
+    return $core->{$want}{value};
+}
 sub env {
     my $id = _get_last_id();
 
@@ -221,14 +226,24 @@ sub _parse_config {
     }
     my $conf = decode_json $json;
 
+    # auxillary channels
+
     for (1..4){
         my $aux_id = "aux$_";
         my $pin = $conf->{$aux_id}{pin};
         aux_pin($aux_id, $pin);
     }
 
+    # environment control
+
     for my $opt (keys %{ $conf->{control} }){
         db_update('control', $opt, $conf->{control}{$opt});
+    }
+
+    # core configuration
+
+    for my $directive (keys %{ $conf->{core} }){
+        db_update('core', 'value', $conf->{core}{$directive}, 'id', $directive);
     }
 }
 sub _reset {

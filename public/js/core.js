@@ -1,78 +1,13 @@
 $(document).ready(function(){
 
-//    var host = 'http://192.168.1.147:5000';
     var host = 'http://10.0.48.1:5000';
+
     display_env();
+    temp_graph();
+    humidity_graph();
+    aux_update();
+
     setInterval(display_env, 4000);
-
-    $(function(){
-        aux_update();
-    });
-
-    // temperature graph
-
-    var temp_ctx = $('#temp_chart')
-    var temp_chart = new Chart(temp_ctx, {
-        type: 'line',
-        data: {
-            labels: ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"],
-            datasets: [{
-                label: 'Temperature (F)',
-                data: [12, 19, 3, 5, 2, 3, 9]
-                /*
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            */
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            }
-        }
-    });
-
-    // humidity graph
-
-    var humidity_ctx = $('#humidity_chart')
-    var humidity_chart = new Chart(humidity_ctx, {
-        type: 'line',
-        data: {
-            labels: ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"],
-            datasets: [{
-                label: 'Humidity %',
-                data: [12, 19, 3, 5, 2, 3, 9]
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            }
-        }
-    });
 
     function aux_update(){
         for(i = 1; i < 5; i++){
@@ -80,6 +15,7 @@ $(document).ready(function(){
             aux_state(aux);
         }
     }
+
     function aux_state(aux){
         $.get(host +'/get_aux/' + aux, function(data){
             var json = $.parseJSON(data);
@@ -139,5 +75,76 @@ $(document).ready(function(){
             $('#humidity').css('color', 'green')
         }
         $('#humidity').text(humidity);
+    }
+
+    // temperature graph
+
+    function temp_graph(){
+        var temp_ctx = $('#temp_chart')
+        var temp_chart = new Chart(temp_ctx, {
+            type: 'line',
+            data: {
+                labels: ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"],
+                datasets: [{
+                    label: 'Temperature (F)',
+                    data: [12, 19, 3, 5, 2, 3, 9],
+                    /*
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(153, 102, 255, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    */
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+    // humidity graph
+
+    function humidity_graph(){
+        var humidity_ctx = $('#humidity_chart')
+        var humidity_chart = new Chart(humidity_ctx, {
+            type: 'line',
+            data: {
+                labels: ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"],
+                datasets: [{
+                    label: 'Humidity %',
+                    data: [12, 19, 3, 5, 2, 3, 9]
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
     }
 });
