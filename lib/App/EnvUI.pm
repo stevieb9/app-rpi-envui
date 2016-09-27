@@ -202,7 +202,6 @@ sub db_insert_env {
 }
 sub db_update {
     my ($table, $col, $value, $where_col, $where_val) = @_;
-
     if (! defined $where_col){
         database->do("UPDATE $table SET $col='$value'");
     }

@@ -5,13 +5,20 @@ CREATE TABLE IF NOT EXISTS stats (
   humidity tinyint(3) not NULL
 );
 
-CREATE TABLE IF NOT EXISTS aux (
+DROP TABLE IF EXISTS aux;
+
+CREATE TABLE aux (
     id VARCHAR(4),
     pin TINYINT(2),
     state TINYINT(1),
     override TINYINT(1),
     on_time INTEGER
 );
+
+INSERT INTO aux VALUES ('aux1', 0, 0, 0, 0);
+INSERT INTO aux VALUES ('aux2', 0, 0, 0, 0);
+INSERT INTO aux VALUES ('aux3', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux4', -1, 0, 0, 0);
 
 DROP TABLE IF EXISTS control;
 
