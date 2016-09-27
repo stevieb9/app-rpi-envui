@@ -8,9 +8,9 @@ my $eumm_version = $ExtUtils::MakeMaker::VERSION;
 $eumm_version =~ s/_//;
 
 WriteMakefile(
-    NAME                => 'App::EnvUI',
+    NAME                => 'EnvUI',
     AUTHOR              => q{Steve Bertrand <steveb@cpan.org>},
-    VERSION_FROM        => 'lib/App/EnvUI.pm',
+    VERSION_FROM        => 'lib/EnvUI.pm',
     ABSTRACT            => '',
     ($eumm_version >= 6.3001
         ? ('LICENSE'=> 'perl')

@@ -1,4 +1,4 @@
-package App::EnvUI;
+package EnvUI;
 
 use Async::Event::Interval;
 use Data::Dumper;
@@ -34,7 +34,6 @@ my $event_action_env = Async::Event::Interval->new(
         action_humidity($h_aux, humidity());
     }
 );
-
 
 $event_env_to_db->start;
 $event_action_env->start;
