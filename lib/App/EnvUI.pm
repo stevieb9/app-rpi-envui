@@ -1,4 +1,4 @@
-package EnvUI;
+package App::EnvUI;
 
 use Async::Event::Interval;
 use Data::Dumper;
