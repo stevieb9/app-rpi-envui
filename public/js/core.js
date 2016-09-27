@@ -59,7 +59,7 @@ $(document).ready(function(){
         data: {
             labels: ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"],
             datasets: [{
-                label: 'Temperature (F)',
+                label: 'Humidity %',
                 data: [12, 19, 3, 5, 2, 3, 9]
             }]
         },
