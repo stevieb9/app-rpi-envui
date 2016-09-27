@@ -30,10 +30,8 @@ my $event_action_env = Async::Event::Interval->new(
         my $t_aux = env_temp_aux();
         my $h_aux = env_humidity_aux();
 
-        my $env_ctl = database->quick_select('control', {id => 1});
-
-        action_temp($t_aux, temp(), $env_ctl);
-        action_humidity($h_aux, humidity(), $env_ctl);
+        action_temp($t_aux, temp());
+        action_humidity($h_aux, humidity());
     }
 );
 
@@ -80,32 +78,32 @@ get '/fetch_env' => sub {
     };
 
 sub action_humidity {
-    my ($aux_id, $humidity, $env_ctl) = @_;
+    my ($aux_id, $humidity) = @_;
 
-    my $min_run = $env_ctl->{humidity_aux_on_time};
-    my $limit = $env_ctl->{humidity_limit};
+    my $min_run = _config('humidity_aux_on_time');
+    my $limit = _config('humidity_limit');
 
     if ($humidity < $limit && aux_time($aux_id) == 0){
         aux_state($aux_id, HIGH);
         aux_time($aux_id, time);
     }
     elsif ($humidity >= $limit && aux_time($aux_id) >= $min_run){
-        aux_state(aux_id($aux_id), LOW);
-        aux_time(aux_id($aux_id), 0);
+        aux_state($aux_id, LOW);
+        aux_time($aux_id, 0);
     }
 }
 sub action_temp {
-    my ($aux_id, $temp, $env_ctl) = @_;
-    my $limit = $env_ctl->{temp_limit};
-    my $min_run = $env_ctl->{temp_aux_on_time};
+    my ($aux_id, $temp) = @_;
+    my $limit = _config('temp_limit');
+    my $min_run = _config('temp_aux_on_time');
 
     if ($temp >= $limit && aux_time($aux_id) == 0){
         aux_state($aux_id, HIGH);
         aux_time($aux_id, time);
     }
     elsif ($temp < $limit && aux_time($aux_id) >= $min_run){
-        aux_state(aux_id($aux_id), LOW);
-        aux_time(aux_id($aux_id), 0);
+        aux_state($aux_id, LOW);
+        aux_time($aux_id, 0);
     }
 }
 sub aux {
@@ -162,6 +160,11 @@ sub aux_pin {
         db_update('aux', 'pin', $pin, 'id', $aux_id);
     }
     return aux($aux_id)->{pin};
+}
+sub _config {
+    my $want = shift;
+    my $env_ctl = database->quick_select('control', {id => 1});
+    return $env_ctl->{$want};
 }
 sub env {
     my $id = _get_last_id();
