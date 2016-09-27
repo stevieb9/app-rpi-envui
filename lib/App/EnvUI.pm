@@ -39,8 +39,8 @@ $event_env_to_db->start;
 $event_action_env->start;
 
 get '/' => sub {
-        return template 'test';
-        #return template 'main';
+        # return template 'test';
+        return template 'main';
 
         # the following events have to be referenced to within a route.
         # we do it after return as we don't need this code reached in actual

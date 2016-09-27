@@ -16,23 +16,35 @@
 </head>
 <body>
 
+<!-- Temperature -->
+
 <table>
-    <th>Temperature</th>
-    <th>Humidity</th>
+    <th colspan="2" align="center"><font size="20">Temperature</font></th>
     <tr>
-        <td><div class="data" id="temp"></div></td>
-        <td><div class="data" id="humidity"></div></td>
+        <td style="text-align: left;"><font size="15"><div class="data" id="temp"></div></font></td>
+        <td style="text-align: right;"><input id="aux1" class="button" style="width:100px;height:30px"></td>
     </tr>
     <tr>
-        <td><input id="aux1" class="button" style="width:100px;height:30px"></td>
-        <td><input id="aux2" class="button" style="width:100px;height:30px"></td>
+        <td colspan="2"><canvas id="temp_chart" width="600" height="200"></canvas></td>
     </tr>
 </table>
-<br><br>
+
+<!-- Humidity -->
+
 <table>
+    <th colspan="2" align="center"><font size="20">Humidity</font></th>
     <tr>
-        <th class="opt_aux3">Auxillary #3</th>
-        <th class="opt_aux4">Auxillary #4</th>
+        <td style="text-align: left;"><font size="15"><div class="data" id="humidity"></div></font></td>
+        <td style="text-align: right;"><input id="aux2" class="button" style="width:100px;height:30px"></td>
+    </tr>
+    <tr>
+        <td colspan="2"><canvas id="humidity_chart" width="600" height="200"></canvas></td>
+    </tr>
+    <tr style="height: 30px;">
+    </tr>
+    <tr>
+        <th class="opt_aux3"><font size="5">Auxillary #3</font></th>
+        <th class="opt_aux4"><font size="5">Auxillary #4</font></th>
     </tr>
     <tr>
         <td class="opt_aux3"><input id="aux3" class="button" style="width:100px;height:30px"></td>
@@ -40,17 +52,5 @@
     </tr>
 </table>
 
-<table>
-    <th>Temperature</th>
-    <tr>
-        <td><canvas id="temp_chart" width="600" height="200"></canvas></td>
-    </tr>
-    <th>Humidity</th>
-    <tr>
-        <td><canvas id="humidity_chart" width="600" height="200"></canvas></td>
-    </tr>
-</table>
-
-</table>
 </body>
 </html>
