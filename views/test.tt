@@ -40,13 +40,11 @@
     <tr>
         <td colspan="2"><canvas id="humidity_chart" width="600" height="200"></canvas></td>
     </tr>
-</table>
-
-<br><br>
-<table>
+    <tr style="height: 30px;">
+    </tr>
     <tr>
-        <th class="opt_aux3">Auxillary #3</th>
-        <th class="opt_aux4">Auxillary #4</th>
+        <th class="opt_aux3"><font size="5">Auxillary #3</font></th>
+        <th class="opt_aux4"><font size="5">Auxillary #4</font></th>
     </tr>
     <tr>
         <td class="opt_aux3"><input id="aux3" class="button" style="width:100px;height:30px"></td>

@@ -15,10 +15,10 @@ $(document).ready(function(){
     var temp_chart = new Chart(temp_ctx, {
         type: 'line',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"],
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3]
+                label: 'Temperature (F)',
+                data: [12, 19, 3, 5, 2, 3, 9]
                 /*
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
@@ -57,10 +57,10 @@ $(document).ready(function(){
     var humidity_chart = new Chart(humidity_ctx, {
         type: 'line',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"],
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3]
+                label: 'Temperature (F)',
+                data: [12, 19, 3, 5, 2, 3, 9]
             }]
         },
         options: {
