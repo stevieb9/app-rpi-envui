@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS aux (
     on_time INTEGER
 );
 
-DROP TABLE control;
+DROP TABLE IF EXISTS control;
 
 CREATE TABLE control (
     id INTEGER primary key autoincrement,

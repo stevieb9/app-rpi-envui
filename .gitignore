@@ -21,3 +21,4 @@ pm_to_blib
 .idea/
 *.debug
 *.iml
+db/envui.db$
