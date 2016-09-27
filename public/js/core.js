@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
-    var host = 'http://192.168.1.147:5000';
-//    var host = 'http://10.0.48.1:5000';
+//    var host = 'http://192.168.1.147:5000';
+    var host = 'http://10.0.48.1:5000';
     display_env();
     setInterval(display_env, 4000);
 

@@ -17,7 +17,7 @@ my $event_env_to_db = Async::Event::Interval->new(
     5,
     sub {
         #my $temp = int(rand(100));
-        my $temp = 76;
+        my $temp = 78;
         #my $humidity = int(rand(100));
         my $humidity = 21;
         db_insert_env($temp, $humidity);
@@ -118,6 +118,7 @@ sub aux {
     my $aux = shift;
     my $aux_obj
         = database->selectrow_hashref("select * from aux where id='$aux'");
+    print Dumper $aux_obj;
     return $aux_obj;
 }
 sub auxs {
@@ -129,7 +130,7 @@ sub aux_state {
 
     my ($aux, $state) = @_;
     if (defined $state){
-        db_update('aux', 'state', $state);
+        db_update('aux', 'state', $state, 'id', $aux);
     }
     return aux($aux)->{state};
 }
@@ -151,7 +152,7 @@ sub aux_override {
     my ($aux, $override) = @_;
 
     if (defined $override){
-        db_update('aux', 'override', $override);
+        db_update('aux', 'override', $override, 'id', $aux);
     }
     return aux($aux)->{override};
 }

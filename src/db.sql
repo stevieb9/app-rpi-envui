@@ -24,3 +24,5 @@ CREATE TABLE control (
 );
 
 INSERT INTO control VALUES (NULL, 80, 20, 900, 900);
+
+
