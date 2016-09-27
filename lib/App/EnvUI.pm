@@ -44,15 +44,13 @@ sub action_humidity {
     my $min_run = $env_ctl->{humidity_aux_on_time};
     my $limit = $env_ctl->{humidity_limit};
 
-    if ($humidity < $limit && aux_time($aux->{id}) == 0){
-        print "h on\n";
-        aux_state($aux->{id}, HIGH);
-        aux_time($aux->{id}, time);
+    if ($humidity < $limit && aux_time(aux_id($aux)) == 0){
+        aux_state(aux_id($aux), HIGH);
+        aux_time(aux_id($aux), time);
     }
-    elsif ($humidity >= $limit && aux_time($aux->{id}) >= $min_run){
-        print "h off\n";
-        aux_state($aux->{id}, LOW);
-        aux_time($aux->{id}, 0);
+    elsif ($humidity >= $limit && aux_time(aux_id($aux)) >= $min_run){
+        aux_state(aux_id($aux), LOW);
+        aux_time(aux_id($aux), 0);
     }
 }
 sub action_temp {
@@ -60,16 +58,13 @@ sub action_temp {
     my $limit = $env_ctl->{temp_limit};
     my $min_run = $env_ctl->{temp_aux_on_time};
 
-    print "$temp ::::: $limit\n";
-    if ($temp >= $limit && aux_time($aux->{id}) == 0){
-        print "t on\n";
-        aux_state($aux->{id}, HIGH);
-        aux_time($aux->{id}, time);
+    if ($temp >= $limit && aux_time(aux_id($aux)) == 0){
+        aux_state(aux_id($aux), HIGH);
+        aux_time(aux_id($aux), time);
     }
-    elsif ($temp < $limit && aux_time($aux->{id}) >= $min_run){
-        print "t off\n";
-        aux_state($aux->{id}, LOW);
-        aux_time($aux->{id}, 0);
+    elsif ($temp < $limit && aux_time(aux_id($aux)) >= $min_run){
+        aux_state(aux_id($aux), LOW);
+        aux_time(aux_id($aux), 0);
     }
 }
 
@@ -92,16 +87,16 @@ get '/get_aux/:aux' => sub {
     };
 
 get '/set_aux/:aux/:state' => sub {
-        my $aux = params->{aux};
+        my $aux_id = params->{aux};
 
         my $state = _bool(params->{state});
-        $state = aux_state($aux, $state);
+        $state = aux_state($aux_id, $state);
 
-        my $override = aux_override($aux) ? OFF : ON;
-        $override = aux_override($aux, $override);
+        my $override = aux_override($aux_id) ? OFF : ON;
+        $override = aux_override($aux_id, $override);
 
         return to_json {
-            aux => $aux,
+            aux => $aux_id,
             state => $state,
         };
     };
@@ -115,56 +110,57 @@ get '/fetch_env' => sub {
     };
 
 sub aux {
-    my $aux = shift;
+    my $aux_id = shift;
     my $aux_obj
-        = database->selectrow_hashref("select * from aux where id='$aux'");
-    print Dumper $aux_obj;
+        = database->selectrow_hashref("select * from aux where id='$aux_id'");
+
     return $aux_obj;
 }
 sub auxs {
     my $auxs = database->selectall_hashref("select * from aux", 'id');
     return $auxs;
 }
+sub aux_id {
+    return $_[0]->{id};
+}
 sub aux_state {
     # maintains the auxillary state (on/off)
 
-    my ($aux, $state) = @_;
+    my ($aux_id, $state) = @_;
     if (defined $state){
-        db_update('aux', 'state', $state, 'id', $aux);
+        db_update('aux', 'state', $state, 'id', $aux_id);
     }
-    return aux($aux)->{state};
+    return aux($aux_id)->{state};
 }
 sub aux_time {
     # maintains the auxillary state (on/off)
 
-    my ($aux, $time) = @_;
+    my ($aux_id, $time) = @_;
     if (defined $time){
-        db_update('aux', 'on_time', $time, 'id', $aux);
+        db_update('aux', 'on_time', $time, 'id', $aux_id);
     }
-    my $on_time = aux($aux)->{on_time};
-    my $x = time - $on_time;
-    print "$aux: $x\n";
+    my $on_time = aux($aux_id)->{on_time};
     return $on_time == 0 ? 0 : time - $on_time;
 }
 sub aux_override {
     # sets a manual override flag if an aux is turned on manually (via button)
 
-    my ($aux, $override) = @_;
+    my ($aux_id, $override) = @_;
 
     if (defined $override){
-        db_update('aux', 'override', $override, 'id', $aux);
+        db_update('aux', 'override', $override, 'id', $aux_id);
     }
-    return aux($aux)->{override};
+    return aux($aux_id)->{override};
 }
 sub aux_pin {
     # returns the auxillary's GPIO pin number
 
-    my ($aux, $pin) = @_;
+    my ($aux_id, $pin) = @_;
 
     if (defined $pin){
-        update_db('aux', $aux, $pin);
+        update_db('aux', $aux_id, $pin);
     }
-    return aux($aux)->{pin};
+    return aux($aux_id)->{pin};
 }
 sub env {
     my $id = _get_last_id();
@@ -205,8 +201,8 @@ sub _parse_config {
     my $conf = decode_json $json;
 
     for (1..4){
-        my $aux = "aux$_";
-        db_update('aux', 'pin', $conf->{$aux}{pin});
+        my $aux_id = "aux$_";
+        db_update('aux', 'pin', $conf->{$aux_id}{pin});
     }
 
     for my $opt (keys %{ $conf->{control} }){
