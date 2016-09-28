@@ -1,7 +1,5 @@
 $(document).ready(function(){
 
-    var host = 'http://10.0.48.1:5000';
-
     display_env();
     temp_graph();
     humidity_graph();
@@ -17,7 +15,7 @@ $(document).ready(function(){
     }
 
     function aux_state(aux){
-        $.get(host +'/get_aux/' + aux, function(data){
+        $.get('/get_aux/' + aux, function(data){
             var json = $.parseJSON(data);
             if (parseInt(json.pin) == '-1'){
                 $('.opt_'+aux).hide();
@@ -38,7 +36,7 @@ $(document).ready(function(){
                 offText: offtxt,
                 checked: parseInt(json.state),
                 onChange: function(checked){
-                    $.get(host +'/set_aux/'+ aux +'/'+ checked, function(data){
+                    $.get('/set_aux/'+ aux +'/'+ checked, function(data){
 
                         // ...
                     });
@@ -48,7 +46,7 @@ $(document).ready(function(){
     }
 
     function display_env(){
-        $.get(host +'/fetch_env', function(data){
+        $.get('/fetch_env', function(data){
             var json = $.parseJSON(data);
             display_temp(json.temp);
             display_humidity(json.humidity);
