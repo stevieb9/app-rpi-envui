@@ -52,9 +52,8 @@ get '/' => sub {
 
 get '/get_config/:want' => sub {
         my $want = params->{want};
-        my $conf = _config_core($want);
-        print "****** >$want< >$conf<\n";
-        return $conf;
+        my $value = _config_core($want);
+        return $value;
     };
 
 get '/get_aux/:aux' => sub {

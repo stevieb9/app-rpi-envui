@@ -1,12 +1,17 @@
 $(document).ready(function(){
 
+    event_interval();
     display_env();
     temp_graph();
     humidity_graph();
     aux_update();
 
-    var display_interval = $.get('/get_config/event_display_timer');
-    setInterval(display_env, display_interval);
+    function event_interval(){
+        $.get('/get_config/event_display_timer', function(interval){
+            interval = interval * 1000;
+            setInterval(display_env, interval);
+        });
+    };
 
     function aux_update(){
         for(i = 1; i < 5; i++){
