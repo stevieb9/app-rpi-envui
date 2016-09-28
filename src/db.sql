@@ -41,6 +41,8 @@ CREATE TABLE core (
     value VARCHAR(50)
 );
 
-INSERT INTO core VALUES ('x_host', 'http://localhost');
-INSERT INTO core VALUES ('x_port', 5000);
+INSERT INTO core VALUES ('event_fetch_timer', 15);
+INSERT INTO core VALUES ('event_action_timer', 3);
+INSERT INTO core VALUES ('event_display_timer', 4);
+
 

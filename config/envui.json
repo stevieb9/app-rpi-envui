@@ -1,7 +1,8 @@
 {
   "core": {
-    "x_host": "http://10.0.48.1",
-    "x_port": "5000"
+    "event_fetch_timer": "5",
+    "event_action_timer": "3",
+    "event_display_timer": "4"
   },
   "control": {
     "temp_limit": "78",

@@ -5,7 +5,8 @@ $(document).ready(function(){
     humidity_graph();
     aux_update();
 
-    setInterval(display_env, 4000);
+    var display_interval = $.get('/get_config/event_display_timer');
+    setInterval(display_env, display_interval);
 
     function aux_update(){
         for(i = 1; i < 5; i++){

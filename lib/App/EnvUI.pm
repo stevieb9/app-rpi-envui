@@ -14,18 +14,18 @@ _parse_config();
 _reset();
 
 my $event_env_to_db = Async::Event::Interval->new(
-    5,
+    _config_core('event_fetch_timer'),
     sub {
-        #my $temp = int(rand(100));
-        my $temp = 78;
-        #my $humidity = int(rand(100));
-        my $humidity = 21;
+        my $temp = int(rand(100));
+#        my $temp = 78;
+        my $humidity = int(rand(100));
+#        my $humidity = 21;
         db_insert_env($temp, $humidity);
     }
 );
 
 my $event_action_env = Async::Event::Interval->new(
-    3,
+    _config_core('event_action_timer'),
     sub {
         my $t_aux = env_temp_aux();
         my $h_aux = env_humidity_aux();
@@ -48,6 +48,13 @@ get '/' => sub {
 
         my $evt_env_to_db = $event_env_to_db;
         my $evt_action_env = $event_action_env;
+    };
+
+get '/get_config/:want' => sub {
+        my $want = params->{want};
+        my $conf = _config_core($want);
+        print "****** >$want< >$conf<\n";
+        return $conf;
     };
 
 get '/get_aux/:aux' => sub {
@@ -168,8 +175,8 @@ sub _config {
 }
 sub _config_core {
     my $want = shift;
-    my $core = database->quick_select('core', {id => $want});
-    return $core->{$want}{value};
+    my $core = database->quick_select('core', {id => $want}, ['value']);
+    return $core->{value};
 }
 sub env {
     my $id = _get_last_id();
