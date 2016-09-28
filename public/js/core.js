@@ -68,7 +68,7 @@ $(document).ready(function(){
         else {
             $('#temp').css('color', 'green')
         }
-        $('#temp').text(temp);
+        $('#temp').text(temp +' F');
     }
 
     function display_humidity(humidity){
@@ -78,7 +78,7 @@ $(document).ready(function(){
         else {
             $('#humidity').css('color', 'green')
         }
-        $('#humidity').text(humidity);
+        $('#humidity').text(humidity +' %');
     }
 
     // temperature graph
