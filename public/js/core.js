@@ -5,6 +5,8 @@ $(document).ready(function(){
     temp_graph();
     humidity_graph();
     aux_update();
+    display_light();
+    display_water();
 
     function event_interval(){
         $.get('/get_config/event_display_timer', function(interval){
@@ -25,10 +27,7 @@ $(document).ready(function(){
             var json = $.parseJSON(data);
 
             if (parseInt(json.pin) == '-1'){
-                $('.opt_'+aux).hide();
-            }
-            if (aux == 'aux5' && parseInt(json.pin) == '-1'){
-                $('.light').hide();
+                return;
             }
 
             var ontxt;
@@ -42,9 +41,6 @@ $(document).ready(function(){
                 ontxt = 'ON';
                 offtxt = 'OFF';
             }
-
-            display_light();
-            display_water();
 
             $('#'+ aux).switchbutton({
                 onText: ontxt,
@@ -63,6 +59,10 @@ $(document).ready(function(){
     function display_light(){
         $.get('/light', function(data){
             var light = $.parseJSON(data);
+            if (light.enable == "0"){
+                $('.light').hide();
+                return;
+            }
             if (light.toggle == 'disabled'){
                 $('#aux5').switchbutton('disable');
             }
@@ -77,6 +77,7 @@ $(document).ready(function(){
             var water = $.parseJSON(data);
             if (water.enable == "0"){
                 $('.water').hide();
+                return;
             }
         });
     }

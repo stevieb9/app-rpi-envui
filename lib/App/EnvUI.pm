@@ -310,6 +310,9 @@ sub _reset {
     aux_time('aux3', 0);
     aux_time('aux4', 0);
     aux_time('aux5', 0);
+    aux_time('aux6', 0);
+    aux_time('aux7', 0);
+    aux_time('aux8', 0);
 }
 sub _bool {
     # translates javascript true/false to 1/0

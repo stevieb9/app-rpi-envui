@@ -71,3 +71,4 @@ INSERT INTO light VALUES ('on_at', '18:00');
 INSERT INTO light VALUES ('on_in', '00:00');
 INSERT INTO light VALUES ('on_hours', '12');
 INSERT INTO light VALUES ('toggle', 'enabled');
+INSERT INTO light VALUES ('enable', 0);

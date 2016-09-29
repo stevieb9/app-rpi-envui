@@ -16,7 +16,8 @@
   "light": {
     "on_at": "18:00",
     "on_hours": "12",
-    "toggle": "disabled"
+    "toggle": "disabled",
+    "enable": "0"
   },
   "water": {
     "enable": "0"
@@ -38,7 +39,7 @@
     "desc": "water2"
   },
   "aux5": {
-    "pin": "-1",
+    "pin": "0",
     "desc": "light"
   }
 }
