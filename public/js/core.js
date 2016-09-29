@@ -25,10 +25,10 @@ $(document).ready(function(){
             var json = $.parseJSON(data);
             if (parseInt(json.pin) == '-1'){
                 $('.opt_'+aux).hide();
-                //return;
             }
             var ontxt;
             var offtxt;
+
             if (parseInt(json.override) == 1 && (aux == 'aux1' || aux == 'aux2')){
                 ontxt = 'OVERRIDE';
                 offtxt = 'OVERRIDE';
@@ -37,6 +37,9 @@ $(document).ready(function(){
                 ontxt = 'ON';
                 offtxt = 'OFF';
             }
+
+            display_light();
+
             $('#'+ aux).switchbutton({
                 onText: ontxt,
                 offText: offtxt,
@@ -48,6 +51,14 @@ $(document).ready(function(){
                     });
                 }
             });
+        });
+    }
+
+    function display_light(){
+        $.get('/light', function(data){
+            var light = $.parseJSON(data);
+            $('#light_on_hours').text(light.on_hours);
+            $('#light_on_at').text(light.on_at);
         });
     }
 

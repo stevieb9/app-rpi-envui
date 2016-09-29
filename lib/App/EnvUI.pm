@@ -12,6 +12,7 @@ our $VERSION = '0.1';
 
 _parse_config();
 _reset();
+_config_light();
 
 my $event_env_to_db = Async::Event::Interval->new(
     _config_core('event_fetch_timer'),
@@ -39,49 +40,53 @@ $event_env_to_db->start;
 $event_action_env->start;
 
 get '/' => sub {
-        # return template 'test';
-        return template 'test';
+    # return template 'test';
+    return template 'test';
 
-        # the following events have to be referenced to within a route.
-        # we do it after return as we don't need this code reached in actual
-        # client calls
+    # the following events have to be referenced to within a route.
+    # we do it after return as we don't need this code reached in actual
+    # client calls
 
-        my $evt_env_to_db = $event_env_to_db;
-        my $evt_action_env = $event_action_env;
-    };
+    my $evt_env_to_db = $event_env_to_db;
+    my $evt_action_env = $event_action_env;
+};
+
+get '/light' => sub {
+    return to_json _config_light();
+};
 
 get '/get_config/:want' => sub {
-        my $want = params->{want};
-        my $value = _config_core($want);
-        return $value;
-    };
+    my $want = params->{want};
+    my $value = _config_core($want);
+    return $value;
+};
 
 get '/get_aux/:aux' => sub {
-        return to_json aux(params->{aux});
-    };
+    return to_json aux(params->{aux});
+};
 
 get '/set_aux/:aux/:state' => sub {
-        my $aux_id = params->{aux};
+    my $aux_id = params->{aux};
 
-        my $state = _bool(params->{state});
-        $state = aux_state($aux_id, $state);
+    my $state = _bool(params->{state});
+    $state = aux_state($aux_id, $state);
 
-        my $override = aux_override($aux_id) ? OFF : ON;
-        $override = aux_override($aux_id, $override);
+    my $override = aux_override($aux_id) ? OFF : ON;
+    $override = aux_override($aux_id, $override);
 
-        return to_json {
-            aux => $aux_id,
-            state => $state,
-        };
+    return to_json {
+        aux => $aux_id,
+        state => $state,
     };
+};
 
 get '/fetch_env' => sub {
-        my $data = env();
-        return to_json {
-            temp => $data->{temp},
-            humidity => $data->{humidity}
-        };
+    my $data = env();
+    return to_json {
+        temp => $data->{temp},
+        humidity => $data->{humidity}
     };
+};
 
 sub action_humidity {
     my ($aux_id, $humidity) = @_;
@@ -177,6 +182,15 @@ sub _config_core {
     my $core = database->quick_select('core', {id => $want}, ['value']);
     return $core->{value};
 }
+sub _config_light {
+    my $light = database->selectall_hashref("select * from light;", 'id');
+
+    my %conf;
+    for (keys %$light) {
+        $conf{$_} = $light->{$_}{value};
+    }
+    return \%conf;
+}
 sub env {
     my $id = _get_last_id();
 
@@ -264,6 +278,7 @@ sub _reset {
     aux_time('aux2', 0);
     aux_time('aux3', 0);
     aux_time('aux4', 0);
+    aux_time('aux5', 0);
 }
 sub _bool {
     # translates javascript true/false to 1/0

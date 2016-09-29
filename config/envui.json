@@ -14,7 +14,8 @@
   },
   "light": {
     "on_at": "18:00",
-    "on_hours": "12"
+    "on_hours": "12",
+    "toggle": "enabled"
   },
   "aux1": {
     "pin": "0"

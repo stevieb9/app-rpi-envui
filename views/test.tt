@@ -76,8 +76,8 @@
     <th><font size="5">Next On</font></th>
     <tr>
         <td><input id="aux5" class="button" style="width:120px;height:30px"></td>
-        <td><div id="light_on_time"</td>
-        <td><div id="light_on_in"></div></td>
+        <td><font size="5"><div id="light_on_hours"></div></font></td>
+        <td><div id="light_on_at"></div></td>
     </tr>
 </table>
 
