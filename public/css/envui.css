@@ -6,4 +6,13 @@ td {
     align: center;
     text-align: center;
 }
-
+.side_by_side_1 {
+    display: inline-block;
+}
+.side_by_side_2 {
+    float: right;
+}
+.top_row {
+    valign: center;
+    align: center;
+}
