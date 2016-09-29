@@ -124,6 +124,7 @@ sub action_temp {
 }
 sub aux {
     my $aux_id = shift;
+
     my $aux_obj
         = database->selectrow_hashref("select * from aux where id='$aux_id'");
 
@@ -171,7 +172,6 @@ sub aux_pin {
     # returns the auxillary's GPIO pin number
 
     my ($aux_id, $pin) = @_;
-
     if (defined $pin){
         db_update('aux', 'pin', $pin, 'id', $aux_id);
     }
@@ -179,8 +179,8 @@ sub aux_pin {
 }
 sub _config {
     my $want = shift;
-    my $env_ctl = database->quick_select('control', {id => 1});
-    return $env_ctl->{$want};
+    my $env_ctl = database->quick_select('control', {id => $want}, ['value']);
+    return $env_ctl->{value};
 }
 sub _config_core {
     my $want = shift;
@@ -236,16 +236,10 @@ sub humidity {
     return env()->{humidity};
 }
 sub env_humidity_aux {
-    my $h_aux = database->quick_select(
-        control => {id => 1}, ['humidity_aux']
-    );
-    return $h_aux->{humidity_aux};
+    return _config('humidity_aux');
 }
 sub env_temp_aux {
-    my $t_aux = database->quick_select(
-        control => {id => 1}, ['temp_aux']
-    );
-    return $t_aux->{temp_aux};
+    return _config('temp_aux');
 }
 sub db_insert_env {
     my ($temp, $hum) = @_;
@@ -277,16 +271,24 @@ sub _parse_config {
 
     # auxillary channels
 
-    for (1..5){
+    for (1..8){
         my $aux_id = "aux$_";
         my $pin = $conf->{$aux_id}{pin};
         aux_pin($aux_id, $pin);
     }
 
+    # aux
+
+    for my $directive (keys %{ $conf->{aux} }){
+        db_update('aux', 'value', $conf->{aux}{$directive}, 'id', $directive);
+    }
+
     # environment control
 
-    for my $opt (keys %{ $conf->{control} }){
-        db_update('control', $opt, $conf->{control}{$opt});
+    for my $directive (keys %{ $conf->{control} }){
+        db_update(
+            'control', 'value', $conf->{control}{$directive}, 'id', $directive
+        );
     }
 
     # core configuration

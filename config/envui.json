@@ -22,18 +22,23 @@
     "enable": "0"
   },
   "aux1": {
-    "pin": "0"
+    "pin": "0",
+    "desc": "temp"
   },
   "aux2": {
-    "pin": "0"
+    "pin": "0",
+    "desc": "humidity"
   },
   "aux3": {
-    "pin": "0"
+    "pin": "0",
+    "desc": "water1"
   },
   "aux4": {
-    "pin": "0"
+    "pin": "0",
+    "desc": "water2"
   },
   "aux5": {
-    "pin": "-1"
+    "pin": "-1",
+    "desc": "light"
   }
 }

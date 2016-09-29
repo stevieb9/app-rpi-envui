@@ -9,31 +9,35 @@ DROP TABLE IF EXISTS aux;
 
 CREATE TABLE aux (
     id VARCHAR(4),
+    desc VARCHAR(50),
     pin TINYINT(2),
     state TINYINT(1),
     override TINYINT(1),
     on_time INTEGER
 );
 
-INSERT INTO aux VALUES ('aux1', 0, 0, 0, 0);
-INSERT INTO aux VALUES ('aux2', 0, 0, 0, 0);
-INSERT INTO aux VALUES ('aux3', -1, 0, 0, 0);
-INSERT INTO aux VALUES ('aux4', -1, 0, 0, 0);
-INSERT INTO aux VALUES ('aux5', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux1', 'temp', 0, 0, 0, 0);
+INSERT INTO aux VALUES ('aux2', 'humidity', 0, 0, 0, 0);
+INSERT INTO aux VALUES ('aux3', 'water1', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux4', 'water2', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux5', 'light', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux6', '', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux7', '', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux8', '', -1, 0, 0, 0);
 
 DROP TABLE IF EXISTS control;
 
 CREATE TABLE control (
-    id INTEGER primary key autoincrement,
-    temp_limit TINYINT(3),
-    humidity_limit TINYINT(3),
-    temp_aux_on_time INTEGER,
-    humidity_aux_on_time INTEGER,
-    temp_aux VARCHAR(7),
-    humidity_aux VARCHAR(7)
+    id VARCHAR(50),
+    value VARCHAR(50)
 );
 
-INSERT INTO control VALUES (NULL, 80, 20, 900, 900, 'aux1', 'aux2');
+INSERT INTO control VALUES ('temp_limit', 80);
+INSERT INTO control VALUES ('humidity_limit', 20);
+INSERT INTO control VALUES ('temp_aux_on_time', 1800);
+INSERT INTO control VALUES ('humidity_aux_on_time', 1800);
+INSERT INTO control VALUES ('temp_aux', 'aux1');
+INSERT INTO control VALUES ('humidity_aux', 'aux2');
 
 DROP TABLE IF EXISTS core;
 
