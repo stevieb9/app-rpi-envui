@@ -44,6 +44,7 @@ $(document).ready(function(){
             }
 
             display_light();
+            display_water();
 
             $('#'+ aux).switchbutton({
                 onText: ontxt,
@@ -68,6 +69,15 @@ $(document).ready(function(){
             $('#light_on_hours').text(light.on_hours);
             $('#light_on_at').text(light.on_at);
             $('#light_on_in').text(light.on_in);
+        });
+    }
+
+    function display_water(){
+        $.get('/water', function(data){
+            var water = $.parseJSON(data);
+            if (water.enable == "0"){
+                $('.water').hide();
+            }
         });
     }
 

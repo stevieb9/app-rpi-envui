@@ -53,7 +53,7 @@
 
 <!-- Water tanks -->
 
-<table id="water_tanks">
+<table class="water">
     <th class="opt_aux3"><font size="20">Water #1</font></th>
     <th class="opt_aux4"><font size="20">Water #2</font></th>
     <tr>

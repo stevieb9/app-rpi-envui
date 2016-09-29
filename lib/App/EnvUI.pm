@@ -56,6 +56,10 @@ get '/light' => sub {
     return to_json _config_light();
 };
 
+get '/water' => sub {
+    return to_json _config_water();
+};
+
 get '/get_config/:want' => sub {
     my $want = params->{want};
     my $value = _config_core($want);
@@ -202,6 +206,17 @@ sub _config_light {
 
     my $dur = $now->subtract_datetime($light_on);
     $conf{on_in} = $dur->hours . ' hrs, ' . $dur->minutes . ' mins';
+
+    return \%conf;
+}
+sub _config_water {
+    my $water = database->selectall_hashref("select * from water;", 'id');
+
+    my %conf;
+
+    for (keys %$water){
+        $conf{$_} = $water->{$_}{value};
+    }
 
     return \%conf;
 }

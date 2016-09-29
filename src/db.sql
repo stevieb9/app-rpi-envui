@@ -47,6 +47,15 @@ INSERT INTO core VALUES ('event_action_timer', 3);
 INSERT INTO core VALUES ('event_display_timer', 4);
 INSERT INTO core VALUES ('time_zone', 'local');
 
+DROP TABLE IF EXISTS water;
+
+CREATE TABLE water (
+    id VARCHAR(20),
+    value VARCHAR(50)
+);
+
+INSERT INTO water VALUES ('enable', 0);
+
 DROP TABLE IF EXISTS light;
 
 CREATE TABLE light (

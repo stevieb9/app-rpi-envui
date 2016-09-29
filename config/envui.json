@@ -18,6 +18,9 @@
     "on_hours": "12",
     "toggle": "disabled"
   },
+  "water": {
+    "enable": "0"
+  },
   "aux1": {
     "pin": "0"
   },
