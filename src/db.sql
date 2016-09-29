@@ -36,8 +36,12 @@ INSERT INTO control VALUES ('temp_limit', 80);
 INSERT INTO control VALUES ('humidity_limit', 20);
 INSERT INTO control VALUES ('temp_aux_on_time', 1800);
 INSERT INTO control VALUES ('humidity_aux_on_time', 1800);
+
 INSERT INTO control VALUES ('temp_aux', 'aux1');
 INSERT INTO control VALUES ('humidity_aux', 'aux2');
+INSERT INTO control VALUES ('light_aux', 'aux3');
+INSERT INTO control VALUES ('water1_aux', 'aux4');
+INSERT INTO control VALUES ('water2_aux', 'aux5');
 
 DROP TABLE IF EXISTS core;
 

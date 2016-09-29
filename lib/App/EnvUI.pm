@@ -66,6 +66,12 @@ get '/get_config/:want' => sub {
     return $value;
 };
 
+get '/get_control/:want' => sub {
+    my $want = params->{want};
+    my $value = _config($want);
+    return $value;
+};
+
 get '/get_aux/:aux' => sub {
     return to_json aux(params->{aux});
 };
