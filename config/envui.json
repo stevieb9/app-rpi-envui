@@ -12,6 +12,10 @@
     "temp_aux": "aux1",
     "humidity_aux": "aux2"
   },
+  "light": {
+    "on_at": "18:00",
+    "on_hours": "12"
+  },
   "aux1": {
     "pin": "0"
   },
@@ -22,6 +26,9 @@
     "pin": "0"
   },
   "aux4": {
+    "pin": "0"
+  },
+  "aux5": {
     "pin": "0"
   }
 }

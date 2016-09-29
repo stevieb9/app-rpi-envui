@@ -19,6 +19,7 @@ INSERT INTO aux VALUES ('aux1', 0, 0, 0, 0);
 INSERT INTO aux VALUES ('aux2', 0, 0, 0, 0);
 INSERT INTO aux VALUES ('aux3', -1, 0, 0, 0);
 INSERT INTO aux VALUES ('aux4', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux5', -1, 0, 0, 0);
 
 DROP TABLE IF EXISTS control;
 
@@ -45,4 +46,13 @@ INSERT INTO core VALUES ('event_fetch_timer', 15);
 INSERT INTO core VALUES ('event_action_timer', 3);
 INSERT INTO core VALUES ('event_display_timer', 4);
 
+DROP TABLE IF EXISTS light;
+
+CREATE TABLE light (
+    id VARCHAR(20),
+    value VARCHAR(50)
+);
+
+INSERT INTO light VALUES ('on_at', '18:00');
+INSERT INTO light VALUES ('on_hours', '12');
 

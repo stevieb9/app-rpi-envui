@@ -14,7 +14,7 @@ $(document).ready(function(){
     };
 
     function aux_update(){
-        for(i = 1; i < 5; i++){
+        for(i = 1; i < 6; i++){
             var aux = 'aux'+ i;
             aux_state(aux);
         }

@@ -234,7 +234,7 @@ sub _parse_config {
 
     # auxillary channels
 
-    for (1..4){
+    for (1..5){
         my $aux_id = "aux$_";
         my $pin = $conf->{$aux_id}{pin};
         aux_pin($aux_id, $pin);
@@ -250,6 +250,12 @@ sub _parse_config {
 
     for my $directive (keys %{ $conf->{core} }){
         db_update('core', 'value', $conf->{core}{$directive}, 'id', $directive);
+    }
+
+    # light config
+
+    for my $directive (keys %{ $conf->{light} }){
+        db_update('light', 'value', $conf->{light}{$directive}, 'id', $directive);
     }
 }
 sub _reset {

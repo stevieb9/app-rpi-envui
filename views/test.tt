@@ -49,17 +49,35 @@
     </table>
 </div>
 
+<br><br>
 
-<!-- generic auxillaries -->
+<!-- Water tanks -->
 
-<table>
+<table id="water_tanks">
+    <th class="opt_aux3"><font size="20">Water #1</font></th>
+    <th class="opt_aux4"><font size="20">Water #2</font></th>
     <tr>
-        <th class="opt_aux3"><font size="5">Auxillary #3</font></th>
-        <th class="opt_aux4"><font size="5">Auxillary #4</font></th>
+        <td class="opt_aux3" width="600"><input id="aux3" class="button" style="width:120px;height:30px"></td>
+        <td class="opt_aux4" width="600"><input id="aux4" class="button" style="width:120px;height:30px"></td>
     </tr>
+</table>
+
+<br><br>
+
+<!-- Light -->
+
+<div class="light" style="width:1200px" align="center"><font size="20"><b>Light</b></font></div>
+
+<br><br>
+
+<table class="light" width="1200">
+    <th><font size="5">Status</font></th>
+    <th><font size="5">Lights On</font></th>
+    <th><font size="5">Next On</font></th>
     <tr>
-        <td class="opt_aux3"><input id="aux3" class="button" style="width:120px;height:30px"></td>
-        <td class="opt_aux4"><input id="aux4" class="button" style="width:120px;height:30px"></td>
+        <td><input id="aux5" class="button" style="width:120px;height:30px"></td>
+        <td><div id="light_on_time"</td>
+        <td><div id="light_on_in"></div></td>
     </tr>
 </table>
 
