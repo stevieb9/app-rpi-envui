@@ -2,7 +2,8 @@
   "core": {
     "event_fetch_timer": "5",
     "event_action_timer": "3",
-    "event_display_timer": "4"
+    "event_display_timer": "4",
+    "time_zone": "local"
   },
   "control": {
     "temp_limit": "78",
@@ -15,7 +16,7 @@
   "light": {
     "on_at": "18:00",
     "on_hours": "12",
-    "toggle": "enabled"
+    "toggle": "disabled"
   },
   "aux1": {
     "pin": "0"
@@ -30,6 +31,6 @@
     "pin": "0"
   },
   "aux5": {
-    "pin": "0"
+    "pin": "-1"
   }
 }

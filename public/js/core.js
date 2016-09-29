@@ -23,9 +23,14 @@ $(document).ready(function(){
     function aux_state(aux){
         $.get('/get_aux/' + aux, function(data){
             var json = $.parseJSON(data);
+
             if (parseInt(json.pin) == '-1'){
                 $('.opt_'+aux).hide();
             }
+            if (aux == 'aux5' && parseInt(json.pin) == '-1'){
+                $('.light').hide();
+            }
+
             var ontxt;
             var offtxt;
 
@@ -57,8 +62,12 @@ $(document).ready(function(){
     function display_light(){
         $.get('/light', function(data){
             var light = $.parseJSON(data);
+            if (light.toggle == 'disabled'){
+                $('#aux5').switchbutton('disable');
+            }
             $('#light_on_hours').text(light.on_hours);
             $('#light_on_at').text(light.on_at);
+            $('#light_on_in').text(light.on_in);
         });
     }
 

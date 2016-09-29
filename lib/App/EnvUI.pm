@@ -2,6 +2,7 @@ package App::EnvUI;
 
 use Async::Event::Interval;
 use Data::Dumper;
+use DateTime;
 use IPC::Shareable;
 use Dancer2;
 use Dancer2::Plugin::Database;
@@ -186,9 +187,22 @@ sub _config_light {
     my $light = database->selectall_hashref("select * from light;", 'id');
 
     my %conf;
+
     for (keys %$light) {
         $conf{$_} = $light->{$_}{value};
     }
+
+    my ($on_hour, $on_min) = split /:/, $conf{on_at};
+
+    my $now = DateTime->now(time_zone => _config_core('time_zone'));
+    my $light_on = $now->clone;
+
+    $light_on->set_hour($on_hour);
+    $light_on->set_minute($on_min);
+
+    my $dur = $now->subtract_datetime($light_on);
+    $conf{on_in} = $dur->hours . ' hrs, ' . $dur->minutes . ' mins';
+
     return \%conf;
 }
 sub env {
