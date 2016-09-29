@@ -21,10 +21,10 @@
     "on_at": "18:00",
     "on_hours": "12",
     "toggle": "disabled",
-    "enable": "1"
+    "enable": "0"
   },
   "water": {
-    "enable": "1"
+    "enable": "0"
   },
   "aux1": {
     "pin": "0",

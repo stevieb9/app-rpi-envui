@@ -16,6 +16,10 @@ $(document).ready(function(){
     };
 
     function aux_update(){
+
+       display_light();
+       display_water();
+
         for(i = 1; i < 9; i++){
             var aux = 'aux'+ i;
             aux_state(aux);
@@ -65,6 +69,9 @@ $(document).ready(function(){
             }
             if (light.toggle == 'disabled'){
                 $('#aux5').switchbutton('disable');
+            }
+            else {
+                $('#aux5').switchbutton('enable');
             }
             $('#light_on_hours').text(light.on_hours);
             $('#light_on_at').text(light.on_at);
