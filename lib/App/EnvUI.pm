@@ -34,11 +34,13 @@ my $event_action_env = Async::Event::Interval->new(
 
         action_temp($t_aux, temp());
         action_humidity($h_aux, humidity());
+        action_light(_config_light()) if _config_light('enable');
     }
 );
 
 $event_env_to_db->start;
 $event_action_env->start;
+
 
 get '/' => sub {
     # return template 'test';
@@ -99,6 +101,38 @@ get '/fetch_env' => sub {
     };
 };
 
+sub action_light {
+    my $light = shift;
+    my $now = DateTime->now(time_zone => _config_core('time_zone'));
+
+    my ($on_hour, $on_min) = split /:/, $light->{on_at};
+
+    if ($now->hour > $on_hour || ($now->hour == $on_hour && $now->minute >= $on_min)){
+        db_update('light', 'value', time(), 'id', 'on_since');
+        aux_state(_config('light_aux'), ON);
+
+        #
+        # turn light on here!
+        #
+    }
+    if (_config_light('on_since')){
+        my $on_since = _config_light('on_since');
+        my $on_hours = _config_light('on_hours');
+        my $on_secs = $on_hours * 60 * 60;
+
+        my $time = time();
+        my $remaining = $time - $on_since;
+
+        if ($remaining >= $on_secs){
+            db_update('light', 'value', 0, 'id', 'on_since');
+            aux_state(_config('light_aux'), OFF);
+
+            #
+            # turn light off here!
+            #
+        }
+    }
+}
 sub action_humidity {
     my ($aux_id, $humidity) = @_;
 
@@ -194,6 +228,8 @@ sub _config_core {
     return $core->{value};
 }
 sub _config_light {
+    my $want = shift;
+
     my $light = database->selectall_hashref("select * from light;", 'id');
 
     my %conf;
@@ -212,6 +248,10 @@ sub _config_light {
 
     my $dur = $now->subtract_datetime($light_on);
     $conf{on_in} = $dur->hours . ' hrs, ' . $dur->minutes . ' mins';
+
+    if (defined $want){
+        return $conf{$want};
+    }
 
     return \%conf;
 }

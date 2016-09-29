@@ -3,6 +3,7 @@
     "event_fetch_timer": "5",
     "event_action_timer": "3",
     "event_display_timer": "4",
+    "event_light_timer": "60",
     "time_zone": "local"
   },
   "control": {
