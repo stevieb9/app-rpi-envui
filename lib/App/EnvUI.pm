@@ -139,13 +139,17 @@ sub action_humidity {
     my $min_run = _config('humidity_aux_on_time');
     my $limit = _config('humidity_limit');
 
-    if ($humidity < $limit && aux_time($aux_id) == 0){
-        aux_state($aux_id, HIGH);
-        aux_time($aux_id, time);
-    }
-    elsif ($humidity >= $limit && aux_time($aux_id) >= $min_run){
-        aux_state($aux_id, LOW);
-        aux_time($aux_id, 0);
+    my $x = aux_override($aux_id);
+
+    if (! aux_override($aux_id)) {
+        if ($humidity < $limit && aux_time( $aux_id ) == 0) {
+            aux_state( $aux_id, HIGH );
+            aux_time( $aux_id, time );
+        }
+        elsif ($humidity >= $limit && aux_time( $aux_id ) >= $min_run) {
+            aux_state( $aux_id, LOW );
+            aux_time( $aux_id, 0 );
+        }
     }
 }
 sub action_temp {
@@ -153,13 +157,15 @@ sub action_temp {
     my $limit = _config('temp_limit');
     my $min_run = _config('temp_aux_on_time');
 
-    if ($temp >= $limit && aux_time($aux_id) == 0){
-        aux_state($aux_id, HIGH);
-        aux_time($aux_id, time);
-    }
-    elsif ($temp < $limit && aux_time($aux_id) >= $min_run){
-        aux_state($aux_id, LOW);
-        aux_time($aux_id, 0);
+    if (! aux_override($aux_id)){
+        if ($temp >= $limit && aux_time($aux_id) == 0){
+            aux_state($aux_id, HIGH);
+            aux_time($aux_id, time);
+        }
+        elsif ($temp < $limit && aux_time($aux_id) >= $min_run){
+            aux_state($aux_id, LOW);
+            aux_time($aux_id, 0);
+        }
     }
 }
 sub aux {
@@ -348,6 +354,13 @@ sub _parse_config {
     for my $directive (keys %{ $conf->{light} }){
         db_update('light', 'value', $conf->{light}{$directive}, 'id', $directive);
     }
+
+    # water config
+
+    for my $directive (keys %{ $conf->{water} }){
+        db_update('water', 'value', $conf->{water}{$directive}, 'id', $directive);
+    }
+
 }
 sub _reset {
     # reset dynamic db attributes

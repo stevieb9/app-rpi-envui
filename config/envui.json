@@ -24,7 +24,7 @@
     "enable": "1"
   },
   "water": {
-    "enable": "0"
+    "enable": "1"
   },
   "aux1": {
     "pin": "0",

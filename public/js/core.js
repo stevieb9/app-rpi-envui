@@ -5,8 +5,8 @@ $(document).ready(function(){
     temp_graph();
     humidity_graph();
     aux_update();
-    display_light();
     display_water();
+    display_light();
 
     function event_interval(){
         $.get('/get_config/event_display_timer', function(interval){
@@ -103,7 +103,7 @@ $(document).ready(function(){
     }
 
     function display_humidity(humidity){
-        if (humidity < 22){
+        if (humidity < 20){
             $('#humidity').css('color', 'red');
         }
         else {
