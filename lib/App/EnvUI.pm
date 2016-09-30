@@ -8,6 +8,7 @@ use Dancer2;
 use Dancer2::Plugin::Database;
 use JSON::XS;
 use RPi::WiringPi::Constant qw(:all);
+use Dancer2::Plugin;
 
 our $VERSION = '0.1';
 
