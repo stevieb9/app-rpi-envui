@@ -24,8 +24,10 @@ WriteMakefile(
     PL_FILES            => {},
     PREREQ_PM => {
         'Test::More' => 0,
-        'YAML'       => 0,
         'Dancer2'     => 0.203001,
+        'Dancer2::Plugin::Database' => 0,
+        'Async::Event::Interval' => 0,
+        'DateTime'  => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'wui-*' },
