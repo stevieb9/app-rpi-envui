@@ -6,24 +6,34 @@ use DateTime;
 use Dancer2;
 use Dancer2::Plugin::Database;
 use JSON::XS;
+use RPi::WiringPi;
 use RPi::WiringPi::Constant qw(:all);
+use RPi::DHT11;
 use Dancer2::Plugin;
 
 our $VERSION = '0.1';
+
 
 _parse_config();
 _reset();
 _config_light();
 
+my $pi = RPi::WiringPi->new;
+
+my $temp_pin = $pi->pin(16);
+my $hum_pin = $pi->pin(12);
+
+my $env_sensor = RPi::WiringPi->new(21);
+
 my $event_env_to_db = Async::Event::Interval->new(
     _config_core('event_fetch_timer'),
     sub {
-        my $temp = int(rand(100));
-#        my $temp = 78;
-        my $humidity = int(rand(100));
-#        my $humidity = 21;
+        my $env_sensor = shift;
+        my $temp = $env_sensor->temp;
+        my $humidity = $env_sensor->humidity;
         db_insert_env($temp, $humidity);
-    }
+    },
+    $env_sensor
 );
 
 my $event_action_env = Async::Event::Interval->new(
