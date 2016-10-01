@@ -24,12 +24,7 @@ if (! -e 'config/envui.json'){
     copy 'src/envui-dist.json', 'config/envui.json' or die $1;
 }
 
-sub MY::postamble {'
-install:: local
-
-local:
-    mkdir "app_envui" or die $!;
-'};
+copy 'bin/envui', '.' or die "can't copy envui app to local directory\n";
 
 WriteMakefile(
     NAME                => 'App::EnvUI',

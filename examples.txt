@@ -1,5 +1,0 @@
-# change colour of element
-
-$("#aux1").css("color", "colour");
-
-

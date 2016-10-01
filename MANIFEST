@@ -1,8 +1,13 @@
 bin/app.pl
+bin/envui
+build/pack.pl
+Changes
 config.yml
+config/envui.json
 db/envui.db
 examples.txt
 lib/App/EnvUI.pm
+lib/App/EnvUI/Configuration.pod
 Makefile.PL
 MANIFEST			This list of files
 public/css/button.css
