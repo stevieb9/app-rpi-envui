@@ -20,7 +20,12 @@ _config_light();
 my $pi = RPi::WiringPi->new;
 
 my $temp_pin = $pi->pin(16);
+$temp_pin->mode(OUTPUT);
+$temp_pin->write(LOW);
+
 my $hum_pin = $pi->pin(12);
+$hum_pin->mode(OUTPUT);
+$hum_pin->write(LOW);
 
 my $env_sensor = RPi::DHT11->new(21);
 
@@ -95,6 +100,8 @@ get '/set_aux/:aux/:state' => sub {
     my $override = aux_override($aux_id) ? OFF : ON;
     $override = aux_override($aux_id, $override);
 
+    switch($aux_id);
+
     return to_json {
         aux => $aux_id,
         state => $state,
@@ -108,7 +115,19 @@ get '/fetch_env' => sub {
         humidity => $data->{humidity}
     };
 };
+sub switch {
+    my $aux_id = shift;
 
+    my $state = aux_state($aux_id);
+    my $override = aux_override($aux_id);
+
+    if ($aux_id eq 'aux1'){
+        $state ? $temp_pin->write(HIGH) : $temp_pin->write(LOW);
+    }
+    if ($aux_id eq 'aux2'){
+        $state ? $hum_pin->write(HIGH) : $hum_pin->write(LOW);
+    }
+}
 sub action_light {
     my $light = shift;
     my $now = DateTime->now(time_zone => _config_core('time_zone'));
