@@ -1,0 +1,15 @@
+Changes history for App::EnvUI
+
+0.02    2016-10-01
+        - all auxillaries working
+        - temp/humidity on/off limits working
+        - aux override working
+        - min on time working (temp/humidity)
+        - light infrastructure added
+        - feeding infrastructure added
+        - initial pod for configuration
+        - dist default config/db
+        - graphs added, but don't use live data yet
+
+0.01    2016-09-15
+        - initial import
