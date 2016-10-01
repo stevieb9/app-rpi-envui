@@ -88,7 +88,9 @@ get '/get_control/:want' => sub {
 };
 
 get '/get_aux/:aux' => sub {
-    return to_json aux(params->{aux});
+    my $aux_id = params->{aux};
+    switch($aux_id);
+    return to_json aux($aux_id);
 };
 
 get '/set_aux/:aux/:state' => sub {

@@ -6,8 +6,8 @@
     "time_zone": "local"
   },
   "control": {
-    "temp_limit": "78",
-    "humidity_limit": "20",
+    "temp_limit": "70",
+    "humidity_limit": "25",
     "temp_aux_on_time": "20",
     "humidity_aux_on_time": "20",
     "temp_aux": "aux1",
