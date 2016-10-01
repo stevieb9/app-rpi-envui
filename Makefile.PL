@@ -13,8 +13,11 @@ if (! grep { -x "$_/sqlite3" } split /$sep/, $ENV{PATH}) {
     die "sqlite3 must be installed to continue\n";
 }
 
+# copy initial db and conf file
+
 if (! -e 'db/envui.db'){
-    copy 'src/envui.db', 'db/' or die $!;
+    copy 'src/envui-dist.db', 'db/envui.db' or die $!;
+    copy 'src/envui-dist.json', 'config/envui.json' or die $1;
 }
 
 WriteMakefile(
