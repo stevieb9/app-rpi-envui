@@ -1,16 +1,14 @@
 package App::EnvUI;
 
 use Async::Event::Interval;
-use Data::Dumper;
-use DateTime;
 use Dancer2;
 use Dancer2::Plugin::Database;
+use Data::Dumper;
+use DateTime;
 use JSON::XS;
-use WiringPi::API qw(:perl);
-use RPi::WiringPi;
-use RPi::WiringPi::Constant qw(:all);
 use RPi::DHT11;
-use Dancer2::Plugin;
+use RPi::WiringPi::Constant qw(:all);
+use WiringPi::API qw(:perl);
 
 our $VERSION = '0.1';
 
@@ -20,11 +18,17 @@ _config_light();
 
 my $env_sensor = RPi::DHT11->new(21);
 
-my $temp_pin = 16;
+# set up the pins below the creation of the sensor object...
+# this way, WiringPi::API will use GPIO pin numbering scheme,
+# as that's the default for RPi::DHT11
+
+my $temp_pin = aux_pin(env_temp_aux());
+
 pin_mode($temp_pin, OUTPUT);
 write_pin($temp_pin, LOW);
 
-my $hum_pin = 12;
+my $hum_pin = aux_pin(env_humidity_aux());
+
 pin_mode($hum_pin, OUTPUT);
 write_pin($hum_pin, LOW);
 
@@ -119,13 +123,13 @@ sub switch {
     my $aux_id = shift;
 
     my $state = aux_state($aux_id);
-    my $override = aux_override($aux_id);
 
-    if ($aux_id eq 'aux1'){
-        $state ? write_pin($temp_pin, HIGH) : write_pin($temp_pin, LOW);
-    }
-    if ($aux_id eq 'aux2'){
-        $state ? write_pin($hum_pin, HIGH) : write_pin($hum_pin, LOW);
+    my $pin = aux_pin($aux_id);
+
+    if ($pin != 0 && $pin != -1){
+        $state
+            ? write_pin($pin, HIGH)
+            : write_pin($pin, LOW);
     }
 }
 sub action_light {
