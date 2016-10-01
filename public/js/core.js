@@ -100,6 +100,7 @@ $(document).ready(function(){
     };
 
     function display_temp(temp){
+        alert(temp);
         if (temp > 78){
             $('#temp').css('color', 'red');
         }

@@ -22,16 +22,6 @@ my $env_sensor = RPi::DHT11->new(21);
 # this way, WiringPi::API will use GPIO pin numbering scheme,
 # as that's the default for RPi::DHT11
 
-my $temp_pin = aux_pin(env_temp_aux());
-
-pin_mode($temp_pin, OUTPUT);
-write_pin($temp_pin, LOW);
-
-my $hum_pin = aux_pin(env_humidity_aux());
-
-pin_mode($hum_pin, OUTPUT);
-write_pin($hum_pin, LOW);
-
 my $event_env_to_db = Async::Event::Interval->new(
     _config_core('event_fetch_timer'),
     sub {
@@ -63,8 +53,6 @@ get '/' => sub {
     # client calls
 
     my $sensor = $env_sensor;
-    my $t_pin = $temp_pin;
-    my $h_pin = $hum_pin;
     my $evt_env_to_db = $event_env_to_db;
     my $evt_action_env = $event_action_env;
 };
@@ -123,7 +111,6 @@ sub switch {
     my $aux_id = shift;
 
     my $state = aux_state($aux_id);
-
     my $pin = aux_pin($aux_id);
 
     if ($pin != 0 && $pin != -1){
