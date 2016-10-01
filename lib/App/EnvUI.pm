@@ -3,7 +3,6 @@ package App::EnvUI;
 use Async::Event::Interval;
 use Data::Dumper;
 use DateTime;
-use IPC::Shareable;
 use Dancer2;
 use Dancer2::Plugin::Database;
 use JSON::XS;
