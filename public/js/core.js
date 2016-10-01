@@ -15,6 +15,16 @@ $(document).ready(function(){
         });
     };
 
+    var temp_limit = -1;
+    var humidity_limit = -1;
+
+    $.get('/get_control/temp_limit', function(data){
+        temp_limit = data;
+    });
+    $.get('/get_control/humidity_limit', function(data){
+        humidity_limit = data;
+    });
+
     function aux_update(){
 
        display_light();
@@ -100,8 +110,7 @@ $(document).ready(function(){
     };
 
     function display_temp(temp){
-        alert(temp);
-        if (temp > 78){
+        if (temp > temp_limit && temp_limit != -1){
             $('#temp').css('color', 'red');
         }
         else {
@@ -111,7 +120,7 @@ $(document).ready(function(){
     }
 
     function display_humidity(humidity){
-        if (humidity < 20){
+        if (humidity < humidity_limit && humidity_limit != -1){
             $('#humidity').css('color', 'red');
         }
         else {
