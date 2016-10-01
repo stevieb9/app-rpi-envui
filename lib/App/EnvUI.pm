@@ -13,7 +13,6 @@ use Dancer2::Plugin;
 
 our $VERSION = '0.1';
 
-
 _parse_config();
 _reset();
 _config_light();
@@ -23,17 +22,13 @@ my $pi = RPi::WiringPi->new;
 my $temp_pin = $pi->pin(16);
 my $hum_pin = $pi->pin(12);
 
-my $env_sensor = RPi::WiringPi->new(21);
+my $env_sensor = RPi::DHT11->new(21);
 
 my $event_env_to_db = Async::Event::Interval->new(
     _config_core('event_fetch_timer'),
     sub {
-        my $env_sensor = shift;
-        my $temp = $env_sensor->temp;
-        my $humidity = $env_sensor->humidity;
-        db_insert_env($temp, $humidity);
+        db_insert_env();
     },
-    $env_sensor
 );
 
 my $event_action_env = Async::Event::Interval->new(
@@ -51,7 +46,6 @@ my $event_action_env = Async::Event::Interval->new(
 $event_env_to_db->start;
 $event_action_env->start;
 
-
 get '/' => sub {
     # return template 'test';
     return template 'test';
@@ -60,6 +54,10 @@ get '/' => sub {
     # we do it after return as we don't need this code reached in actual
     # client calls
 
+    my $pi_x = $pi;
+    my $sensor = $env_sensor;
+    my $t_pin = $temp_pin;
+    my $h_pin = $hum_pin;
     my $evt_env_to_db = $event_env_to_db;
     my $evt_action_env = $event_action_env;
 };
@@ -304,7 +302,10 @@ sub env_temp_aux {
     return _config('temp_aux');
 }
 sub db_insert_env {
-    my ($temp, $hum) = @_;
+    my $temp = $env_sensor->temp('f');
+    my $hum = $env_sensor->humidity;
+
+    print "***** $temp, $hum\n";
     database->quick_insert(stats => {
             temp => $temp,
             humidity => $hum,
