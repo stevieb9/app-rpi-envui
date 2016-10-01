@@ -27,11 +27,11 @@
     "enable": "0"
   },
   "aux1": {
-    "pin": "16",
+    "pin": "-1",
     "desc": "temp"
   },
   "aux2": {
-    "pin": "12",
+    "pin": "-1",
     "desc": "humidity"
   },
   "aux3": {

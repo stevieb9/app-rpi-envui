@@ -16,7 +16,11 @@ if (! grep { -x "$_/sqlite3" } split /$sep/, $ENV{PATH}) {
 # copy initial db and conf file
 
 if (! -e 'db/envui.db'){
+    print "copying default db...\n";
     copy 'src/envui-dist.db', 'db/envui.db' or die $!;
+}
+if (! -e 'config/envui.json'){
+    print "copying default config...\n";
     copy 'src/envui-dist.json', 'config/envui.json' or die $1;
 }
 
