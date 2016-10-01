@@ -6,6 +6,7 @@ use DateTime;
 use Dancer2;
 use Dancer2::Plugin::Database;
 use JSON::XS;
+use WiringPi::API qw(:perl);
 use RPi::WiringPi;
 use RPi::WiringPi::Constant qw(:all);
 use RPi::DHT11;
@@ -17,17 +18,15 @@ _parse_config();
 _reset();
 _config_light();
 
-my $pi = RPi::WiringPi->new;
-
-my $temp_pin = $pi->pin(16);
-$temp_pin->mode(OUTPUT);
-$temp_pin->write(LOW);
-
-my $hum_pin = $pi->pin(12);
-$hum_pin->mode(OUTPUT);
-$hum_pin->write(LOW);
-
 my $env_sensor = RPi::DHT11->new(21);
+
+my $temp_pin = 16;
+pin_mode($temp_pin, OUTPUT);
+write_pin($temp_pin, LOW);
+
+my $hum_pin = 12;
+pin_mode($hum_pin, OUTPUT);
+write_pin($hum_pin, LOW);
 
 my $event_env_to_db = Async::Event::Interval->new(
     _config_core('event_fetch_timer'),
@@ -59,7 +58,6 @@ get '/' => sub {
     # we do it after return as we don't need this code reached in actual
     # client calls
 
-    my $pi_x = $pi;
     my $sensor = $env_sensor;
     my $t_pin = $temp_pin;
     my $h_pin = $hum_pin;
@@ -124,10 +122,10 @@ sub switch {
     my $override = aux_override($aux_id);
 
     if ($aux_id eq 'aux1'){
-        $state ? $temp_pin->write(HIGH) : $temp_pin->write(LOW);
+        $state ? write_pin($temp_pin, HIGH) : write_pin($temp_pin, LOW);
     }
     if ($aux_id eq 'aux2'){
-        $state ? $hum_pin->write(HIGH) : $hum_pin->write(LOW);
+        $state ? write_pin($hum_pin, HIGH) : write_pin($hum_pin, LOW);
     }
 }
 sub action_light {
