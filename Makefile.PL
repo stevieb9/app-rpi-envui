@@ -9,6 +9,12 @@ use File::Copy;
 my $eumm_version = $ExtUtils::MakeMaker::VERSION;
 $eumm_version =~ s/_//;
 
+my $sep = $^O =~ /MSWin/ ? ';' : ':';
+
+if (! grep { -x "$_/sqlite3" } split /$sep/, $ENV{PATH}) {
+    die "sqlite3 must be installed to continue\n";
+}
+
 if (! -e 'db/envui.db'){
     copy 'src/envui.db', 'db/' or die $!;
 }
@@ -26,6 +32,7 @@ WriteMakefile(
         'Test::More' => 0,
         'Dancer2'     => 0.203001,
         'Dancer2::Plugin::Database' => 0,
+        'DBD::SQLite' => 0,
         'Async::Event::Interval' => 0,
         'DateTime'  => 0,
     },
