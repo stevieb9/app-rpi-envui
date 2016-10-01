@@ -315,7 +315,6 @@ sub db_insert_env {
     my $temp = $env_sensor->temp('f');
     my $hum = $env_sensor->humidity;
 
-    print "***** $temp, $hum\n";
     database->quick_insert(stats => {
             temp => $temp,
             humidity => $hum,
