@@ -14,6 +14,25 @@ sub new {
     ) or die $DBI::errstr;
     return $self;
 }
+sub aux {
+    my ($self, $aux_id) = @_;
+
+    my $sth = $self->{db}->prepare(
+        'SELECT * from ? WHERE id=?'
+    );
+    my $aux_obj - $sth->execute('aux', $aux_id);
+
+    return $aux_obj;
+}
+sub auxs {
+    my ($self) = @_;
+
+    my $sth = $self->{db}->selectall_hashref(
+        'SELECT * from ?, id'
+    );
+    my $auxs = $sth->execute('aux');
+    return $auxs;
+}
 sub insert_env {
     my ($self, $temp, $hum) = @_;
 

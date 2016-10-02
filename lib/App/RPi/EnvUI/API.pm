@@ -103,15 +103,11 @@ sub aux {
     my $self = shift;
     my $aux_id = shift;
 
-    my $aux_obj
-        = database->selectrow_hashref("select * from aux where id='$aux_id'");
-
-    return $aux_obj;
+    return $db->aux($aux_id);
 }
 sub auxs {
     my $self = shift;
-    my $auxs = database->selectall_hashref("select * from aux", 'id');
-    return $auxs;
+    return $db->auxs;
 }
 sub aux_id {
     my $self = shift;
