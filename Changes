@@ -10,6 +10,7 @@ Changes history for App::EnvUI
         - initial pod for configuration
         - dist default config/db
         - graphs added, but don't use live data yet
+        - added App::FatPacker build structure
 
 0.01    2016-09-15
         - initial import
