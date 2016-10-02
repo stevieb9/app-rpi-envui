@@ -1,7 +1,5 @@
 package App::RPi::EnvUI::DB;
 
-use Dancer2 appname => 'App::RPi::EnvUI';
-use Dancer2::Plugin::Database;
 use DateTime;
 use DBI;
 use RPi::WiringPi::Constant qw(:all);
@@ -10,32 +8,37 @@ our $VERSION = '0.2';
 sub new {
     my $self = bless {}, shift;
     $self->{db} = DBI->connect(
-        "dbi:SQLite:dbname=../../../db/envui.db",
+        "dbi:SQLite:dbname=db/envui.db",
         "",
         ""
-    );
+    ) or die $DBI::errstr;
     return $self;
 }
 sub insert_env {
     my ($self, $temp, $hum) = @_;
 
-    $self->{db}->do(
-        "INSERT INTO stats VALUES($temp, $hum)"
+    my $sth = $self->{db}->prepare(
+        'INSERT INTO stats VALUES (?, ?, ?, ?)'
     );
+    $sth->execute(undef, undef, $temp, $hum);
 }
 sub update {
     my ($self, $table, $col, $value, $where_col, $where_val) = @_;
+
     if (! defined $where_col){
-        database->do("UPDATE $table SET $col='$value'");
+        my $sth = $self->{db}->prepare('UPDATE ? SET ?=?');
+        $sth->execute($table, $col, $value);
     }
     else {
-        database->do(
-            "UPDATE $table SET $col='$value' WHERE $where_col='$where_val'"
+        my $sth = $self->{db}->prepare(
+            "UPDATE $table SET $col=? WHERE $where_col=?"
         );
+        $sth->execute($value, $where_val);
     }
 }
 sub last_id {
-    my $id_list = database->selectrow_arrayref(
+    my $self = shift;
+    my $id_list = $self->{db}->selectrow_arrayref(
         "select seq from sqlite_sequence where name='stats';"
     );
 
