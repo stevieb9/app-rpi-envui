@@ -2,8 +2,6 @@ package App::RPi::EnvUI::API;
 
 use App::RPi::EnvUI::DB;
 use Async::Event::Interval;
-use Dancer2 appname => 'App::RPi::EnvUI';
-use Dancer2::Plugin::Database;
 use Data::Dumper;
 use DateTime;
 use JSON::XS;
