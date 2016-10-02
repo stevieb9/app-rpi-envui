@@ -2,23 +2,25 @@ package App::RPi::EnvUI::DB;
 
 use Dancer2 appname => 'App::RPi::EnvUI';
 use Dancer2::Plugin::Database;
-use Data::Dumper;
 use DateTime;
+use DBI;
 use RPi::WiringPi::Constant qw(:all);
-
 our $VERSION = '0.2';
 
 sub new {
-    return bless {}, shift;
+    my $self = bless {}, shift;
+    $self->{db} = DBI->connect(
+        "dbi:SQLite:dbname=../../../db/envui.db",
+        "",
+        ""
+    );
+    return $self;
 }
 sub insert_env {
     my ($self, $temp, $hum) = @_;
 
-    print "***** insert_env\n";
-    database->quick_insert(stats => {
-            temp => $temp,
-            humidity => $hum,
-        }
+    $self->{db}->do(
+        "INSERT INTO stats VALUES($temp, $hum)"
     );
 }
 sub update {
