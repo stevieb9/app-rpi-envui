@@ -24,7 +24,7 @@ if (! -e 'config/envui.json'){
     copy 'src/envui-dist.json', 'config/envui.json' or die $1;
 }
 
-copy 'bin/envui', '.' or die "can't copy envui app to local directory\n";
+# copy 'bin/envui', '.' or die "can't copy envui app to local directory\n";
 
 WriteMakefile(
     NAME                => 'App::RPi::EnvUI',

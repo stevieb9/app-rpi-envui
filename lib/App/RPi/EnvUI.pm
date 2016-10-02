@@ -28,7 +28,9 @@ my $env_sensor = RPi::DHT11->new(21);
 my $event_env_to_db = Async::Event::Interval->new(
     _config_core('event_fetch_timer'),
     sub {
-        db_insert_env();
+        my $temp = $env_sensor->temp('f');
+        my $hum = $env_sensor->humidity;
+        env($temp, $hum);
     },
 );
 
@@ -129,7 +131,7 @@ sub action_light {
     my ($on_hour, $on_min) = split /:/, $light->{on_at};
 
     if ($now->hour > $on_hour || ($now->hour == $on_hour && $now->minute >= $on_min)){
-        db_update('light', 'value', time(), 'id', 'on_since');
+        $db->update('light', 'value', time(), 'id', 'on_since');
         aux_state(_config('light_aux'), ON);
 
         #
@@ -145,7 +147,7 @@ sub action_light {
         my $remaining = $time - $on_since;
 
         if ($remaining >= $on_secs){
-            db_update('light', 'value', 0, 'id', 'on_since');
+            $db->update('light', 'value', 0, 'id', 'on_since');
             aux_state(_config('light_aux'), OFF);
 
             #
@@ -209,7 +211,7 @@ sub aux_state {
 
     my ($aux_id, $state) = @_;
     if (defined $state){
-        db_update('aux', 'state', $state, 'id', $aux_id);
+        $db->update('aux', 'state', $state, 'id', $aux_id);
     }
     return aux($aux_id)->{state};
 }
@@ -219,7 +221,7 @@ sub aux_time {
     my ($aux_id, $time) = @_;
 
     if (defined $time) {
-        db_update('aux', 'on_time', $time, 'id', $aux_id);
+        $db->update('aux', 'on_time', $time, 'id', $aux_id);
     }
 
     my $on_time = aux($aux_id)->{on_time};
@@ -231,7 +233,7 @@ sub aux_override {
     my ($aux_id, $override) = @_;
 
     if (defined $override){
-        db_update('aux', 'override', $override, 'id', $aux_id);
+        $db->update('aux', 'override', $override, 'id', $aux_id);
     }
     return aux($aux_id)->{override};
 }
@@ -240,7 +242,7 @@ sub aux_pin {
 
     my ($aux_id, $pin) = @_;
     if (defined $pin){
-        db_update('aux', 'pin', $pin, 'id', $aux_id);
+        $db->update('aux', 'pin', $pin, 'id', $aux_id);
     }
     return aux($aux_id)->{pin};
 }
@@ -294,7 +296,13 @@ sub _config_water {
     return \%conf;
 }
 sub env {
-    my $id = _get_last_id();
+    my ($temp, $hum) = @_;
+
+    if (defined $temp){
+        $db->insert_env($temp, $hum);
+    }
+
+    my $id = $db->last_id;
 
     my $row = database->quick_select(
         stats => {id => $id}
@@ -313,23 +321,6 @@ sub env_humidity_aux {
 }
 sub env_temp_aux {
     return _config('temp_aux');
-}
-sub db_insert_env {
-    my $temp = $env_sensor->temp('f');
-    my $hum = $env_sensor->humidity;
-
-    $db->insert_env($temp, $hum);
-}
-sub db_update {
-    my ($table, $col, $value, $where_col, $where_val) = @_;
-    if (! defined $where_col){
-        database->do("UPDATE $table SET $col='$value'");
-    }
-    else {
-        database->do(
-            "UPDATE $table SET $col='$value' WHERE $where_col='$where_val'"
-        );
-    }
 }
 sub _parse_config {
     my $json;
@@ -351,13 +342,13 @@ sub _parse_config {
     # aux
 
     for my $directive (keys %{ $conf->{aux} }){
-        db_update('aux', 'value', $conf->{aux}{$directive}, 'id', $directive);
+        $db->update('aux', 'value', $conf->{aux}{$directive}, 'id', $directive);
     }
 
     # environment control
 
     for my $directive (keys %{ $conf->{control} }){
-        db_update(
+        $db->update(
             'control', 'value', $conf->{control}{$directive}, 'id', $directive
         );
     }
@@ -365,19 +356,19 @@ sub _parse_config {
     # core configuration
 
     for my $directive (keys %{ $conf->{core} }){
-        db_update('core', 'value', $conf->{core}{$directive}, 'id', $directive);
+        $db->update('core', 'value', $conf->{core}{$directive}, 'id', $directive);
     }
 
     # light config
 
     for my $directive (keys %{ $conf->{light} }){
-        db_update('light', 'value', $conf->{light}{$directive}, 'id', $directive);
+        $db->update('light', 'value', $conf->{light}{$directive}, 'id', $directive);
     }
 
     # water config
 
     for my $directive (keys %{ $conf->{water} }){
-        db_update('water', 'value', $conf->{water}{$directive}, 'id', $directive);
+        $db->update('water', 'value', $conf->{water}{$directive}, 'id', $directive);
     }
 
 }
@@ -397,12 +388,6 @@ sub _bool {
 
     my $bool = shift;
     return $bool eq 'true' ? 1 : 0;
-}
-sub _get_last_id {
-    my $id = database->selectrow_arrayref(
-        "select seq from sqlite_sequence where name='stats';"
-    )->[0];
-    return $id;
 }
 
 true;

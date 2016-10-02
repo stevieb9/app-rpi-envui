@@ -1,6 +1,6 @@
 package App::RPi::EnvUI::DB;
 
-#use Dancer2;
+use Dancer2 appname => 'App::RPi::EnvUI';
 use Dancer2::Plugin::Database;
 use Data::Dumper;
 use DateTime;
@@ -20,8 +20,8 @@ sub insert_env {
         }
     );
 }
-sub db_update {
-    my ($table, $col, $value, $where_col, $where_val) = @_;
+sub update {
+    my ($self, $table, $col, $value, $where_col, $where_val) = @_;
     if (! defined $where_col){
         database->do("UPDATE $table SET $col='$value'");
     }
@@ -31,7 +31,7 @@ sub db_update {
         );
     }
 }
-sub _get_last_id {
+sub last_id {
     my $id = database->selectrow_arrayref(
         "select seq from sqlite_sequence where name='stats';"
     )->[0];
