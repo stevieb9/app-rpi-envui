@@ -1,4 +1,4 @@
-package App::EnvUI;
+package App::RPi::EnvUI;
 
 use Async::Event::Interval;
 use Dancer2;
@@ -411,7 +411,7 @@ __END__
 
 =head1 NAME
 
-App::EnvUI - One-page asynchronous grow room environment control web application
+App::RPi::EnvUI - One-page asynchronous grow room environment control web application
 
 =head1 SYNOPSIS
 

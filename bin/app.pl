@@ -5,6 +5,6 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 
-use App::EnvUI;
-App::EnvUI->to_app;
+use App::RPi::EnvUI;
+App::RPi::EnvUI->to_app;
 

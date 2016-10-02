@@ -4,7 +4,7 @@ BEGIN {
 my %fatpacked;
 
 $fatpacked{"App/EnvUI.pm"} = '#line '.(1+__LINE__).' "'.__FILE__."\"\n".<<'APP_ENVUI';
-  package App::EnvUI;
+  package App::RPi::EnvUI;
   
   use Async::Event::Interval;
   use Dancer2;
@@ -417,7 +417,7 @@ $fatpacked{"App/EnvUI.pm"} = '#line '.(1+__LINE__).' "'.__FILE__."\"\n".<<'APP_E
   
   =head1 NAME
   
-  App::EnvUI - One-page asynchronous grow room environment control web application
+  App::RPi::EnvUI - One-page asynchronous grow room environment control web application
   
   =head1 DESCRIPTION
   
@@ -531,6 +531,6 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 
-use App::EnvUI;
-App::EnvUI->to_app;
+use App::RPi::EnvUI;
+App::RPi::EnvUI->to_app;
 

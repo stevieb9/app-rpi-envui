@@ -1,6 +1,6 @@
 =head1 NAME
 
-App::EnvUI::Configuration - Configuration options for L<App::EnvUI>
+App::RPi::EnvUI::Configuration - Configuration options for L<App::RPi::EnvUI>
 
 =head1 CONFIGURATION FILE
 

@@ -1,6 +1,6 @@
 NAME
-    App::EnvUI - One-page asynchronous grow room environment control web
-    application
+    App::RPi::EnvUI - One-page asynchronous grow room environment control
+    web application
 
 SYNOPSIS
         sudo plackup ./envui

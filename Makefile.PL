@@ -27,9 +27,9 @@ if (! -e 'config/envui.json'){
 copy 'bin/envui', '.' or die "can't copy envui app to local directory\n";
 
 WriteMakefile(
-    NAME                => 'App::EnvUI',
+    NAME                => 'App::RPi::EnvUI',
     AUTHOR              => q{Steve Bertrand <steveb@cpan.org>},
-    VERSION_FROM        => 'lib/App/EnvUI.pm',
+    VERSION_FROM        => 'lib/App/RPi/EnvUI.pm',
     ABSTRACT            => '',
     ($eumm_version >= 6.3001
         ? ('LICENSE'=> 'perl')

@@ -11,13 +11,13 @@ BEGIN {
         plan skip_all => "not on a raspberry pi board\n";
     }
 }
-use App::EnvUI;
+use App::RPi::EnvUI;
 use HTTP::Request::Common;
 use Plack::Test;
 
 
 
-my $test = Plack::Test->create( App::EnvUI->to_app );
+my $test = Plack::Test->create( App::RPi::EnvUI->to_app );
 
 {
         my $res = $test->request( GET '/' );
