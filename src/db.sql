@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS stats (
   id integer primary key autoincrement,
-  datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
+  datetime DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   temp tinyint(3) not NULL,
   humidity tinyint(3) not NULL
 );

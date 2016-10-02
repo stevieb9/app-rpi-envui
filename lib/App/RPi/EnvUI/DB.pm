@@ -18,9 +18,9 @@ sub insert_env {
     my ($self, $temp, $hum) = @_;
 
     my $sth = $self->{db}->prepare(
-        'INSERT INTO stats VALUES (?, ?, ?, ?)'
+        'INSERT INTO stats VALUES (?, CURRENT_TIMESTAMP, ?, ?)'
     );
-    $sth->execute(undef, undef, $temp, $hum);
+    $sth->execute(undef, $temp, $hum);
 }
 sub update {
     my ($self, $table, $col, $value, $where_col, $where_val) = @_;
