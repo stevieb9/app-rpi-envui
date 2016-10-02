@@ -291,14 +291,10 @@ sub _parse_config {
 sub _reset {
     my $self = shift;
     # reset dynamic db attributes
-    $self->aux_time('aux1', 0);
-    $self->aux_time('aux2', 0);
-    $self->aux_time('aux3', 0);
-    $self->aux_time('aux4', 0);
-    $self->aux_time('aux5', 0);
-    $self->aux_time('aux6', 0);
-    $self->aux_time('aux7', 0);
-    $self->aux_time('aux8', 0);
+    for (1..8){
+        my $aux_id = "aux$_";
+        $self->aux_time($aux_id, 0);
+    }
 }
 sub _bool {
     my $self = shift;
