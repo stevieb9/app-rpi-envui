@@ -14,6 +14,7 @@ sub new {
 sub insert_env {
     my ($self, $temp, $hum) = @_;
 
+    print "***** insert_env\n";
     database->quick_insert(stats => {
             temp => $temp,
             humidity => $hum,
