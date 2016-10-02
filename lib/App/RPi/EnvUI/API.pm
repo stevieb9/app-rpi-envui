@@ -103,7 +103,8 @@ sub aux {
     my $self = shift;
     my $aux_id = shift;
 
-    return $db->aux($aux_id);
+    my $aux = $db->aux($aux_id);
+    return $aux;
 }
 sub auxs {
     my $self = shift;

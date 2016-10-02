@@ -43,9 +43,9 @@ my $event_action_env = Async::Event::Interval->new(
         my $t_aux = $api->env_temp_aux();
         my $h_aux = $api->env_humidity_aux();
 
-        $api->action_temp($t_aux, $api->temp());
-        $api->action_humidity($h_aux, $api->humidity());
-        $api->action_light($api->_config_light()) if $api->_config_light('enable');
+        $api->action_temp($t_aux, $api->temp);
+        $api->action_humidity($h_aux, $api->humidity);
+        $api->action_light($api->_config_light) if $api->_config_light('enable');
     }
 );
 

@@ -1,5 +1,6 @@
 package App::RPi::EnvUI::DB;
 
+use Data::Dumper;
 use DateTime;
 use DBI;
 use RPi::WiringPi::Constant qw(:all);
@@ -10,8 +11,10 @@ sub new {
     $self->{db} = DBI->connect(
         "dbi:SQLite:dbname=db/envui.db",
         "",
-        ""
+        "",
+        {RaiseError => 1}
     ) or die $DBI::errstr;
+
     return $self;
 }
 sub aux {
@@ -20,18 +23,18 @@ sub aux {
     my $sth = $self->{db}->prepare(
         'SELECT * from aux WHERE id=?'
     );
-    my $aux_obj = $sth->execute($aux_id);
-
-    return $aux_obj;
+    $sth->execute($aux_id);
+    my $aux = $sth->fetchrow_hashref;
+    return $aux;
 }
 sub auxs {
     my ($self) = @_;
 
-    my $sth = $self->{db}->selectall_hashref(
+    my $sth = $self->{db}->prepare(
         'SELECT * from aux, id'
     );
-    my $auxs = $sth->execute;
-    return $auxs;
+    $sth->execute;
+    return $sth->selectall_hashref;
 }
 sub config {
     my ($self, $want) = @_;
@@ -40,29 +43,26 @@ sub config {
         'SELECT value FROM control WHERE id=?'
     );
 
-    my $value = $sth->execute($want);
-    print "****************** $value\n";
-    return $value;
+    $sth->execute($want);
+    return $sth->fetchrow_hashref->{value};
 }
 sub config_core {
     my ($self, $want) = @_;
 
     my $sth = $self->{db}->prepare(
-        'SELECT value FROM core WHERE id=?'
+        'SELECT * FROM core WHERE id = ?'
     );
 
-    my $value = $sth->execute($want);
-    print "core ****************** $value\n";
-    return $value;
+    $sth->execute($want);
+    return $sth->fetchrow_hashref->{value};
 }
 sub config_light {
     my ($self, $want) = @_;
 
-    my $sth = $self->{db}->selectall_hashref(
-        'SELECT * from light, id'
+    my $light = $self->{db}->selectall_hashref(
+        'SELECT * FROM light',
+        'id'
     );
-
-    my $light = $sth->execute;
 
     if (defined $want){
         return $light->{$want};
@@ -74,30 +74,24 @@ sub config_light {
 sub config_water {
     my ($self, $want) = @_;
 
-    my $sth = $self->{db}->selectall_hashref(
-        'SELECT * from water, id'
+    my $water = $self->{db}->selectall_hashref(
+        'SELECT * from water',
+        'id'
     );
 
-    my $water = $sth->execute;
-
-    if (defined $want){
-        return $water->{$want};
-    }
-    else {
-        return $water;
-    }
+    return $water;
 }
 sub env {
     my ($self) = @_;
 
     my $id = $self->last_id;
 
-    my $sth = $self->{db}->selectrow_hashref(
+    my $sth = $self->{db}->prepare(
         'SELECT * FROM stats WHERE id=?'
     );
 
-    my $env = $sth->execute($id);
-    return $env;
+    $sth->execute($id);
+    return $sth->fetchrow_hashref;
 }
 sub insert_env {
     my ($self, $temp, $hum) = @_;
