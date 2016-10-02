@@ -160,14 +160,12 @@ sub aux_pin {
 sub _config {
     my $self = shift;
     my $want = shift;
-    my $env_ctl = database->quick_select('control', {id => $want}, ['value']);
-    return $env_ctl->{value};
+    return $db->config($want);
 }
 sub _config_core {
     my $self = shift;
     my $want = shift;
-    my $core = database->quick_select('core', {id => $want}, ['value']);
-    return $core->{value};
+    return $db->config_core($want);
 }
 sub _config_light {
     my $self = shift;

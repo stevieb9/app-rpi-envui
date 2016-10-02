@@ -20,7 +20,7 @@ sub aux {
     my $sth = $self->{db}->prepare(
         'SELECT * from ? WHERE id=?'
     );
-    my $aux_obj - $sth->execute('aux', $aux_id);
+    my $aux_obj = $sth->execute('aux', $aux_id);
 
     return $aux_obj;
 }
@@ -32,6 +32,28 @@ sub auxs {
     );
     my $auxs = $sth->execute('aux');
     return $auxs;
+}
+sub config {
+    my ($self, $want) = @_;
+
+    my $sth = $self->{db}->prepare(
+        'SELECT value FROM control WHERE id=?'
+    );
+
+    my $value = $sth->execute($want);
+    print "****************** $value\n";
+    return $value;
+}
+sub config_core {
+    my ($self, $want) = @_;
+
+    my $sth = $self->{db}->prepare(
+        'SELECT value FROM core WHERE id=?'
+    );
+
+    my $value = $sth->execute($want);
+    print "core ****************** $value\n";
+    return $value;
 }
 sub insert_env {
     my ($self, $temp, $hum) = @_;
