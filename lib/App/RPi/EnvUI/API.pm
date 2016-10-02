@@ -127,7 +127,7 @@ sub aux_state {
     if (defined $state){
         $db->update('aux', 'state', $state, 'id', $aux_id);
     }
-    return aux($aux_id)->{state};
+    return $self->aux($aux_id)->{state};
 }
 sub aux_time {
     my $self = shift;
