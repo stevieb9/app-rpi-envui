@@ -1,5 +1,6 @@
 package App::RPi::EnvUI;
 
+use App::RPi::EnvUI::DB;
 use Async::Event::Interval;
 use Dancer2;
 use Dancer2::Plugin::Database;
@@ -11,6 +12,8 @@ use RPi::WiringPi::Constant qw(:all);
 use WiringPi::API qw(:perl);
 
 our $VERSION = '0.2';
+
+my $db = App::RPi::EnvUI::DB->new;
 
 _parse_config();
 _reset();
@@ -315,11 +318,7 @@ sub db_insert_env {
     my $temp = $env_sensor->temp('f');
     my $hum = $env_sensor->humidity;
 
-    database->quick_insert(stats => {
-            temp => $temp,
-            humidity => $hum,
-        }
-    );
+    $db->insert_env($temp, $hum);
 }
 sub db_update {
     my ($table, $col, $value, $where_col, $where_val) = @_;
