@@ -16,17 +16,20 @@ our $VERSION = '0.2';
 my $api = App::RPi::EnvUI::API->new;
 
 $api->_parse_config();
-$api->reset();
+$api->_reset();
 $api->_config_light();
 
 my $env_sensor = RPi::DHT11->new(21);
+my $temp = $env_sensor->temp('f');
+my $hum = $env_sensor->humidity;
+$api->env($temp, $hum);
 
 # set up the pins below the creation of the sensor object...
 # this way, WiringPi::API will use GPIO pin numbering scheme,
 # as that's the default for RPi::DHT11
 
 my $event_env_to_db = Async::Event::Interval->new(
-    _config_core('event_fetch_timer'),
+    $api->_config_core('event_fetch_timer'),
     sub {
         my $temp = $env_sensor->temp('f');
         my $hum = $env_sensor->humidity;

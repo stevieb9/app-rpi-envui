@@ -33,10 +33,11 @@ sub update {
     }
 }
 sub last_id {
-    my $id = database->selectrow_arrayref(
+    my $id_list = database->selectrow_arrayref(
         "select seq from sqlite_sequence where name='stats';"
-    )->[0];
-    return $id;
+    );
+
+    return defined $id_list ? $id_list->[0] : 0;
 }
 
 true;
