@@ -18,9 +18,9 @@ sub aux {
     my ($self, $aux_id) = @_;
 
     my $sth = $self->{db}->prepare(
-        'SELECT * from ? WHERE id=?'
+        'SELECT * from aux WHERE id=?'
     );
-    my $aux_obj = $sth->execute('aux', $aux_id);
+    my $aux_obj = $sth->execute($aux_id);
 
     return $aux_obj;
 }
