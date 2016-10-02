@@ -28,9 +28,9 @@ sub auxs {
     my ($self) = @_;
 
     my $sth = $self->{db}->selectall_hashref(
-        'SELECT * from ?, id'
+        'SELECT * from aux, id'
     );
-    my $auxs = $sth->execute('aux');
+    my $auxs = $sth->execute;
     return $auxs;
 }
 sub config {
@@ -54,6 +54,50 @@ sub config_core {
     my $value = $sth->execute($want);
     print "core ****************** $value\n";
     return $value;
+}
+sub config_light {
+    my ($self, $want) = @_;
+
+    my $sth = $self->{db}->selectall_hashref(
+        'SELECT * from light, id'
+    );
+
+    my $light = $sth->execute;
+
+    if (defined $want){
+        return $light->{$want};
+    }
+    else {
+        return $light;
+    }
+}
+sub config_water {
+    my ($self, $want) = @_;
+
+    my $sth = $self->{db}->selectall_hashref(
+        'SELECT * from water, id'
+    );
+
+    my $water = $sth->execute;
+
+    if (defined $want){
+        return $water->{$want};
+    }
+    else {
+        return $water;
+    }
+}
+sub env {
+    my ($self) = @_;
+
+    my $id = $self->last_id;
+
+    my $sth = $self->{db}->selectrow_hashref(
+        'SELECT * FROM stats WHERE id=?'
+    );
+
+    my $env = $sth->execute($id);
+    return $env;
 }
 sub insert_env {
     my ($self, $temp, $hum) = @_;

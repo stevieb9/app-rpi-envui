@@ -171,7 +171,7 @@ sub _config_light {
     my $self = shift;
     my $want = shift;
 
-    my $light = database->selectall_hashref("select * from light;", 'id');
+    my $light = $db->config_light;
 
     my %conf;
 
@@ -181,7 +181,7 @@ sub _config_light {
 
     my ($on_hour, $on_min) = split /:/, $conf{on_at};
 
-    my $now = DateTime->now(time_zone => $self->_config_core('time_zone'));
+    my $now = DateTime->now(time_zone => $db->config_core('time_zone'));
     my $light_on = $now->clone;
 
     $light_on->set_hour($on_hour);
@@ -198,7 +198,7 @@ sub _config_light {
 }
 sub _config_water {
     my $self = shift;
-    my $water = database->selectall_hashref("select * from water;", 'id');
+    my $water = $db->config_water;
 
     my %conf;
 
@@ -218,11 +218,7 @@ sub env {
 
     my $id = $db->last_id;
 
-    my $row = database->quick_select(
-        stats => {id => $id}
-    );
-
-    return $row;
+    return $db->env;
 }
 sub temp {
     my $self = shift;
