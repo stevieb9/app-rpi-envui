@@ -53,6 +53,7 @@ CREATE TABLE core (
 INSERT INTO core VALUES ('event_fetch_timer', 15);
 INSERT INTO core VALUES ('event_action_timer', 3);
 INSERT INTO core VALUES ('event_display_timer', 4);
+INSERT INTO core VALUES ('sensor_pin', 0);
 INSERT INTO core VALUES ('time_zone', 'local');
 
 DROP TABLE IF EXISTS water;

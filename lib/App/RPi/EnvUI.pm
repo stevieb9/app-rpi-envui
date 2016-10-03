@@ -53,7 +53,7 @@ get '/set_aux/:aux/:state' => sub {
     my $state = $api->_bool(params->{state});
     $state = $api->aux_state($aux_id, $state);
 
-    my $override = $api->aux_override($aux_id) ? OFF : ON;
+    my $override = $api->aux_override($aux_id) ? 0 : 1;
     $override = $api->aux_override($aux_id, $override);
 
     $api->switch($aux_id);
