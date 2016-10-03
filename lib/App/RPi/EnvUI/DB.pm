@@ -4,17 +4,29 @@ use Data::Dumper;
 use DateTime;
 use DBI;
 use RPi::WiringPi::Constant qw(:all);
+
 our $VERSION = '0.2';
 
 sub new {
     my $self = bless {}, shift;
-    $self->{db} = DBI->connect(
-        "dbi:SQLite:dbname=db/envui.db",
-        "",
-        "",
-        {RaiseError => 1}
-    ) or die $DBI::errstr;
+    my %args = @_;
 
+    if (-e 't/testing.lck' || (defined $args{testing} && $args{testing})){
+        $self->{db} = DBI->connect(
+            "dbi:SQLite:dbname=t/envui.db",
+            "",
+            "",
+            {RaiseError => 1}
+        ) or die $DBI::errstr;
+    }
+    else {
+        $self->{db} = DBI->connect(
+            "dbi:SQLite:dbname=db/envui.db",
+            "",
+            "",
+            {RaiseError => 1}
+        ) or die $DBI::errstr;
+    }
     return $self;
 }
 sub aux {
@@ -30,11 +42,10 @@ sub aux {
 sub auxs {
     my ($self) = @_;
 
-    my $sth = $self->{db}->prepare(
-        'SELECT * from aux, id'
+    return $self->{db}->selectall_hashref(
+        'SELECT * from aux',
+        'id'
     );
-    $sth->execute;
-    return $sth->selectall_hashref;
 }
 sub config_control {
     my ($self, $want) = @_;

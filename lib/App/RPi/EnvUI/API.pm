@@ -22,7 +22,9 @@ sub new {
     # check if we're testing or not. If so, bypass the loading of the
     # RPi::DHT11 sensor
 
-    if ($self->_config_core('testing')){
+
+    if (-e 't/testing.lck'){
+        warn "in testing mode on a non-Pi board... remove 't/testing.lck' file to resume normal ops\n";
         $self->{sensor} = 'RPi::DHT11 sensor mocked due to testing...';
         *read_sensor = sub {
             return (80, 20);

@@ -5,6 +5,7 @@ Changes
 config.yml
 config/envui.json
 db/envui.db
+db/envui.db-journal
 lib/App/RPi/EnvUI.pm
 lib/App/RPi/EnvUI/API.pm
 lib/App/RPi/EnvUI/Configuration.pod
@@ -22,5 +23,10 @@ src/db.sql
 src/envui-dist.db
 src/envui-dist.json
 t/base.t
+t/db.t
+t/envui.db
+t/load_front_page.t
+t/temp.t
+t/TestBase.pm
 views/main.tt
 views/test.tt
