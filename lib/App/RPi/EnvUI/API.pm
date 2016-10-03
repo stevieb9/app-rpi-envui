@@ -16,15 +16,20 @@ my $db = App::RPi::EnvUI::DB->new;
 
 sub new {
     my $self = bless {}, shift;
+    %$self = @_;
 
-    $self->_parse_config;
+    $self->{config_file} = defined $self->{config_file}
+        ? $self->{config_file}
+        : 'config/envui.json';
+
+    $self->_parse_config($self->{config_file});
 
     # check if we're testing or not. If so, bypass the loading of the
     # RPi::DHT11 sensor
 
 
-    if (-e 't/testing.lck'){
-        warn "in testing mode on a non-Pi board... remove 't/testing.lck' file to resume normal ops\n";
+    if (-e 't/testing.lck' || $self->{testing}){
+        warn "API in test mode\n";
         $self->{sensor} = 'RPi::DHT11 sensor mocked due to testing...';
         *read_sensor = sub {
             return (80, 20);
@@ -286,7 +291,7 @@ sub _parse_config {
     my $json;
     {
         local $/;
-        open my $fh, '<', 'config/envui.json' or die $!;
+        open my $fh, '<', $self->{config_file} or die $!;
         $json = <$fh>;
     }
     my $conf = decode_json $json;
@@ -322,6 +327,7 @@ sub _parse_config {
 sub _reset {
     my $self = shift;
     # reset dynamic db attributes
+
     for (1..8){
         my $aux_id = "aux$_";
         $self->aux_time($aux_id, 0);

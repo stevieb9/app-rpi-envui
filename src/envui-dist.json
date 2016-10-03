@@ -1,6 +1,6 @@
 {
   "core": {
-    "event_fetch_timer": "5",
+    "event_fetch_timer": "15",
     "event_action_timer": "3",
     "event_display_timer": "4",
     "time_zone": "local"
@@ -12,9 +12,9 @@
     "humidity_aux_on_time": "1800",
     "temp_aux": "aux1",
     "humidity_aux": "aux2",
-    "water1_aux": "aux3",
-    "water2_aux": "aux4",
-    "light_aux": "aux5"
+    "light_aux": "aux3",
+    "water1_aux": "aux4",
+    "water2_aux": "aux5"
 
   },
   "light": {
