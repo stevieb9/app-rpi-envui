@@ -1,7 +1,7 @@
 package App::RPi::EnvUI::API;
 
 use App::RPi::EnvUI::DB;
-use Async::Event::Interval;
+use App::RPi::EnvUI::Event;
 use Data::Dumper;
 use DateTime;
 use JSON::XS;
@@ -14,7 +14,39 @@ our $VERSION = '0.2';
 my $db = App::RPi::EnvUI::DB->new;
 
 sub new {
-    return bless {}, shift;
+    my $self = bless {}, shift;
+
+    my $env_sensor = RPi::DHT11->new(
+        $self->_config_core('sensor_pin')
+    );
+
+    $self->{sensor} = $env_sensor;
+
+    return $self;
+}
+sub events {
+    my $self = shift;
+
+    my $events = App::RPi::EnvUI::Event->new;
+
+    $self->{events}{env_to_db} = $events->env_to_db(
+        App::RPi::EnvUI::API->new
+    );
+
+    $self->{events}{env_action} = $events->env_action(
+        App::RPi::EnvUI::API->new
+    );
+
+    $self->{events}{env_to_db}->start;
+    $self->{events}{env_action}->start;
+}
+sub read_sensor {
+    my $self = shift;
+
+    my $temp = $self->{sensor}->temp('f');
+    my $hum = $self->{sensor}->humidity;
+
+    return ($temp, $hum);
 }
 sub switch {
     my $self = shift;
@@ -210,14 +242,11 @@ sub _config_water {
     return \%conf;
 }
 sub env {
-    my $self = shift;
-    my ($temp, $hum) = @_;
+    my ($self, $temp, $hum) = @_;
 
     if (defined $temp){
         $db->insert_env($temp, $hum);
     }
-
-    my $id = $db->last_id;
 
     return $db->env;
 }

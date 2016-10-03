@@ -1,81 +1,44 @@
-package App::RPi::EnvUI;
+package App::RPi::EnvUI::Event;
 
-use App::RPi::EnvUI::API;
-use Dancer2;
-use Dancer2::Plugin::Database;
-use Data::Dumper;
-use DateTime;
-use JSON::XS;
+use Async::Event::Interval;
 
 our $VERSION = '0.2';
 
-my $api = App::RPi::EnvUI::API->new;
+sub new {
+    return bless {}, shift;
+}
+sub env_to_db {
+    my $api = shift;
 
-$api->_parse_config();
-$api->_reset();
-$api->_config_light();
+    my $event = Async::Event::Interval->new(
+        $api->_config_core('event_fetch_timer'),
+        sub {
+            my ($temp, $hum) = $api->read_sensor;
+            $api->env($temp, $hum);
+        },
+    );
 
-$api->env($api->read_sensor);
+    return $event;
+}
+sub env_action {
+    my $api = shift;
 
-$api->events;
+    my $event = Async::Event::Interval->new(
+        $api->_config_core('event_action_timer'),
+        sub {
+            my $t_aux = $api->env_temp_aux();
+            my $h_aux = $api->env_humidity_aux();
 
-get '/' => sub {
-    # return template 'main';
-    return template 'test';
-};
+            $api->action_temp($t_aux, $api->temp);
+            $api->action_humidity($h_aux, $api->humidity);
+            $api->action_light($api->_config_light)
+              if $api->_config_light('enable');
+        }
+    );
 
-get '/light' => sub {
-    return to_json $api->_config_light();
-};
-
-get '/water' => sub {
-    return to_json $api->_config_water();
-};
-
-get '/get_config/:want' => sub {
-    my $want = params->{want};
-    my $value = $api->_config_core($want);
-    return $value;
-};
-
-get '/get_control/:want' => sub {
-    my $want = params->{want};
-    my $value = $api->_config($want);
-    return $value;
-};
-
-get '/get_aux/:aux' => sub {
-    my $aux_id = params->{aux};
-    $api->switch($aux_id);
-    return to_json $api->aux($aux_id);
-};
-
-get '/set_aux/:aux/:state' => sub {
-    my $aux_id = params->{aux};
-
-    my $state = $api->_bool(params->{state});
-    $state = $api->aux_state($aux_id, $state);
-
-    my $override = $api->aux_override($aux_id) ? OFF : ON;
-    $override = $api->aux_override($aux_id, $override);
-
-    $api->switch($aux_id);
-
-    return to_json {
-        aux => $aux_id,
-        state => $state,
-    };
-};
-
-get '/fetch_env' => sub {
-    my $data = $api->env();
-    return to_json {
-        temp => $data->{temp},
-        humidity => $data->{humidity}
-    };
-};
-
-true;
+    return $event;
+}
+1;
 __END__
 
 =head1 NAME
