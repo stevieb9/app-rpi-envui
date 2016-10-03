@@ -3,9 +3,6 @@ package App::RPi::EnvUI;
 use App::RPi::EnvUI::API;
 use Dancer2;
 use Dancer2::Plugin::Database;
-use Data::Dumper;
-use DateTime;
-use JSON::XS;
 
 our $VERSION = '0.2';
 

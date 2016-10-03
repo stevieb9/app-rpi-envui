@@ -98,8 +98,8 @@ sub action_humidity {
     my $self = shift;
     my ($aux_id, $humidity) = @_;
 
-    my $min_run = $self->_config('humidity_aux_on_time');
     my $limit = $self->_config('humidity_limit');
+    my $min_run = $self->_config('humidity_aux_on_time');
 
     my $x = $self->aux_override($aux_id);
 
@@ -117,6 +117,7 @@ sub action_humidity {
 sub action_temp {
     my $self = shift;
     my ($aux_id, $temp) = @_;
+
     my $limit = $self->_config('temp_limit');
     my $min_run = $self->_config('temp_aux_on_time');
 
@@ -297,8 +298,8 @@ sub _parse_config {
     }
 
     #FIXME: I don't think auxs are being read correctly here...
-    #FIXME: it seems as though there shouldn't be a $conf->{aux}, as all of the
-    #FIXME: aux entries are suffixed with a number
+    # it seems as though there shouldn't be a $conf->{aux}, as all of the
+    # aux entries are suffixed with a number
 
     for my $directive (keys %{ $conf->{aux} }){
         $db->update('aux', 'value', $conf->{aux}{$directive}, 'id', $directive);

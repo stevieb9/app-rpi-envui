@@ -43,66 +43,58 @@ __END__
 
 =head1 NAME
 
-App::RPi::EnvUI - One-page asynchronous grow room environment control web application
+App::RPi::EnvUI::Event - Asynchronous events for the Perl portion of
+L<App::RPi::EnvUI>
 
 =head1 SYNOPSIS
 
-    sudo plackup ./envui
+    use App::RPi::EnvUI::API;
+    use App::RPi::EnvUI::Event;
+
+    my $api = App::RPi::EnvUI::API->new;
+    my $events = App::RPi::EnvUI::Event->new;
+
+    my $env_to_db_event  = $events->env_to_db($api);
+    my $env_action_event = $events->env_action($api);
+
+    $env_to_db_event->start;
+    $env_action_event->start;
 
 =head1 DESCRIPTION
 
-This distribution is alpha. It does not install the same way most CPAN modules
-install, and has some significant requirements Most specifically, the
-L<wiringPi|http://wiringpi.com> libraries, and the fact it can only run on a
-Raspberry Pi. To boot, you have to have an elaborate electrical relay
-configuration set up etc.
+This is a helper module for L<App::RPi::EnvUI>, which contains the scheduled
+asynchronous Perl events on the server side of the webapp.
 
-Right now, I'm testing an L<App::FatPacker> install method, where the packed 
-web app is bundled into a single file called C<envui>, and placed in your
-current working directory. See L</SYNOPSIS> for running the app. I doubt this
-will work as expected on my first try.
+=head1 METHODS
 
-It's got no tests yet, and barely any documentation. It's only here so I can
-begin testing the installation routine.
+=head2 new
 
-This is my first web app in many, many years, so the technologies (jQuery,
-L<Dancer2> etc) are brand new to me, so as I go, I'll be refactoring heavily as
-I continue to learn.
+Returns a new C<App::RPi::EnvUI::Event> object.
 
-At this stage, after I sort the installer, I will be focusing solely on tests.
-After tests are done, I'll clean up the code (refactor), then complete the
-existing non-finished functionality, and add the rest of the functionality I
-want to add.
+=head2 env_to_db($api)
 
-I'll then add pictures, diagrams and schematics of my physical layout of the Pi
-all electrical components, and the electrical circuits.
+Parameter:
 
-=head1 WHAT IT DOES
+    $api
 
-Reads temperature and humidity data via a hygrometer sensor through the
-L<RPi::DHT11> distribution.
+Mandatory. An instance of the L<App::RPi::EnvUI::API> class.
 
-It then allows, through a one-page asynchronous web UI to turn on and off
-120/240v devices through buttons, timers and reached threshold limits.
+Returns the event that updates the 'stats' environment database table.
 
-For example. We have a max temperature limit of 80F. We assign an auxillary
-(GPIO pin) that is connected to a relay to a 120v exhaust fan. Through the
-configuration file, we load the temp limit, and if the temp goes above it, we
-enable the fan via the GPIO pin.
+=head2 env_action($api)
 
-To prevent the fan from going on/off repeatedly if the temp hovers at the limit,
-a minimum "on time" is also set, so by default, if the fan turns on, it'll stay
-on for 30 minutes, no matter if the temp drops back below the limit.
+Parameter:
 
-Each auxillary has a manual override switch in the UI, and if overridden in the
-UI, it'll remain in the state you set.
+    $api
 
-We also include a grow light scheduler, so that you can connect your light, set
-the schedule, and we'll manage it. The light has an override switch in the UI,
-but that can be disabled to prevent any accidents.
+Mandatory. An instance of the L<App::RPi::EnvUI::API> class.
 
-...manages auto-feeding too, but that's not any where near complete yet.
+Returns the event that enables/disables the GPIO pins associated with the
+environment.
 
+=head1 SEE ALSO
+
+L<Async::Event::Interval>
 
 =head1 AUTHOR
 
