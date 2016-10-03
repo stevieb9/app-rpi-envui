@@ -77,24 +77,18 @@ __END__
 
 =head1 NAME
 
-App::RPi::EnvUI - One-page asynchronous grow room environment control web application
+App::RPi::EnvUI - One-page asynchronous grow room environment control web
+application
 
 =head1 SYNOPSIS
 
-    sudo plackup ./envui
 
 =head1 DESCRIPTION
 
 This distribution is alpha. It does not install the same way most CPAN modules
 install, and has some significant requirements Most specifically, the
 L<wiringPi|http://wiringpi.com> libraries, and the fact it can only run on a
-Raspberry Pi. To boot, you have to have an elaborate electrical relay
-configuration set up etc.
-
-Right now, I'm testing an L<App::FatPacker> install method, where the packed 
-web app is bundled into a single file called C<envui>, and placed in your
-current working directory. See L</SYNOPSIS> for running the app. I doubt this
-will work as expected on my first try.
+Raspberry Pi.
 
 It's got no tests yet, and barely any documentation. It's only here so I can
 begin testing the installation routine.

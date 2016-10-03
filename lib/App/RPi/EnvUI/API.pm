@@ -70,7 +70,7 @@ sub action_light {
 
     if ($now->hour > $on_hour || ($now->hour == $on_hour && $now->minute >= $on_min)){
         $db->update('light', 'value', time(), 'id', 'on_since');
-        $self->aux_state(_config('light_aux'), ON);
+        $self->aux_state(_config_control('light_aux'), ON);
 
         #
         # turn light on here!
@@ -86,7 +86,7 @@ sub action_light {
 
         if ($remaining >= $on_secs){
             $db->update('light', 'value', 0, 'id', 'on_since');
-            $self->aux_state(_config('light_aux'), OFF);
+            $self->aux_state(_config_control('light_aux'), OFF);
 
             #
             # turn light off here!
@@ -98,8 +98,8 @@ sub action_humidity {
     my $self = shift;
     my ($aux_id, $humidity) = @_;
 
-    my $limit = $self->_config('humidity_limit');
-    my $min_run = $self->_config('humidity_aux_on_time');
+    my $limit = $self->_config_control('humidity_limit');
+    my $min_run = $self->_config_control('humidity_aux_on_time');
 
     my $x = $self->aux_override($aux_id);
 
@@ -118,8 +118,8 @@ sub action_temp {
     my $self = shift;
     my ($aux_id, $temp) = @_;
 
-    my $limit = $self->_config('temp_limit');
-    my $min_run = $self->_config('temp_aux_on_time');
+    my $limit = $self->_config_control('temp_limit');
+    my $min_run = $self->_config_control('temp_aux_on_time');
 
     if (! $self->aux_override($aux_id)){
         if ($temp >= $limit && $self->aux_time($aux_id) == 0){
@@ -191,10 +191,10 @@ sub aux_pin {
     }
     return $self->aux($aux_id)->{pin};
 }
-sub _config {
+sub _config_control {
     my $self = shift;
     my $want = shift;
-    return $db->config($want);
+    return $db->config_control($want);
 }
 sub _config_core {
     my $self = shift;
@@ -261,11 +261,11 @@ sub humidity {
 }
 sub env_humidity_aux {
     my $self = shift;
-    return $self->_config('humidity_aux');
+    return $self->_config_control('humidity_aux');
 }
 sub env_temp_aux {
     my $self = shift;
-    return $self->_config('temp_aux');
+    return $self->_config_control('temp_aux');
 }
 sub _parse_config {
     my $self = shift;
