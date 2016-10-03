@@ -284,38 +284,25 @@ sub _parse_config {
         $self->aux_pin($aux_id, $pin);
     }
 
-    # aux
+    for my $conf_section (qw(aux control core light water)){
+        for my $directive (keys %{ $conf->{$conf_section} }){
+            $db->update(
+                $_,
+                'value',
+                $conf->{$conf_section}{$directive},
+                'id',
+                $directive
+            );
+        }
+    }
+
+    #FIXME: I don't think auxs are being read correctly here...
+    #FIXME: it seems as though there shouldn't be a $conf->{aux}, as all of the
+    #FIXME: aux entries are suffixed with a number
 
     for my $directive (keys %{ $conf->{aux} }){
         $db->update('aux', 'value', $conf->{aux}{$directive}, 'id', $directive);
     }
-
-    # environment control
-
-    for my $directive (keys %{ $conf->{control} }){
-        $db->update(
-            'control', 'value', $conf->{control}{$directive}, 'id', $directive
-        );
-    }
-
-    # core configuration
-
-    for my $directive (keys %{ $conf->{core} }){
-        $db->update('core', 'value', $conf->{core}{$directive}, 'id', $directive);
-    }
-
-    # light config
-
-    for my $directive (keys %{ $conf->{light} }){
-        $db->update('light', 'value', $conf->{light}{$directive}, 'id', $directive);
-    }
-
-    # water config
-
-    for my $directive (keys %{ $conf->{water} }){
-        $db->update('water', 'value', $conf->{water}{$directive}, 'id', $directive);
-    }
-
 }
 sub _reset {
     my $self = shift;
