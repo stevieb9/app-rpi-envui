@@ -1,6 +1,7 @@
 package App::RPi::EnvUI;
 
 use App::RPi::EnvUI::API;
+use Data::Dumper;
 use Dancer2;
 use Dancer2::Plugin::Database;
 
@@ -8,7 +9,6 @@ our $VERSION = '0.2';
 
 my $api = App::RPi::EnvUI::API->new;
 
-$api->_parse_config();
 $api->_reset();
 $api->_config_light();
 

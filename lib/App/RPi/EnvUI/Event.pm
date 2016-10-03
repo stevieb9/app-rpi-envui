@@ -8,7 +8,7 @@ sub new {
     return bless {}, shift;
 }
 sub env_to_db {
-    my $api = shift;
+    my ($self, $api) = @_;
 
     my $event = Async::Event::Interval->new(
         $api->_config_core('event_fetch_timer'),
@@ -21,7 +21,7 @@ sub env_to_db {
     return $event;
 }
 sub env_action {
-    my $api = shift;
+    my ($self, $api) = @_;
 
     my $event = Async::Event::Interval->new(
         $api->_config_core('event_action_timer'),

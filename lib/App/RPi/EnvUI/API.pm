@@ -5,6 +5,7 @@ use App::RPi::EnvUI::Event;
 use Data::Dumper;
 use DateTime;
 use JSON::XS;
+use Mock::Sub;
 use RPi::DHT11;
 use RPi::WiringPi::Constant qw(:all);
 use WiringPi::API qw(:perl);
@@ -16,11 +17,22 @@ my $db = App::RPi::EnvUI::DB->new;
 sub new {
     my $self = bless {}, shift;
 
-    my $env_sensor = RPi::DHT11->new(
-        $self->_config_core('sensor_pin')
-    );
+    $self->_parse_config;
 
-    $self->{sensor} = $env_sensor;
+    # check if we're testing or not. If so, bypass the loading of the
+    # RPi::DHT11 sensor
+
+    if ($self->_config_core('testing')){
+        $self->{sensor} = 'RPi::DHT11 sensor mocked due to testing...';
+        *read_sensor = sub {
+            return (80, 20);
+        }
+    }
+    else {
+        $self->{sensor} = RPi::DHT11->new(
+            $self->_config_core( 'sensor_pin' )
+        );
+    }
 
     return $self;
 }
@@ -288,7 +300,7 @@ sub _parse_config {
     for my $conf_section (qw(aux control core light water)){
         for my $directive (keys %{ $conf->{$conf_section} }){
             $db->update(
-                $_,
+                $conf_section,
                 'value',
                 $conf->{$conf_section}{$directive},
                 'id',
