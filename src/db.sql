@@ -16,8 +16,8 @@ CREATE TABLE aux (
     on_time INTEGER
 );
 
-INSERT INTO aux VALUES ('aux1', 'temp', 0, 0, 0, 0);
-INSERT INTO aux VALUES ('aux2', 'humidity', 0, 0, 0, 0);
+INSERT INTO aux VALUES ('aux1', 'temp', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux2', 'humidity', -1, 0, 0, 0);
 INSERT INTO aux VALUES ('aux3', 'water1', -1, 0, 0, 0);
 INSERT INTO aux VALUES ('aux4', 'water2', -1, 0, 0, 0);
 INSERT INTO aux VALUES ('aux5', 'light', -1, 0, 0, 0);

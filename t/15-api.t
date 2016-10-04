@@ -155,7 +155,29 @@ $api->_parse_config;
     like $@, qr/requires an aux ID/, "...and has the correct error message";
 }
 
-unconfig();
+{ # aux_pin
 
+    for (1..8){
+        my $aux_id = "aux$_";
+        my $p = $api->aux_pin($aux_id);
+
+        is $p, -1, "aux_pin() returns correct default pin value for $aux_id";
+
+        $p = $api->aux_pin($aux_id, 1);
+
+        is $p, 1, "aux_pin() correctly sets pin for $aux_id";
+
+        $p = $api->aux_pin($aux_id, -1);
+
+        is $p, -1, "aux_pin() can re-set pin for $aux_id";
+    }
+
+    my $ok = eval { $api->aux_pin; 1; };
+
+    is $ok, undef, "aux_pin() dies if an aux ID not sent in";
+    like $@, qr/requires an aux ID/, "...and has the correct error message";
+}
+
+unconfig();
 done_testing();
 

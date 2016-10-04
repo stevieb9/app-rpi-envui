@@ -217,6 +217,11 @@ sub aux_pin {
     # returns the auxillary's GPIO pin number
 
     my ($aux_id, $pin) = @_;
+
+    if ($aux_id !~ /^aux/){
+        die "aux_pin() requires an aux ID as its first param\n";
+    }
+
     if (defined $pin){
         $db->update('aux', 'pin', $pin, 'id', $aux_id);
     }
