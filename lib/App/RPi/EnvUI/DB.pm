@@ -76,7 +76,7 @@ sub config_light {
     );
 
     if (defined $want){
-        return $light->{$want};
+        return $light->{$want}{value};
     }
     else {
         return $light;
@@ -90,6 +90,9 @@ sub config_water {
         'id'
     );
 
+    if (defined $want){
+        return $water->{$want}{value};
+    }
     return $water;
 }
 sub env {
