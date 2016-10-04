@@ -7,20 +7,26 @@ use RPi::WiringPi::Constant qw(:all);
 
 our $VERSION = '0.2';
 
+#FIXME: the following will have to be cleaned up into a conditional
+# we create a db handle globally so that if subsequent calls to new() are done,
+# the test env won't have separate memory databases
+
+my $dbh = DBI->connect(
+    "dbi:SQLite:database=:memory:",
+    "",
+    "",
+    {RaiseError => 1}
+) or die $DBI::errstr;
+
+$dbh->sqlite_backup_from_file('src/envui-dist.db');
+
 sub new {
     my $self = bless {}, shift;
     my %args = @_;
 
     if (-e 't/testing.lck' || (defined $args{testing} && $args{testing})){
         $self->{testing} = 1;
-        $self->{db} = DBI->connect(
-            "dbi:SQLite:database=:memory:",
-            "",
-            "",
-            {RaiseError => 1}
-        ) or die $DBI::errstr;
-
-        $self->{db}->sqlite_backup_from_file('src/envui-dist.db');
+        $self->{db} = $dbh;
     }
     else {
         $self->{db} = DBI->connect(

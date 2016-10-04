@@ -291,22 +291,20 @@ $api->_parse_config;
     }
 }
 
-#FIXME: db updates are not working in tests
-
 { # env_temp_aux
     is $api->env_temp_aux, 'aux1', "aux1 is the temp aux by default";
-#    $db->update('control', 'value', 'aux9', 'id', 'temp_aux');
-#    is $api->env_temp_aux, 'aux9', "setting the value works ok";
-#    $db->update('control', 'value', 'aux1', 'id', 'temp_aux');
-#    is $api->env_temp_aux, 'aux1', "...and works ok going back too";
+    $db->update('control', 'value', 'aux9', 'id', 'temp_aux');
+    is $api->env_temp_aux, 'aux9', "setting the value works ok";
+    $db->update('control', 'value', 'aux1', 'id', 'temp_aux');
+    is $api->env_temp_aux, 'aux1', "...and works ok going back too";
 }
 
 { # env_temp_humidity
     is $api->env_humidity_aux, 'aux2', "aux2 is the humidity aux by default";
-#    $db->update('control', 'value', 'aux9', 'id', 'humidity_aux');
-#    is $api->env_humidity_aux, 'aux9', "setting the value works ok";
-#    $db->update('control', 'value', 'aux2', 'id', 'humidity_aux');
-#    is $api->env_humidity_aux, 'aux2', "...and works ok going back too";
+    $db->update('control', 'value', 'aux9', 'id', 'humidity_aux');
+    is $api->env_humidity_aux, 'aux9', "setting the value works ok";
+    $db->update('control', 'value', 'aux2', 'id', 'humidity_aux');
+    is $api->env_humidity_aux, 'aux2', "...and works ok going back too";
 }
 
 # $db->{db}->sqlite_backup_to_file('test.db');

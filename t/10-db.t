@@ -198,16 +198,13 @@ $api->_parse_config;
 
 }
 
-#{ # update()
+{ # update()
 
-    #FIXME: add tests for update(). These ones don't work!
-
-#    my $x = $db->config_control('temp_aux');
-#    $db->update('control', 'value', 'aux9', 'id', 'temp_aux');
-#    is $api->env_temp_aux, 'aux9', "setting the value works ok";
-#    $db->update('control', 'value', 'aux1', 'id', 'temp_aux');
-#    is $api->env_temp_aux, 'aux1', "...and works ok going back too";
-#}
+    $db->update('control', 'value', 'aux9', 'id', 'temp_aux');
+    is $api->env_temp_aux, 'aux9', "setting the value works ok";
+    $db->update('control', 'value', 'aux1', 'id', 'temp_aux');
+    is $api->env_temp_aux, 'aux1', "...and works ok going back too";
+}
 
 unconfig();
 
