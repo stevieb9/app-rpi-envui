@@ -33,7 +33,6 @@ my $wp_sub = $mock->mock(
 );
 
 my $db = App::RPi::EnvUI::DB->new(testing => 1);
-
 my $api = App::RPi::EnvUI::API->new(testing => 1);
 
 is ref $api, 'App::RPi::EnvUI::API', "new() returns a proper object";
@@ -219,7 +218,39 @@ $api->_parse_config;
         is $ret, '', "switch(): if pin is -1, we don't call write_pin(), $id";
     }
 }
+{ # env()
 
+    my $ret = $api->env(99, 1);
+
+    is $ret->{temp}, 99, "env() w/ params sets temp properly";
+    is $ret->{humidity}, 1, "env() w/params sets humidity properly";
+
+    $ret = $api->env;
+
+    is $ret->{temp}, 99, "env() w/o params returns temp ok";
+    is $ret->{humidity}, 1, "env() w/o params returns humidity ok";
+
+    $api->env(50, 50);
+    $ret = $api->env;
+
+    is $ret->{temp}, 50, "env() does the right thing after another update (temp)";
+    is $ret->{humidity}, 50, "env() does the right thing after another update (hum)";
+
+    my $ok = eval { $api->env(50), 1; };
+    is $ok, undef, "env() dies if neither 0 or exactly 2 args sent in";
+    like $@, qr/requires either/, "...and the error message is correct";
+
+    for (qw(1.1 99h hello !!)){
+
+        $ok = eval { $api->env($_, 99); 1; };
+        is $ok, undef, "env() dies if temp arg isn't a number\n";
+        like $@, qr/must be an integer/, "...and for temp, error is ok";
+
+        $ok = eval { $api->env(99, $_); 1; };
+        is $ok, undef, "env() dies if humidity arg isn't a number\n";
+        like $@, qr/must be an integer/, "...and for humidity, error is ok";
+    }
+}
 unconfig();
 done_testing();
 

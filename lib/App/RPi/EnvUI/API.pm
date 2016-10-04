@@ -280,6 +280,19 @@ sub _config_water {
 sub env {
     my ($self, $temp, $hum) = @_;
 
+    if (@_ != 1 && @_ != 3){
+        die "env() requires either zero params, or two\n";
+    }
+
+    if (defined $temp){
+        if ($temp !~ /^\d+$/){
+            die "env() temp param must be an integer\n";
+        }
+        if ($hum !~ /^\d+$/){
+            die "env() humidity param must be an integer\n";
+        }
+    }
+
     if (defined $temp){
         $db->insert_env($temp, $hum);
     }
