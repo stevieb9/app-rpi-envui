@@ -288,6 +288,7 @@ sub env_temp_aux {
 }
 sub _parse_config {
     my $self = shift;
+
     my $json;
     {
         local $/;

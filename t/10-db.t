@@ -4,8 +4,8 @@ use warnings;
 BEGIN {
     use lib 't/';
     use TestBase;
-    db_remove();
-    db_create();
+#    db_remove();
+#    db_create();
     config();
 }
 

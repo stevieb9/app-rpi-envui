@@ -13,11 +13,13 @@ sub new {
 
     if (-e 't/testing.lck' || (defined $args{testing} && $args{testing})){
         $self->{db} = DBI->connect(
-            "dbi:SQLite:dbname=t/envui.db",
+            "dbi:SQLite:database=:memory:",
             "",
             "",
             {RaiseError => 1}
         ) or die $DBI::errstr;
+
+        $self->{db}->sqlite_backup_from_file('src/envui-dist.db');
     }
     else {
         $self->{db} = DBI->connect(

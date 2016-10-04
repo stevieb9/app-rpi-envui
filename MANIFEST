@@ -22,6 +22,9 @@ README
 src/db.sql
 src/envui-dist.db
 src/envui-dist.json
+t/10-db.t
+t/15-api.t
+t/30-load_front_page.t
 t/base.t
 t/db.t
 t/envui.db
