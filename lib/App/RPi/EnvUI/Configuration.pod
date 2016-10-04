@@ -49,6 +49,14 @@ parameter.
 
 Default: C<local>
 
+=head3 testing
+
+Value: Bool. True (C<1>) to enable testing. We will mock out all portions that
+are non-Perl in order to allow for unit test runs on non-Pi boards. Set to False
+(C<0>) to disable this and run in normal mode.
+
+Default: C<0>
+
 =head2 CONTROL CONFIGURATION SECTION
 
 The C<control> configuration section specifies parameters for specific actions

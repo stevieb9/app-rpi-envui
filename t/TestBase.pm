@@ -30,3 +30,12 @@ sub config {
 sub unconfig {
     unlink "t/envui.json" or die $! if -e "t/envui.json";
 }
+
+1;
+__END__
+
+=head1 NAME TestBase - Utility class for unit testing
+
+=head1 DESCRIPTION
+
+This class is only used for unit testing L<App::RPi::EnvUI>.

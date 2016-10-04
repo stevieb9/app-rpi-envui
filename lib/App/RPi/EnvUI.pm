@@ -5,7 +5,7 @@ use Data::Dumper;
 use Dancer2;
 use Dancer2::Plugin::Database;
 
-our $VERSION = '0.2';
+our $VERSION = '0.03';
 
 my $api = App::RPi::EnvUI::API->new;
 
@@ -95,20 +95,11 @@ install, and has some significant requirements Most specifically, the
 L<wiringPi|http://wiringpi.com> libraries, and the fact it can only run on a
 Raspberry Pi.
 
-It's got no tests yet, and barely any documentation. It's only here so I can
-begin testing the installation routine.
+Test coverage is only about 50%, and there's really no documentation as of yet.
 
 This is my first web app in many, many years, so the technologies (jQuery,
 L<Dancer2> etc) are brand new to me, so as I go, I'll be refactoring heavily as
 I continue to learn.
-
-At this stage, after I sort the installer, I will be focusing solely on tests.
-After tests are done, I'll clean up the code (refactor), then complete the
-existing non-finished functionality, and add the rest of the functionality I
-want to add.
-
-I'll then add pictures, diagrams and schematics of my physical layout of the Pi
-all electrical components, and the electrical circuits.
 
 =head1 WHAT IT DOES
 

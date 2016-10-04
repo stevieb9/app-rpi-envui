@@ -2,7 +2,7 @@ package App::RPi::EnvUI::Event;
 
 use Async::Event::Interval;
 
-our $VERSION = '0.2';
+our $VERSION = '0.03';
 
 sub new {
     return bless {}, shift;

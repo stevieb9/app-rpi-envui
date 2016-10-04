@@ -1,5 +1,33 @@
 Changes history for App::RPi::EnvUI
 
+0.03    2016-10-04
+        - broke out the main components (route-handler, API, DB) into distinct
+          abstraction layers making it easy to test specific sections, and use
+          the various pieces external from the web app
+        - significant amount of test coverage written, particularly for API
+          and DB
+        - many small bugs corrected, and error checking added while in the
+          process of test writing
+        - separated testing from prod in API and DB (needs more work)
+        - initial work done on using memory-backed databases. For now, they are
+          fully implemented in testing
+        - temp and humidity limits are now grabbed by jquery from the API, so
+          there's no risk of conflict (closes #1)
+        - set reasonable real defaults in the default config file (closes #2)
+        - we now get the control aux values from the API instead of having them
+          specified all over the place manually (closes #3)
+        - the "next on" UI display is now updated on each fetch of the aux
+          states 9closes #8)
+        - in the Makefile.PL in a postamble, we now create a new app dir
+          (envui), and copy in the relevant pieces into it on 'make install'
+          (closes #10). More work will be needed here
+        - default config now has all aux pins set to -1. This is because GPIO 0
+          is a valid pin
+        - added core config section "testing" directive. This allows unit
+          testing on non-Pi boards, and on machines that don't have the wiringPi
+          C libraries installed
+        - next release will be doc and test focused
+
 0.02    2016-10-01
         - all auxillaries working
         - temp/humidity on/off limits working
