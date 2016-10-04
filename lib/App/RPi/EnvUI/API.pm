@@ -5,7 +5,6 @@ use App::RPi::EnvUI::Event;
 use Data::Dumper;
 use DateTime;
 use JSON::XS;
-use RPi::DHT11;
 use RPi::WiringPi::Constant qw(:all);
 use WiringPi::API qw(:perl);
 
@@ -35,6 +34,7 @@ sub new {
         }
     }
     else {
+        use if RPi::DHT11, ! $self->{testing};
         $self->{sensor} = RPi::DHT11->new(
             $self->_config_core( 'sensor_pin' )
         );
