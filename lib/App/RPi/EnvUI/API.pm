@@ -187,7 +187,7 @@ sub aux_time {
     my ($aux_id, $time) = @_;
 
     if ($aux_id !~ /^aux/){
-        die "aux_state() requires an aux ID as its first param\n";
+        die "aux_time() requires an aux ID as its first param\n";
     }
 
     if (defined $time) {
@@ -202,6 +202,10 @@ sub aux_override {
     # sets a manual override flag if an aux is turned on manually (via button)
 
     my ($aux_id, $override) = @_;
+
+    if ($aux_id !~ /^aux/){
+        die "aux_override() requires an aux ID as its first param\n";
+    }
 
     if (defined $override){
         $db->update('aux', 'override', $override, 'id', $aux_id);

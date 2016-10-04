@@ -132,6 +132,28 @@ $api->_parse_config;
     is $ok, undef, "aux_time() dies if no aux id is sent in";
 }
 
+{ # aux_override()
+
+    for (1..8){
+        my $aux_id = "aux$_";
+        my $o = $api->aux_override($aux_id);
+
+        is $o, 0, "aux_override() returns correct default override value for $aux_id";
+
+        $o = $api->aux_override($aux_id, 1);
+
+        is $o, 1, "aux_override() correctly sets override for $aux_id";
+
+        $o = $api->aux_override($aux_id, 0);
+
+        is $o, 0, "aux_override() can re-set override for $aux_id";
+    }
+
+    my $ok = eval { $api->aux_override; 1; };
+
+    is $ok, undef, "aux_override() dies if an aux ID not sent in";
+    like $@, qr/requires an aux ID/, "...and has the correct error message";
+}
 
 unconfig();
 
