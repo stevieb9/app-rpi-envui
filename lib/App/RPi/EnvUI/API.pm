@@ -186,6 +186,10 @@ sub aux_time {
 
     my ($aux_id, $time) = @_;
 
+    if ($aux_id !~ /^aux/){
+        die "aux_state() requires an aux ID as its first param\n";
+    }
+
     if (defined $time) {
         $db->update('aux', 'on_time', $time, 'id', $aux_id);
     }

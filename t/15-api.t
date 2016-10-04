@@ -106,6 +106,32 @@ $api->_parse_config;
     like $@, qr/requires an aux ID/, "...and has the correct error message";
 }
 
+{ #aux_time()
+
+    my $time = time();
+
+    for (1..8){
+        my $id = "aux$_";
+
+        is $api->aux_time($id), 0, "aux_time() has correct default for $id";
+
+        $api->aux_time($id, $time);
+    }
+
+    sleep 1;
+
+    for (1..8){
+        my $id = "aux$_";
+        my $elapsed = time() - $api->aux_time($id);
+        ok $elapsed > 0, "aux_time() sets time correctly for $id";
+        is $api->aux_time($id, 0), 0, "and resets it back again ok";
+    }
+
+    my $ok = eval { $api->aux_time(); 1; };
+
+    is $ok, undef, "aux_time() dies if no aux id is sent in";
+}
+
 
 unconfig();
 
