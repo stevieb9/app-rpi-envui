@@ -33,8 +33,12 @@ sub new {
         }
     }
     else {
-        use if ! $self->{testing}, 'RPi::DHT11';
-        use if ! $self->{testing}, 'WiringPi::API' => qw(:perl);
+        require RPi::DHT11;
+        RPi::DHT11->import;
+
+        require WiringPi::API;
+        WiringPi::API->import(qw(:perl));
+
         $self->{sensor} = RPi::DHT11->new(
             $self->_config_core( 'sensor_pin' )
         );
