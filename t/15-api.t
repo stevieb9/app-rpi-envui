@@ -60,6 +60,8 @@ $api->_parse_config;
     my $db_auxs = $db->auxs;
     my $api_auxs = $api->auxs;
 
+    is keys %$api_auxs, 8, "eight auxs() total from auxs()";
+
     for my $db_k (keys %$db_auxs) {
         for (keys %{ $db_auxs->{$db_k} }) {
             is $db_auxs->{$db_k}{$_}, $api_auxs->{$db_k}{$_},

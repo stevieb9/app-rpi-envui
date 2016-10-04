@@ -208,13 +208,9 @@ $api->_parse_config;
 
 }
 
-{ # update()
-
-    #FIXME: add tests for update()
-}
+#FIXME: add tests for update()
 
 db_remove();
 unconfig();
 
 done_testing();
-
