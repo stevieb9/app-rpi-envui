@@ -6,7 +6,6 @@ use Data::Dumper;
 use DateTime;
 use JSON::XS;
 use RPi::WiringPi::Constant qw(:all);
-use WiringPi::API qw(:perl);
 
 our $VERSION = '0.2';
 
@@ -34,7 +33,8 @@ sub new {
         }
     }
     else {
-        use if RPi::DHT11, ! $self->{testing};
+        use if ! $self->{testing}, 'RPi::DHT11';
+        use if ! $self->{testing}, 'WiringPi::API' => qw(:perl);
         $self->{sensor} = RPi::DHT11->new(
             $self->_config_core( 'sensor_pin' )
         );
