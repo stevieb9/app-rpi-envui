@@ -13,6 +13,8 @@ use Data::Dumper;
 use Mock::Sub;
 use Test::More;
 
+# mock out some subs that rely on external C libraries
+
 my $mock = Mock::Sub->new;
 
 my $temp_sub = $mock->mock(
@@ -23,6 +25,11 @@ my $temp_sub = $mock->mock(
 my $hum_sub = $mock->mock(
     'RPi::DHT11::humidity',
     return_value => 20
+);
+
+my $wp_sub = $mock->mock(
+    'App::RPi::EnvUI::API::write_pin',
+    return_value => 'ok'
 );
 
 my $db = App::RPi::EnvUI::DB->new(testing => 1);
@@ -164,7 +171,7 @@ $api->_parse_config;
     like $@, qr/requires an aux ID/, "...and has the correct error message";
 }
 
-{ # aux_pin
+{ # aux_pin()
 
     for (1..8){
         my $aux_id = "aux$_";
@@ -185,6 +192,32 @@ $api->_parse_config;
 
     is $ok, undef, "aux_pin() dies if an aux ID not sent in";
     like $@, qr/requires an aux ID/, "...and has the correct error message";
+}
+
+{ # switch()
+
+    for (1..8){
+        my $id = "aux$_";
+        $api->aux_pin($id, 1);
+        my $ret = $api->switch($id);
+
+        is $wp_sub->called, 1, "switch(): wp called if pin isn't -1";
+        is $ret, 'ok', "switch(): if pin isn't -1, we call write_pin(), $id";
+
+        $api->aux_pin($id, -1);
+
+        is $api->aux_pin($id), -1, "successfully reset $id pin to -1";
+    }
+
+    $wp_sub->reset;
+
+    for (1..8){
+        my $id = "aux$_";
+        my $ret = $api->switch($id);
+
+        is $wp_sub->called, 0, "switch(): write_pin() not called if pin state is -1: $id";
+        is $ret, '', "switch(): if pin is -1, we don't call write_pin(), $id";
+    }
 }
 
 unconfig();

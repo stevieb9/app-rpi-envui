@@ -73,7 +73,7 @@ sub switch {
     my $state = $self->aux_state($aux_id);
     my $pin = $self->aux_pin($aux_id);
 
-    if ($pin != 0 && $pin != -1){
+    if ($pin != -1){
         $state
             ? write_pin($pin, HIGH)
             : write_pin($pin, LOW);
