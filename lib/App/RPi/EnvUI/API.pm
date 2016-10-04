@@ -22,15 +22,11 @@ sub new {
     $self->_parse_config($self->{config_file});
 
     # check if we're testing or not. If so, bypass the loading of the
-    # RPi::DHT11 sensor
-
+    # RPi::DHT11 and WiringPi::API modules, and set up a fake sensor
 
     if (-e 't/testing.lck' || $self->{testing}){
         warn "API in test mode\n";
-        $self->{sensor} = 'RPi::DHT11 sensor mocked due to testing...';
-        *read_sensor = sub {
-            return (80, 20);
-        }
+        $self->{sensor} = bless {}, 'RPi::DHT11';
     }
     else {
         require RPi::DHT11;

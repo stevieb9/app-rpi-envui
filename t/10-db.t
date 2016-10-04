@@ -16,10 +16,7 @@ my $db = App::RPi::EnvUI::DB->new(testing => 1);
 
 is ref $db, 'App::RPi::EnvUI::DB', "new() returns a proper object";
 
-my $api = App::RPi::EnvUI::API->new(
-    testing => 1,
-    config_file => 't/envui.json'
-);
+my $api = App::RPi::EnvUI::API->new(testing => 1);
 $api->_parse_config;
 
 { # auxs()

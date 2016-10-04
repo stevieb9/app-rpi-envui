@@ -10,18 +10,27 @@ BEGIN {
 use App::RPi::EnvUI::API;
 use App::RPi::EnvUI::DB;
 use Data::Dumper;
+use Mock::Sub;
 use Test::More;
+
+my $mock = Mock::Sub->new;
+
+my $temp_sub = $mock->mock(
+    'RPi::DHT11::temp',
+    return_value => 80
+);
+
+my $hum_sub = $mock->mock(
+    'RPi::DHT11::humidity',
+    return_value => 20
+);
 
 my $db = App::RPi::EnvUI::DB->new(testing => 1);
 
-my $api = App::RPi::EnvUI::API->new(
-    testing => 1,
-    config_file => 't/envui.json'
-);
+my $api = App::RPi::EnvUI::API->new(testing => 1);
 
 is ref $api, 'App::RPi::EnvUI::API', "new() returns a proper object";
 is $api->{testing}, 1, "testing param to new() ok";
-is $api->{config_file}, 't/envui.json', "config_file param to new() ok";
 
 $api->_parse_config;
 
