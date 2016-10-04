@@ -5,7 +5,7 @@ use Data::Dumper;
 use Dancer2;
 use Dancer2::Plugin::Database;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 my $api = App::RPi::EnvUI::API->new;
 
