@@ -68,6 +68,45 @@ $api->_parse_config;
     }
 }
 
+{ # aux_id()
+
+    # takes aux hash
+
+    for (1..8){
+        my $name = "aux$_";
+        my $aux = $api->aux($name);
+        my $id = $api->aux_id($aux);
+
+        is $id, $name, "aux_id() returns proper ID for $name";
+
+
+    }
+}
+
+{ # aux_state()
+
+    for (1..8){
+        my $aux_id = "aux$_";
+        my $state = $api->aux_state($aux_id);
+
+        is $state, 0, "aux_state() returns correct default state value for $aux_id";
+
+        $state = $api->aux_state($aux_id, 1);
+
+        is $state, 1, "aux_state() correctly sets state for $aux_id";
+
+        $state = $api->aux_state($aux_id, 0);
+
+        is $state, 0, "aux_state() can re-set state for $aux_id";
+    }
+
+    my $ok = eval { $api->aux_state; 1; };
+
+    is $ok, undef, "aux_state() dies if an aux ID not sent in";
+    like $@, qr/requires an aux ID/, "...and has the correct error message";
+}
+
+
 unconfig();
 
 done_testing();

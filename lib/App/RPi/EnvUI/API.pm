@@ -163,14 +163,18 @@ sub auxs {
     return $db->auxs;
 }
 sub aux_id {
-    my $self = shift;
-    return $_[0]->{id};
+    return $_[1]->{id};
 }
 sub aux_state {
     my $self = shift;
     # maintains the auxillary state (on/off)
 
     my ($aux_id, $state) = @_;
+
+    if ($aux_id !~ /^aux/){
+        die "aux_state() requires an aux ID as its first param\n";
+    }
+
     if (defined $state){
         $db->update('aux', 'state', $state, 'id', $aux_id);
     }
