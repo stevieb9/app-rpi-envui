@@ -37,12 +37,7 @@ $api->_parse_config;
         my $name = "aux$_";
         my $aux = $auxs->{$name};
 
-        if ($name eq 'aux1' || $name eq 'aux2'){
-            is $aux->{pin}, 0, "$name aux has proper pin default";
-        }
-        else {
-            is $aux->{pin}, -1, "$name aux has proper pin default";
-        }
+        is $aux->{pin}, -1, "$name aux has proper pin default";
         is $aux->{state}, 0, "$name has proper default state";
         is $aux->{override}, 0, "$name has proper default override";
         is $aux->{on_time}, 0, "$name has proper default on_time";
