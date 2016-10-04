@@ -28,11 +28,11 @@ sub new {
         require WiringPi::API;
         WiringPi::API->import(qw(:perl));
 
+        $self->{db} = App::RPi::EnvUI::DB->new;
+
         $self->{sensor} = RPi::DHT11->new(
             $self->_config_core( 'sensor_pin' )
         );
-
-        $self->{db} = App::RPi::EnvUI::DB->new;
     }
 
     $self->{config_file} = defined $self->{config_file}

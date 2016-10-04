@@ -1,4 +1,6 @@
-test.db$
+t/testing\.lck$
+envui/
+test\.db$
 cover_db/
 .gitignore
 envui$
