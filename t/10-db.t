@@ -16,7 +16,7 @@ my $db = App::RPi::EnvUI::DB->new(testing => 1);
 
 is ref $db, 'App::RPi::EnvUI::DB', "new() returns a proper object";
 
-my $api = App::RPi::EnvUI::API->new(testing => 1);
+my $api = App::RPi::EnvUI::API->new(testing => 1, config_file => 't/envui.json');
 $api->_parse_config;
 
 { # auxs()
@@ -198,7 +198,16 @@ $api->_parse_config;
 
 }
 
-#FIXME: add tests for update()
+#{ # update()
+
+    #FIXME: add tests for update(). These ones don't work!
+
+#    my $x = $db->config_control('temp_aux');
+#    $db->update('control', 'value', 'aux9', 'id', 'temp_aux');
+#    is $api->env_temp_aux, 'aux9', "setting the value works ok";
+#    $db->update('control', 'value', 'aux1', 'id', 'temp_aux');
+#    is $api->env_temp_aux, 'aux1', "...and works ok going back too";
+#}
 
 unconfig();
 

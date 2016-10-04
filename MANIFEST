@@ -1,11 +1,8 @@
-App-RPi-EnvUI-0.2/META.json
-App-RPi-EnvUI-0.2/META.yml
 bin/app.pl
 Changes
 config.yml
 config/envui.json
 db/envui.db
-db/envui.db-journal
 lib/App/RPi/EnvUI.pm
 lib/App/RPi/EnvUI/API.pm
 lib/App/RPi/EnvUI/Configuration.pod
@@ -25,11 +22,7 @@ src/envui-dist.json
 t/10-db.t
 t/15-api.t
 t/30-load_front_page.t
-t/base.t
-t/db.t
-t/envui.db
-t/load_front_page.t
-t/temp.t
 t/TestBase.pm
+t/testing.lck
 views/main.tt
 views/test.tt

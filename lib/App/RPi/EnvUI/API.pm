@@ -9,17 +9,9 @@ use RPi::WiringPi::Constant qw(:all);
 
 our $VERSION = '0.2';
 
-my $db = App::RPi::EnvUI::DB->new;
-
 sub new {
     my $self = bless {}, shift;
     %$self = @_;
-
-    $self->{config_file} = defined $self->{config_file}
-        ? $self->{config_file}
-        : 'config/envui.json';
-
-    $self->_parse_config($self->{config_file});
 
     # check if we're testing or not. If so, bypass the loading of the
     # RPi::DHT11 and WiringPi::API modules, and set up a fake sensor
@@ -27,6 +19,7 @@ sub new {
     if (-e 't/testing.lck' || $self->{testing}){
         warn "API in test mode\n";
         $self->{sensor} = bless {}, 'RPi::DHT11';
+        $self->{db} = App::RPi::EnvUI::DB->new(testing => 1);
     }
     else {
         require RPi::DHT11;
@@ -38,7 +31,17 @@ sub new {
         $self->{sensor} = RPi::DHT11->new(
             $self->_config_core( 'sensor_pin' )
         );
+
+        $self->{db} = App::RPi::EnvUI::DB->new;
     }
+
+    $self->{config_file} = defined $self->{config_file}
+        ? $self->{config_file}
+        : 'config/envui.json';
+
+    $self->_parse_config($self->{config_file});
+
+
 
     return $self;
 }
@@ -87,7 +90,7 @@ sub action_light {
     my ($on_hour, $on_min) = split /:/, $light->{on_at};
 
     if ($now->hour > $on_hour || ($now->hour == $on_hour && $now->minute >= $on_min)){
-        $db->update('light', 'value', time(), 'id', 'on_since');
+        $self->{db}->update('light', 'value', time(), 'id', 'on_since');
         $self->aux_state(_config_control('light_aux'), ON);
 
         #
@@ -103,7 +106,7 @@ sub action_light {
         my $remaining = $time - $on_since;
 
         if ($remaining >= $on_secs){
-            $db->update('light', 'value', 0, 'id', 'on_since');
+            $self->{db}->update('light', 'value', 0, 'id', 'on_since');
             $self->aux_state(_config_control('light_aux'), OFF);
 
             #
@@ -154,12 +157,12 @@ sub aux {
     my $self = shift;
     my $aux_id = shift;
 
-    my $aux = $db->aux($aux_id);
+    my $aux = $self->{db}->aux($aux_id);
     return $aux;
 }
 sub auxs {
     my $self = shift;
-    return $db->auxs;
+    return $self->{db}->auxs;
 }
 sub aux_id {
     return $_[1]->{id};
@@ -175,7 +178,7 @@ sub aux_state {
     }
 
     if (defined $state){
-        $db->update('aux', 'state', $state, 'id', $aux_id);
+        $self->{db}->update('aux', 'state', $state, 'id', $aux_id);
     }
     return $self->aux($aux_id)->{state};
 }
@@ -190,7 +193,7 @@ sub aux_time {
     }
 
     if (defined $time) {
-        $db->update('aux', 'on_time', $time, 'id', $aux_id);
+        $self->{db}->update('aux', 'on_time', $time, 'id', $aux_id);
     }
 
     my $on_time = $self->aux($aux_id)->{on_time};
@@ -207,7 +210,7 @@ sub aux_override {
     }
 
     if (defined $override){
-        $db->update('aux', 'override', $override, 'id', $aux_id);
+        $self->{db}->update('aux', 'override', $override, 'id', $aux_id);
     }
     return $self->aux($aux_id)->{override};
 }
@@ -222,25 +225,25 @@ sub aux_pin {
     }
 
     if (defined $pin){
-        $db->update('aux', 'pin', $pin, 'id', $aux_id);
+        $self->{db}->update('aux', 'pin', $pin, 'id', $aux_id);
     }
     return $self->aux($aux_id)->{pin};
 }
 sub _config_control {
     my $self = shift;
     my $want = shift;
-    return $db->config_control($want);
+    return $self->{db}->config_control($want);
 }
 sub _config_core {
     my $self = shift;
     my $want = shift;
-    return $db->config_core($want);
+    return $self->{db}->config_core($want);
 }
 sub _config_light {
     my $self = shift;
     my $want = shift;
 
-    my $light = $db->config_light;
+    my $light = $self->{db}->config_light;
 
     my %conf;
 
@@ -250,7 +253,7 @@ sub _config_light {
 
     my ($on_hour, $on_min) = split /:/, $conf{on_at};
 
-    my $now = DateTime->now(time_zone => $db->config_core('time_zone'));
+    my $now = DateTime->now(time_zone => $self->{db}->config_core('time_zone'));
     my $light_on = $now->clone;
 
     $light_on->set_hour($on_hour);
@@ -267,7 +270,7 @@ sub _config_light {
 }
 sub _config_water {
     my $self = shift;
-    my $water = $db->config_water;
+    my $water = $self->{db}->config_water;
 
     my %conf;
 
@@ -294,10 +297,10 @@ sub env {
     }
 
     if (defined $temp){
-        $db->insert_env($temp, $hum);
+        $self->{db}->insert_env($temp, $hum);
     }
 
-    return $db->env;
+    return $self->{db}->env;
 }
 sub temp {
     my $self = shift;
@@ -336,7 +339,7 @@ sub _parse_config {
 
     for my $conf_section (qw(aux control core light water)){
         for my $directive (keys %{ $conf->{$conf_section} }){
-            $db->update(
+            $self->{db}->update(
                 $conf_section,
                 'value',
                 $conf->{$conf_section}{$directive},
@@ -351,7 +354,7 @@ sub _parse_config {
     # aux entries are suffixed with a number
 
     for my $directive (keys %{ $conf->{aux} }){
-        $db->update('aux', 'value', $conf->{aux}{$directive}, 'id', $directive);
+        $self->{db}->update('aux', 'value', $conf->{aux}{$directive}, 'id', $directive);
     }
 }
 sub _reset {
@@ -364,10 +367,10 @@ sub _reset {
     }
 }
 sub _bool {
-    my $self = shift;
     # translates javascript true/false to 1/0
 
-    my $bool = shift;
+    my ($self, $bool) = @_;
+    die "bool() needs either 'true' or 'false' as param\n" if ! defined $bool;
     return $bool eq 'true' ? 1 : 0;
 }
 

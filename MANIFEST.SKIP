@@ -1,3 +1,5 @@
+test.db$
+cover_db/
 .gitignore
 envui$
 Makefile$

@@ -12,6 +12,7 @@ sub new {
     my %args = @_;
 
     if (-e 't/testing.lck' || (defined $args{testing} && $args{testing})){
+        $self->{testing} = 1;
         $self->{db} = DBI->connect(
             "dbi:SQLite:database=:memory:",
             "",
