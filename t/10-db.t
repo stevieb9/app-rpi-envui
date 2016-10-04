@@ -4,8 +4,6 @@ use warnings;
 BEGIN {
     use lib 't/';
     use TestBase;
-#    db_remove();
-#    db_create();
     config();
 }
 
@@ -210,7 +208,6 @@ $api->_parse_config;
 
 #FIXME: add tests for update()
 
-db_remove();
 unconfig();
 
 done_testing();

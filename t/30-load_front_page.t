@@ -5,8 +5,6 @@ BEGIN {
     use lib 't/';
     use TestBase;
     set_testing();
-    db_remove();
-    db_create();
 }
 
 use Test::More;
@@ -26,7 +24,6 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     like $res->content, qr/Temperature/, 'front page loaded ok';
 }
 
-db_remove();
 unset_testing();
 done_testing();
 

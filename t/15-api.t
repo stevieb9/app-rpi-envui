@@ -4,8 +4,6 @@ use warnings;
 BEGIN {
     use lib 't/';
     use TestBase;
-    db_remove();
-    db_create();
     config();
 }
 
@@ -70,7 +68,6 @@ $api->_parse_config;
     }
 }
 
-db_remove();
 unconfig();
 
 done_testing();
