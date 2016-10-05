@@ -11,9 +11,7 @@ my $api = App::RPi::EnvUI::API->new;
 
 $api->_reset();
 $api->_config_light();
-
 $api->env($api->read_sensor);
-
 $api->events;
 
 get '/' => sub {

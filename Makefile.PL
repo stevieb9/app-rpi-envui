@@ -31,28 +31,28 @@ install:: all local
 
 local:
 
-	rm -rf envui
-	mkdir envui
+	rm -rf ~/envui
+	mkdir ~/envui
 
-	mkdir envui/bin
-	cp bin/* envui/bin
+	mkdir ~/envui/bin
+	cp bin/* ~/envui/bin
 
-	mkdir envui/config
-	cp config/* envui/config
+	mkdir ~/envui/config
+	cp config/* ~/envui/config
 
-	mkdir envui/db
-	cp db/* envui/db
+	mkdir ~/envui/db
+	cp db/* ~/envui/db
 
-	mkdir envui/public
-	mkdir envui/public/js
-	mkdir envui/public/css
-	cp public/js/* envui/public/js
-	cp public/css/* envui/public/css
+	mkdir ~/envui/public
+	mkdir ~/envui/public/js
+	mkdir ~/envui/public/css
+	cp public/js/* ~/envui/public/js
+	cp public/css/* ~/envui/public/css
 
-	mkdir envui/src
-	cp src/* envui/src
-	mkdir envui/views
-	cp views/* envui/views
+	mkdir ~/envui/src
+	cp src/* ~/envui/src
+	mkdir ~/envui/views
+	cp views/* ~/envui/views
 
 EOF
 }

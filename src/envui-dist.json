@@ -4,6 +4,7 @@
     "event_action_timer": "3",
     "event_display_timer": "4",
     "time_zone": "local",
+    "sensor_pin": "-1",
     "testing": "0"
   },
   "control": {

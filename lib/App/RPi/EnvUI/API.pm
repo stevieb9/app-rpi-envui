@@ -22,11 +22,14 @@ sub new {
         $self->{db} = App::RPi::EnvUI::DB->new(testing => 1);
     }
     else {
-        require RPi::DHT11;
-        RPi::DHT11->import;
-
-        require WiringPi::API;
-        WiringPi::API->import(qw(:perl));
+        if (! exists $INC{'WiringPi/API.pm'}){
+            require WiringPi::API;
+            WiringPi::API->import(qw(:perl));
+        }
+        if (! exists $INC{'RPi/DHT11.pm'}){
+            require RPi::DHT11;
+            RPi::DHT11->import;
+        }
 
         $self->{db} = App::RPi::EnvUI::DB->new;
 
@@ -41,8 +44,6 @@ sub new {
 
     $self->_parse_config($self->{config_file});
 
-
-
     return $self;
 }
 sub events {
@@ -50,13 +51,8 @@ sub events {
 
     my $events = App::RPi::EnvUI::Event->new;
 
-    $self->{events}{env_to_db} = $events->env_to_db(
-        App::RPi::EnvUI::API->new
-    );
-
-    $self->{events}{env_action} = $events->env_action(
-        App::RPi::EnvUI::API->new
-    );
+    $self->{events}{env_to_db} = $events->env_to_db($self);
+    $self->{events}{env_action} = $events->env_action($self);
 
     $self->{events}{env_to_db}->start;
     $self->{events}{env_action}->start;
