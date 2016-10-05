@@ -7,6 +7,8 @@ Changes history for App::RPi::EnvUI
           been required, then instead of passing a new API object to each
           event, we now pass in $self instead, so we don't call new() which
           tries to load the wiringPi libraries again
+        - the 'envui' app dir now gets placed in the user's home directory, and
+          works
 
 0.03    2016-10-04
         - broke out the main components (route-handler, API, DB) into distinct

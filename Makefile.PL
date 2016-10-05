@@ -38,10 +38,12 @@ local:
 	cp bin/* ~/envui/bin
 
 	mkdir ~/envui/config
-	cp config/* ~/envui/config
+	cp src/envui-dist.json ~/envui/config/envui.json
 
 	mkdir ~/envui/db
-	cp db/* ~/envui/db
+	cp src/envui-dist.db ~/envui/db/envui.db
+
+	cp -R lib ~/envui
 
 	mkdir ~/envui/public
 	mkdir ~/envui/public/js
@@ -51,6 +53,7 @@ local:
 
 	mkdir ~/envui/src
 	cp src/* ~/envui/src
+
 	mkdir ~/envui/views
 	cp views/* ~/envui/views
 
