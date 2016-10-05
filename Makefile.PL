@@ -4,12 +4,15 @@ use warnings;
 use ExtUtils::MakeMaker;
 use File::Copy;
 
+if ($^O =~ /MSWin/){
+    print "this distribution is not meant to run on MS Windows\n";
+    exit;
+}
+
 my $eumm_version = $ExtUtils::MakeMaker::VERSION;
 $eumm_version =~ s/_//;
 
-my $sep = $^O =~ /MSWin/ ? ';' : ':';
-
-if (! grep { -x "$_/sqlite3" } split /$sep/, $ENV{PATH}) {
+if (! grep { -x "$_/sqlite3" } split /:/, $ENV{PATH}) {
     die "sqlite3 must be installed to continue\n";
 }
 

@@ -5,9 +5,9 @@ use Data::Dumper;
 use Dancer2;
 use Dancer2::Plugin::Database;
 
-our $VERSION = '0.04';
+our $VERSION = '0.21';
 
-my $api = App::RPi::EnvUI::API->new;
+my $api = App::RPi::EnvUI::API;
 
 $api->_reset();
 $api->_config_light();
@@ -84,13 +84,22 @@ application
 
 =head1 SYNOPSIS
 
+    cd ~/envui
+    sudo plackup bin/app.pl
+
+Now direct your browser at your Pi, on port 3000:
+
+    http://raspberry.pi:3000
 
 =head1 DESCRIPTION
 
 This distribution is alpha. It does not install the same way most CPAN modules
 install, and has some significant requirements Most specifically, the
 L<wiringPi|http://wiringpi.com> libraries, and the fact it can only run on a
-Raspberry Pi.
+Raspberry Pi (except for unit testing).
+
+When installed, it'll install all of the relevant information in a directory
+named C<envui> in your home directory.
 
 Test coverage is only about 50%, and there's really no documentation as of yet.
 

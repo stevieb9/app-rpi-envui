@@ -1,6 +1,8 @@
 Changes history for App::RPi::EnvUI
 
-0.04 NONREL
+0.21    2016-10-04
+        - had to change version numbers because of a typo in 0.2, which should
+          have been 0.02
         - added sensor_pin to core config section in json and db
         - fix issue where wiringPi was being loaded multiple times, breaking
           things. First, set up a check in %INC to see if they've already
