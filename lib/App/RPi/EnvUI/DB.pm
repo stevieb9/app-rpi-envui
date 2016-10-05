@@ -5,7 +5,7 @@ use DateTime;
 use DBI;
 use RPi::WiringPi::Constant qw(:all);
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 #FIXME: the following will have to be cleaned up into a conditional
 # we create a db handle globally so that if subsequent calls to new() are done,

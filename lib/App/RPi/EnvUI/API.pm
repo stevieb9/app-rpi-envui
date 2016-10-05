@@ -7,7 +7,7 @@ use DateTime;
 use JSON::XS;
 use RPi::WiringPi::Constant qw(:all);
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 sub new {
     my $self = bless {}, shift;

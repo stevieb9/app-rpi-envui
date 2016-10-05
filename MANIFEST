@@ -23,6 +23,5 @@ t/10-db.t
 t/15-api.t
 t/30-load_front_page.t
 t/TestBase.pm
-t/testing.lck
 views/main.tt
 views/test.tt
