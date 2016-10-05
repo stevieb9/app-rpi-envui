@@ -13,6 +13,8 @@ use Data::Dumper;
 use Mock::Sub no_warnings => 1;
 use Test::More;
 
+#FIXME: add tests to test overrides for hum and temp
+
 # mock out some subs that rely on external C libraries
 
 my $mock = Mock::Sub->new;
@@ -32,7 +34,10 @@ my $wp_sub = $mock->mock(
     return_value => 'ok'
 );
 
-my $api = App::RPi::EnvUI::API->new(testing => 1, config_file => 't/envui.json');
+my $api = App::RPi::EnvUI::API->new(
+    testing => 1,
+    config_file => 't/envui.json'
+);
 my $db = App::RPi::EnvUI::DB->new(testing => 1);
 
 is ref $api, 'App::RPi::EnvUI::API', "new() returns a proper object";
@@ -104,7 +109,9 @@ $api->_parse_config;
         my $aux_id = "aux$_";
         my $state = $api->aux_state($aux_id);
 
-        is $state, 0, "aux_state() returns correct default state value for $aux_id";
+        is $state,
+            0,
+            "aux_state() returns correct default state value for $aux_id";
 
         $state = $api->aux_state($aux_id, 1);
 
@@ -153,7 +160,10 @@ $api->_parse_config;
         my $aux_id = "aux$_";
         my $o = $api->aux_override($aux_id);
 
-        is $o, 0, "aux_override() returns correct default override value for $aux_id";
+        is
+            $o,
+            0,
+            "aux_override() returns correct default override value for $aux_id";
 
         $o = $api->aux_override($aux_id, 1);
 
@@ -214,7 +224,10 @@ $api->_parse_config;
         my $id = "aux$_";
         my $ret = $api->switch($id);
 
-        is $wp_sub->called, 0, "switch(): write_pin() not called if pin state is -1: $id";
+        is
+            $wp_sub->called,
+            0,
+            "switch(): write_pin() not called if pin state is -1: $id";
         is $ret, '', "switch(): if pin is -1, we don't call write_pin(), $id";
     }
 }
@@ -233,8 +246,14 @@ $api->_parse_config;
     $api->env(50, 50);
     $ret = $api->env;
 
-    is $ret->{temp}, 50, "env() does the right thing after another update (temp)";
-    is $ret->{humidity}, 50, "env() does the right thing after another update (hum)";
+    is
+        $ret->{temp},
+        50,
+        "env() does the right thing after another update (temp)";
+    is
+        $ret->{humidity},
+        50,
+        "env() does the right thing after another update (hum)";
 
     my $ok = eval { $api->env(50), 1; };
     is $ok, undef, "env() dies if neither 0 or exactly 2 args sent in";
@@ -382,7 +401,10 @@ $api->_parse_config;
     for (@directives){
         my $value = $api->_config_light($_);
         if ($_ eq 'on_in'){
-            isnt $value, '00:00', "_config_light() on_in value is properly set from the default";
+            isnt
+                $value,
+                '00:00',
+                "_config_light() on_in value is properly set from the default";
             $i++;
             next;
         }
@@ -484,7 +506,10 @@ $api->_parse_config;
     $db->update('light', 'value', $on_since, 'id', 'on_since');
 
     $api->action_light;
-    is $api->_config_light('on_since'), 0, "light on_since is zero after going off";
+    is
+        $api->_config_light('on_since'),
+        0,
+        "light on_since is zero after going off";
 
     is
         $api->aux_state($api->_config_control('light_aux')),
@@ -525,8 +550,13 @@ $api->_parse_config;
     $api->aux_time($id, time() - 1680); # 28 mins
 
     $api->action_humidity($id, 99);
-    ok $api->aux_time($id) > 0, "hum on aux_time ok when hum < limit but min_time not reached";
-    is $api->aux_state($id), 1, "hum aux is on w/o override when hum < limit but min_time not reached";
+    ok
+        $api->aux_time($id) > 0,
+        "hum on aux_time ok when hum < limit but min_time not reached";
+    is
+        $api->aux_state($id),
+        1,
+        "hum aux is on w/o override when hum < limit but min_time not reached";
 
     # hum equal to limit exactly, min_time expired
 
@@ -537,8 +567,14 @@ $api->_parse_config;
     is $api->aux_state($id), 0, "hum aux is on w/o override when hum==limit";
 
     $api->action_humidity($id, 99);
-    is $api->aux_time($id),  0, "hum on aux_time ok when hum > limit and min_time expired";
-    is $api->aux_state($id), 0, "hum aux is on w/o override when hum > limit and min_time expired";
+    is
+        $api->aux_time($id),
+        0,
+        "hum on aux_time ok when hum > limit and min_time expired";
+    is
+        $api->aux_state($id),
+        0,
+        "hum aux is on w/o override when hum > limit and min_time expired";
 }
 
 { # action_temp()
@@ -574,8 +610,13 @@ $api->_parse_config;
     $api->aux_time($id, time() - 1680); # 28 mins
 
     $api->action_temp($id, 1);
-    ok $api->aux_time($id) > 0, "temp on aux_time ok when temp < limit but min_time not reached";
-    is $api->aux_state($id), 1, "temp aux is on w/o override when temp < limit but min_time not reached";
+    ok
+        $api->aux_time($id) > 0,
+        "temp on aux_time ok when temp < limit but min_time not reached";
+    is
+        $api->aux_state($id),
+        1,
+        "temp aux is on w/o override when temp<limit but min_time not reached";
 
     # temp equal to limit exactly, min_time expired
 
@@ -586,8 +627,14 @@ $api->_parse_config;
     is $api->aux_state($id), 0, "temp aux is on w/o override when temp==limit";
 
     $api->action_temp($id, 1);
-    is $api->aux_time($id),  0, "temp on aux_time ok when temp > limit and min_time expired";
-    is $api->aux_state($id), 0, "temp aux is on w/o override when temp > limit and min_time expired";
+    is
+        $api->aux_time($id),
+        0,
+        "temp on aux_time ok when temp > limit and min_time expired";
+    is
+        $api->aux_state($id),
+        0,
+        "temp aux is on w/o override when temp > limit and min_time expired";
 }
 # $db->{db}->sqlite_backup_to_file('test.db');
 
