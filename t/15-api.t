@@ -390,7 +390,6 @@ $api->_parse_config;
         $i++;
     }
 }
-
 { # config_water()
 
     my @directives = qw(
@@ -401,12 +400,28 @@ $api->_parse_config;
         0
         );
 
-    # is @directives, @values, "config_water() test is set up equally";
+    is @directives, @values, "config_water() test is set up equally";
 
-    #my $conf = $db->config_water;
+    my $conf = $api->_config_water;
 
-    # is ref $conf, 'HASH', "config_water() is an href with no params";
+    is ref $conf, 'HASH', "config_water() is an href with no params";
 
+    for my $k (keys %$conf){
+        my $ok = grep {$_ eq $k} @directives;
+        is $ok, 1, "$k is a directive";
+    }
+
+    for my $d (@directives){
+        is exists $conf->{$d}, 1, "$d directive exists in conf";
+    }
+
+    my $i = 0;
+
+    for (@directives){
+        my $value = $api->_config_water($_);
+        is $value, $values[$i], "water $_ has value $values[$i] by default";
+        $i++;
+    }
 }
 
 # $db->{db}->sqlite_backup_to_file('test.db');

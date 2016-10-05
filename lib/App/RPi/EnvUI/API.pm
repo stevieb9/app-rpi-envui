@@ -266,7 +266,13 @@ sub _config_light {
 }
 sub _config_water {
     my $self = shift;
+    my $want = shift;
+
     my $water = $self->{db}->config_water;
+
+    if (defined $want){
+        return $water->{$want}{value};
+    }
 
     my %conf;
 
