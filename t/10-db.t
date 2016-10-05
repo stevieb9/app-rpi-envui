@@ -80,7 +80,7 @@ $api->_parse_config;
     );
 
     my @values = qw(
-        15 3 4 0 0 local
+        15 3 4 -1 0 local
     );
 
     my $i = 0;

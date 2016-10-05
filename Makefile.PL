@@ -86,7 +86,7 @@ WriteMakefile(
         'DBD::SQLite' => 0,
         'DateTime'  => 0,
         'JSON::XS' => 0,
-        'Mock::Sub' => 0,
+        'Mock::Sub' => '1.06',
         'Plack::Test' => 0,
         'RPi::DHT11' => '1.00',
         'RPi::WiringPi::Constant' => '0.02',
