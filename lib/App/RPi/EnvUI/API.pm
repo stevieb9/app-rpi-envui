@@ -80,14 +80,14 @@ sub switch {
 }
 sub action_light {
     my $self = shift;
-    my $light = shift;
+
     my $now = DateTime->now(time_zone => $self->_config_core('time_zone'));
 
-    my ($on_hour, $on_min) = split /:/, $light->{on_at};
+    my ($on_hour, $on_min) = split /:/, $self->_config_light('on_at');
 
-    if ($now->hour > $on_hour || ($now->hour == $on_hour && $now->minute >= $on_min)){
+    if ($now->hour > $on_hour || ($now->hour == $on_hour && $now->minute >= $on_min && ! $self->_config_light('on_since'))){
         $self->{db}->update('light', 'value', time(), 'id', 'on_since');
-        $self->aux_state(_config_control('light_aux'), ON);
+        $self->aux_state($self->_config_control('light_aux'), ON);
 
         #
         # turn light on here!
@@ -103,7 +103,7 @@ sub action_light {
 
         if ($remaining >= $on_secs){
             $self->{db}->update('light', 'value', 0, 'id', 'on_since');
-            $self->aux_state(_config_control('light_aux'), OFF);
+            $self->aux_state($self->_config_control('light_aux'), OFF);
 
             #
             # turn light off here!
@@ -118,16 +118,14 @@ sub action_humidity {
     my $limit = $self->_config_control('humidity_limit');
     my $min_run = $self->_config_control('humidity_aux_on_time');
 
-    my $x = $self->aux_override($aux_id);
-
     if (! $self->aux_override($aux_id)) {
-        if ($humidity < $limit && $self->aux_time( $aux_id ) == 0) {
-            $self->aux_state( $aux_id, HIGH );
-            $self->aux_time( $aux_id, time );
+        if ($humidity < $limit && $self->aux_time($aux_id) == 0) {
+            $self->aux_state($aux_id, HIGH);
+            $self->aux_time($aux_id, time());
         }
-        elsif ($humidity >= $limit && $self->aux_time( $aux_id ) >= $min_run) {
-            $self->aux_state( $aux_id, LOW );
-            $self->aux_time( $aux_id, 0 );
+        if ($humidity >= $limit && $self->aux_time($aux_id) >= $min_run) {
+            $self->aux_state($aux_id, LOW);
+            $self->aux_time($aux_id, 0);
         }
     }
 }
@@ -139,11 +137,11 @@ sub action_temp {
     my $min_run = $self->_config_control('temp_aux_on_time');
 
     if (! $self->aux_override($aux_id)){
-        if ($temp >= $limit && $self->aux_time($aux_id) == 0){
+        if ($temp > $limit && $self->aux_time($aux_id) == 0){
             $self->aux_state($aux_id, HIGH);
             $self->aux_time($aux_id, time);
         }
-        elsif ($temp < $limit && $self->aux_time($aux_id) >= $min_run){
+        elsif ($temp <= $limit && $self->aux_time($aux_id) >= $min_run){
             $self->aux_state($aux_id, LOW);
             $self->aux_time($aux_id, 0);
         }
@@ -193,7 +191,8 @@ sub aux_time {
     }
 
     my $on_time = $self->aux($aux_id)->{on_time};
-    return $on_time == 0 ? 0 : time - $on_time;
+    my $on_length = time() - $on_time;
+    return $on_time == 0 ? 0 : $on_length;
 }
 sub aux_override {
     my $self = shift;
