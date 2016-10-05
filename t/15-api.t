@@ -10,7 +10,7 @@ BEGIN {
 use App::RPi::EnvUI::API;
 use App::RPi::EnvUI::DB;
 use Data::Dumper;
-use Mock::Sub;
+use Mock::Sub no_warnings => 1;
 use Test::More;
 
 # mock out some subs that rely on external C libraries
@@ -382,7 +382,7 @@ $api->_parse_config;
     for (@directives){
         my $value = $api->_config_light($_);
         if ($_ eq 'on_in'){
-            not $value, '00:00', "_config_light() on_in value is properly set from the default";
+            isnt $value, '00:00', "_config_light() on_in value is properly set from the default";
             $i++;
             next;
         }
