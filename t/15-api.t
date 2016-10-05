@@ -460,17 +460,30 @@ $api->_parse_config;
         1,
         "light aux is in on state";
 
-    # force a light off event
+    # turn up on time to nearly 12 hrs, light should still be on
 
-    my $on = $light->{on_hours} * 60 * 60 + 10;
+    #my $on = $light->{on_hours} * 60 * 60 + 10;
+    my $on = 43000;
     my $on_since = time() - $on;
 
     $db->update('light', 'value', $on_since, 'id', 'on_since');
 
     $api->action_light;
 
-    # light should be off again
+    is
+        $api->aux_state($api->_config_control('light_aux')),
+        1,
+        "light aux is in on state when not quite all on time is done";
 
+    # light should go off again
+
+    $on = $light->{on_hours} * 60 * 60 + 10;
+
+    $on_since = time() - $on;
+
+    $db->update('light', 'value', $on_since, 'id', 'on_since');
+
+    $api->action_light;
     is $api->_config_light('on_since'), 0, "light on_since is zero after going off";
 
     is
@@ -508,6 +521,8 @@ $api->_parse_config;
     is $api->aux_state($id), 1, "hum aux is on w/o override";
 
     # hum > limit, but min_time not expired to turn back off
+
+    $api->aux_time($id, time() - 1680); # 28 mins
 
     $api->action_humidity($id, 99);
     ok $api->aux_time($id) > 0, "hum on aux_time ok when hum < limit but min_time not reached";
@@ -556,13 +571,15 @@ $api->_parse_config;
 
     # temp > limit, but min_time not expired to turn back off
 
+    $api->aux_time($id, time() - 1680); # 28 mins
+
     $api->action_temp($id, 1);
     ok $api->aux_time($id) > 0, "temp on aux_time ok when temp < limit but min_time not reached";
     is $api->aux_state($id), 1, "temp aux is on w/o override when temp < limit but min_time not reached";
 
     # temp equal to limit exactly, min_time expired
 
-    $api->aux_time($id, time() - 1850); # 30 mins, 50 seconds
+    $api->aux_time($id, time() - 1805);
 
     $api->action_temp($id, 80);
     is $api->aux_time($id),  0, "temp on aux_time ok when temp==limit";
