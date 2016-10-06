@@ -20,20 +20,24 @@ use App::RPi::EnvUI;
 
 my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
 
-{
-    my $i = 0;
-    for (1..8){
-        my $id = "aux$_";
-        my $res = $test->request(GET "/get_aux/$id");
-        ok $res->is_success, "/get_aux/$id request ok";
-        my $j = $res->content;
-        my $p = decode_json $j;
+{ # /fetch_env route
 
-        is ref $p, 'HASH', "/get_aux/$id return an href in JSON";
-        is keys %$p, 6, "$id has ok key count";
+    my $res = $test->request(GET "/fetch_env");
+    ok $res->is_success, "/fetch_env request ok";
+    my $j = $res->content;
+    my $p = decode_json $j;
 
-        $i++;
+    is ref $p, 'HASH', "/fetch_env return an href in JSON";
+    is keys %$p, 2, "and has proper key count";
+
+    for (qw(temp humidity)){
+        is exists $p->{$_}, 1, "$_ has a key in /fetch_env";
+
     }
+
+    is $p->{temp}, 80, "/fetch_env returns default value for temp ok";
+    is $p->{humidity}, 20, "/fetch_env returns default value for humidity ok";
+
 }
 
 unset_testing();

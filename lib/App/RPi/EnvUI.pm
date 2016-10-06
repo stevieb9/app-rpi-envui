@@ -79,9 +79,8 @@ get '/set_aux/:aux/:state' => sub {
     };
 };
 
-
-
 true;
+
 __END__
 
 =head1 NAME

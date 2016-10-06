@@ -10,6 +10,8 @@ use RPi::WiringPi::Constant qw(:all);
 
 our $VERSION = '0.22';
 
+# these are mocked sub handles for when we're in testing mode
+
 my $temp_sub;
 my $hum_sub;
 my $wp_sub;
@@ -26,9 +28,9 @@ sub new {
     #FIXME: testing 1 and testing 2 needs to be made more descriptive
 
     if (-e 't/testing.lck' || $self->{testing}){
-        $self->{testing} = 1 if -e 't/testing.lck';
-
         if (-e 't/testing.lck') {
+            $self->{testing} = 1;
+
             my $mock = Mock::Sub->new;
 
             $temp_sub = $mock->mock(
@@ -388,7 +390,13 @@ sub _parse_config {
     # aux entries are suffixed with a number
 
     for my $directive (keys %{ $conf->{aux} }){
-        $self->{db}->update('aux', 'value', $conf->{aux}{$directive}, 'id', $directive);
+        $self->{db}->update(
+            'aux',
+            'value',
+            $conf->{aux}{$directive},
+            'id',
+            $directive
+        );
     }
 }
 sub _reset {
@@ -413,7 +421,8 @@ __END__
 
 =head1 NAME
 
-App::RPi::EnvUI - One-page asynchronous grow room environment control web application
+App::RPi::EnvUI - One-page asynchronous grow room environment control web
+application
 
 =head1 SYNOPSIS
 
