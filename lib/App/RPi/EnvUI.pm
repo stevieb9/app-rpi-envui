@@ -7,24 +7,6 @@ use Dancer2::Plugin::Database;
 use Mock::Sub no_warnings => 1;
 
 our $VERSION = '0.22';
-    # if testing the webapp portion, we need to mock out some stuff
-
-        my $mock = Mock::Sub->new;
-
-        my $temp_sub = $mock->mock(
-            'RPi::DHT11::temp',
-            return_value => 80
-        );
-
-        my $hum_sub = $mock->mock(
-            'RPi::DHT11::humidity',
-            return_value => 20
-        );
-
-        my $wp_sub = $mock->mock(
-            'App::RPi::EnvUI::API::write_pin',
-            return_value => 'ok'
-        );
 
 my $api = App::RPi::EnvUI::API->new;
 
@@ -32,6 +14,10 @@ $api->_reset();
 $api->_config_light();
 $api->env($api->read_sensor);
 $api->events;
+
+#
+# fetch routes
+#
 
 get '/' => sub {
     # return template 'main';
@@ -64,6 +50,18 @@ get '/get_aux/:aux' => sub {
     return to_json $api->aux($aux_id);
 };
 
+get '/fetch_env' => sub {
+    my $data = $api->env();
+    return to_json {
+        temp => $data->{temp},
+        humidity => $data->{humidity}
+    };
+};
+
+#
+# set routes
+#
+
 get '/set_aux/:aux/:state' => sub {
     my $aux_id = params->{aux};
 
@@ -81,13 +79,7 @@ get '/set_aux/:aux/:state' => sub {
     };
 };
 
-get '/fetch_env' => sub {
-    my $data = $api->env();
-    return to_json {
-        temp => $data->{temp},
-        humidity => $data->{humidity}
-    };
-};
+
 
 true;
 __END__

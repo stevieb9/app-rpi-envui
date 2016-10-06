@@ -10,33 +10,45 @@ use RPi::WiringPi::Constant qw(:all);
 
 our $VERSION = '0.22';
 
+my $temp_sub;
+my $hum_sub;
+my $wp_sub;
+
 sub new {
     my $self = bless {}, shift;
     %$self = @_;
 
-    # check if we're testing or not. If so, bypass the loading of the
-    # RPi::DHT11 and WiringPi::API modules, and set up a fake sensor
+    # check if we're testing or not. If a testing.lck file is present, its a UI
+    # test run, and we need to bypass the loading of the
+    # RPi::DHT11 and WiringPi::API modules, and set up a fake sensor within
+    # this package (other tests API/DB should mock the subs there)
 
     #FIXME: testing 1 and testing 2 needs to be made more descriptive
 
     if (-e 't/testing.lck' || $self->{testing}){
-        my $mock = Mock::Sub->new;
+        $self->{testing} = 1 if -e 't/testing.lck';
 
-        my $temp_sub = $mock->mock(
-            'RPi::DHT11::temp',
-            return_value => 80
-        );
+        if (-e 't/testing.lck') {
+            my $mock = Mock::Sub->new;
 
-        my $hum_sub = $mock->mock(
-            'RPi::DHT11::humidity',
-            return_value => 20
-        );
+            $temp_sub = $mock->mock(
+                'RPi::DHT11::temp',
+                return_value => 80
+            );
 
-        my $wp_sub = $mock->mock(
-            'App::RPi::EnvUI::API::write_pin',
-            return_value => 'ok'
-        );
+            $hum_sub = $mock->mock(
+                'RPi::DHT11::humidity',
+                return_value => 20
+            );
+
+            $wp_sub = $mock->mock(
+                'App::RPi::EnvUI::API::write_pin',
+                return_value => 'ok'
+            );
+        }
+
         warn "API in test mode\n";
+
         $self->{sensor} = bless {}, 'RPi::DHT11';
         $self->{db} = App::RPi::EnvUI::DB->new(
             testing => $self->{testing}

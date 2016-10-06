@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 
-use Test::More;
 
 BEGIN {
     use lib 't/';
@@ -9,6 +8,7 @@ BEGIN {
     set_testing();
 }
 
+use Test::More;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 

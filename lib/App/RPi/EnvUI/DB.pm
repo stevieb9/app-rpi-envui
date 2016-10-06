@@ -29,6 +29,9 @@ sub new {
     # 2: testing for separate procs (events)
 
     if (-e 't/testing.lck' || defined $args{testing}){
+
+        warn "DB in test mode\n";
+
         if ($args{testing} == 1 || -e 't/testing.lck'){
             # memory db testing
             $self->{testing} = 1;
