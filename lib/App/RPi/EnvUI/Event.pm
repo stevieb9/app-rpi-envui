@@ -15,7 +15,6 @@ sub env_to_db {
         $api->_config_core('event_fetch_timer'),
         sub {
             my ($temp, $hum) = $api->read_sensor;
-            print "***** $temp :: $hum ****\n";
             $api->env($temp, $hum);
         },
     );

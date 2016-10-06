@@ -49,6 +49,12 @@ is $api->{testing}, 2, "testing param to new() ok";
 
 $api->_parse_config;
 
+# set the event timers
+
+$db->update('core', 'value', 1, 'id', 'event_fetch_timer');
+my $c = $api->_config_core('event_fetch_timer');
+is $c, 1, "event_fetch_timer set ok for testing";
+
 { # read_sensor()
     my @env = $api->read_sensor;
 
@@ -59,20 +65,35 @@ $api->_parse_config;
 
 { # env_to_db()
 
-    my $event = $evt->env_to_db($api);
-
-    $db->update('core', 'value', 1, 'id', 'event_fetch_timer');
-
-    my $c = $api->_config_core('event_fetch_timer');
+    my $event = $evt->env_to_db( $api );
 
     $event->start;
-    sleep 4;
+    sleep 1;
     $event->stop;
 
-    my @env = $api->env;
+    my $env = $api->env;
 
-    print Dumper \@env;
+    is $env->{temp}, 99, "temp val ok in env_to_db() event";
+    is $env->{humidity}, 99, "hum val ok in env_to_db() event";
 }
+
+{ # another env_to_db()
+
+    $temp_sub->return_value(80);
+    $hum_sub->return_value(20);
+
+    my $event = $evt->env_to_db( $api );
+
+    $event->start;
+    sleep 1;
+    $event->stop;
+
+    my $env = $api->env;
+
+    is $env->{temp}, 80, "temp val ok in env_to_db() event after update";
+    is $env->{humidity}, 20, "hum val ok in env_to_db() event after update";
+}
+
 unconfig();
 db_remove();
 done_testing();

@@ -24,6 +24,8 @@ sub new {
     my $self = bless {}, shift;
     my %args = @_;
 
+    #FIXME: testing 1 and testing 2 needs to be made more descriptive
+
     if (-e 't/testing.lck' || defined $args{testing}){
         if ($args{testing} == 1){
             # memory db testing

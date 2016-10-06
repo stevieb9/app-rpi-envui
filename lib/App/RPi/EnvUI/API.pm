@@ -16,6 +16,8 @@ sub new {
     # check if we're testing or not. If so, bypass the loading of the
     # RPi::DHT11 and WiringPi::API modules, and set up a fake sensor
 
+    #FIXME: testing 1 and testing 2 needs to be made more descriptive
+
     if (-e 't/testing.lck' || $self->{testing}){
         warn "API in test mode\n";
         $self->{sensor} = bless {}, 'RPi::DHT11';
