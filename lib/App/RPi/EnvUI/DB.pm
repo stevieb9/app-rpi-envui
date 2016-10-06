@@ -25,9 +25,11 @@ sub new {
     my %args = @_;
 
     #FIXME: testing 1 and testing 2 needs to be made more descriptive
+    # 1: testing for web ui and non-event tests
+    # 2: testing for separate procs (events)
 
     if (-e 't/testing.lck' || defined $args{testing}){
-        if ($args{testing} == 1){
+        if ($args{testing} == 1 || -e 't/testing.lck'){
             # memory db testing
             $self->{testing} = 1;
             $self->{db} = $dbh;

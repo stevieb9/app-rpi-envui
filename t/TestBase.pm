@@ -24,7 +24,7 @@ sub db_remove {
 }
 sub set_testing {
     open my $fh, '>', 't/testing.lck' or die $!;
-    print $fh '1';
+    print $fh 1;
     close $fh;
 }
 sub unset_testing {

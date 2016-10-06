@@ -5,6 +5,7 @@ use App::RPi::EnvUI::Event;
 use Data::Dumper;
 use DateTime;
 use JSON::XS;
+use Mock::Sub no_warnings => 1;
 use RPi::WiringPi::Constant qw(:all);
 
 our $VERSION = '0.22';
@@ -19,6 +20,22 @@ sub new {
     #FIXME: testing 1 and testing 2 needs to be made more descriptive
 
     if (-e 't/testing.lck' || $self->{testing}){
+        my $mock = Mock::Sub->new;
+
+        my $temp_sub = $mock->mock(
+            'RPi::DHT11::temp',
+            return_value => 80
+        );
+
+        my $hum_sub = $mock->mock(
+            'RPi::DHT11::humidity',
+            return_value => 20
+        );
+
+        my $wp_sub = $mock->mock(
+            'App::RPi::EnvUI::API::write_pin',
+            return_value => 'ok'
+        );
         warn "API in test mode\n";
         $self->{sensor} = bless {}, 'RPi::DHT11';
         $self->{db} = App::RPi::EnvUI::DB->new(

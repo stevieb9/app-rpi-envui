@@ -4,10 +4,29 @@ use App::RPi::EnvUI::API;
 use Data::Dumper;
 use Dancer2;
 use Dancer2::Plugin::Database;
+use Mock::Sub no_warnings => 1;
 
 our $VERSION = '0.22';
+    # if testing the webapp portion, we need to mock out some stuff
 
-my $api = App::RPi::EnvUI::API;
+        my $mock = Mock::Sub->new;
+
+        my $temp_sub = $mock->mock(
+            'RPi::DHT11::temp',
+            return_value => 80
+        );
+
+        my $hum_sub = $mock->mock(
+            'RPi::DHT11::humidity',
+            return_value => 20
+        );
+
+        my $wp_sub = $mock->mock(
+            'App::RPi::EnvUI::API::write_pin',
+            return_value => 'ok'
+        );
+
+my $api = App::RPi::EnvUI::API->new;
 
 $api->_reset();
 $api->_config_light();
