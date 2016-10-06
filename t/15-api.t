@@ -466,7 +466,9 @@ $api->_parse_config;
     # force a light on event
 
     $on_hr = $now_hr;
-    $on_min = $now_min - 1;
+    $on_min = $now_min == 0
+        ? 0
+        : $now_min - 1;
 
     my $on_time = "$on_hr:$on_min";
     $db->update('light', 'value', $on_time, 'id', 'on_at');

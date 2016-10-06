@@ -5,6 +5,8 @@ use Test::More;
 my $tfile = 't/envui.db';
 my $cfile = 't/envui.json';
 
+ok 1, "cleanup test loaded ok";
+
 for ($tfile, $cfile){
     if (-e $_){
         unlink $_ or die $!;

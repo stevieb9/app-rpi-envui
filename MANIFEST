@@ -21,7 +21,9 @@ src/envui-dist.db
 src/envui-dist.json
 t/10-db.t
 t/15-api.t
+t/20-events.t
 t/30-load_front_page.t
+t/99-cleanup.t
 t/TestBase.pm
 views/main.tt
 views/test.tt
