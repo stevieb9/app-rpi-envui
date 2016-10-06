@@ -27,8 +27,8 @@ sub env_action {
     my $event = Async::Event::Interval->new(
         $api->_config_core('event_action_timer'),
         sub {
-            my $t_aux = $api->env_temp_aux();
-            my $h_aux = $api->env_humidity_aux();
+            my $t_aux = $api->env_temp_aux;
+            my $h_aux = $api->env_humidity_aux;
 
             $api->action_temp($t_aux, $api->temp);
             $api->action_humidity($h_aux, $api->humidity);
