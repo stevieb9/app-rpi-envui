@@ -150,8 +150,8 @@ sub update {
     my ($self, $table, $col, $value, $where_col, $where_val) = @_;
 
     if (! defined $where_col){
-        my $sth = $self->{db}->prepare('UPDATE ? SET ?=?');
-        $sth->execute($table, $col, $value);
+        my $sth = $self->{db}->prepare("UPDATE $table SET $col=?");
+        $sth->execute($value);
     }
     else {
         my $sth = $self->{db}->prepare(

@@ -207,7 +207,7 @@ $api->_parse_config;
 
 }
 
-{ # update()
+{ # update() with where_col
 
     $db->update('control', 'value', 'aux9', 'id', 'temp_aux');
     is $api->env_temp_aux, 'aux9', "setting the value works ok";
@@ -215,5 +215,26 @@ $api->_parse_config;
     is $api->env_temp_aux, 'aux1', "...and works ok going back too";
 }
 
+{ # update() w/o where_col
+
+    for (1..8){
+        my $id = "aux$_";
+        is $api->aux_state($id), 0, "$id is set to default state for testing";
+    }
+
+   $db->update('aux', 'state', 1);
+
+    for (1..8){
+        my $id = "aux$_";
+        is $api->aux_state($id), 1, "update() w/o where_col was set ok for $id";
+    }
+
+    $db->update('aux', 'state', 0);
+
+    for (1..8){
+        my $id = "aux$_";
+        is $api->aux_state($id), 0, "update() back to default ok for $id";
+    }
+}
 unconfig();
 done_testing();
