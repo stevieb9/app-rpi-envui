@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 use Data::Dumper;
+use JSON::XS;
 use Test::More;
 
 BEGIN {
@@ -22,10 +23,13 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
 {
     my $i = 0;
     for (1..8){
-        my $res = $test->request(GET "/get_control/$_");
-        ok $res->is_success, "/get_control/$_ request ok";
-        my $ret = $res->content;
-        is $ret, $values[$i], "${_}'s value is returned correctly";
+        my $id = "aux$_";
+        my $res = $test->request(GET "/get_aux/$id");
+        ok $res->is_success, "/get_aux/$id request ok";
+        my $j = $res->content;
+        my $p = decode_json $j;
+
+        is ref $p, 'HASH', "/get_aux/$id return an href in JSON";
         $i++;
     }
 }

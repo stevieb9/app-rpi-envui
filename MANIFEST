@@ -23,6 +23,11 @@ t/10-db.t
 t/15-api.t
 t/20-events.t
 t/30-load_front_page.t
+t/30-route_load_front_page.t
+t/35-route_light_water.t
+t/40-route_get_config.t
+t/45-route_get_control.t
+t/50-route_get_aux.t
 t/99-cleanup.t
 t/TestBase.pm
 views/main.tt
