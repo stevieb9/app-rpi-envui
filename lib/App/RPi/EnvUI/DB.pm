@@ -24,9 +24,21 @@ sub new {
     my $self = bless {}, shift;
     my %args = @_;
 
-    if (-e 't/testing.lck' || (defined $args{testing} && $args{testing})){
-        $self->{testing} = 1;
-        $self->{db} = $dbh;
+    if (-e 't/testing.lck' || defined $args{testing}){
+        if ($args{testing} == 1){
+            # memory db testing
+            $self->{testing} = 1;
+            $self->{db} = $dbh;
+        }
+        if ($args{testing} == 2){
+            $self->{db} = DBI->connect(
+                # file db testing (events)
+                "dbi:SQLite:dbname=t/envui.db",
+                "",
+                "",
+                {RaiseError => 1}
+            ) or die $DBI::errstr;
+        }
     }
     else {
         $self->{db} = DBI->connect(

@@ -16,6 +16,12 @@ use File::Copy;
 
 my $config = 'src/envui-dist.json';
 
+sub db_create {
+    copy 'src/envui-dist.db', 't/envui.db' or die $!;
+}
+sub db_remove {
+    unlink 't/envui.db' or die $!;
+}
 sub set_testing {
     open my $fh, '>', 't/testing.lck' or die $!;
     print $fh '1';

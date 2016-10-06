@@ -19,7 +19,9 @@ sub new {
     if (-e 't/testing.lck' || $self->{testing}){
         warn "API in test mode\n";
         $self->{sensor} = bless {}, 'RPi::DHT11';
-        $self->{db} = App::RPi::EnvUI::DB->new(testing => 1);
+        $self->{db} = App::RPi::EnvUI::DB->new(
+            testing => $self->{testing}
+        );
     }
     else {
         if (! exists $INC{'WiringPi/API.pm'}){
