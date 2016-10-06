@@ -54,7 +54,7 @@ get '/get_config/:want' => sub {
 
 get '/get_control/:want' => sub {
     my $want = params->{want};
-    my $value = $api->_config($want);
+    my $value = $api->_config_control($want);
     return $value;
 };
 

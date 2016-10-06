@@ -1,18 +1,12 @@
 use strict;
 use warnings;
 
-use Mock::Sub no_warnings => 1;
 use Test::More;
 
 BEGIN {
-    #FIXME: temporarily turning test off until we fix the temp() mock call issue
-
-#    plan skip_all => "need a fix for mocking subs due to errors...\n";
     use lib 't/';
     use TestBase;
     set_testing();
-
-
 }
 
 use FindBin;
@@ -30,6 +24,6 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     like $res->content, qr/Temperature/, 'front page loaded ok';
 }
 
-#unset_testing();
+unset_testing();
 done_testing();
 
