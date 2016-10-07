@@ -56,7 +56,14 @@ sub new {
             testing => $self->{testing}
         );
     }
-    else {
+
+    $self->{config_file} = defined $self->{config_file}
+        ? $self->{config_file}
+        : 'config/envui.json';
+
+    $self->_parse_config($self->{config_file});
+
+    if (! $self->{testing}) {
         if (! exists $INC{'WiringPi/API.pm'}){
             require WiringPi::API;
             WiringPi::API->import(qw(:perl));
@@ -69,15 +76,9 @@ sub new {
         $self->{db} = App::RPi::EnvUI::DB->new;
 
         $self->{sensor} = RPi::DHT11->new(
-            $self->_config_core( 'sensor_pin' )
+            $self->_config_core('sensor_pin')
         );
     }
-
-    $self->{config_file} = defined $self->{config_file}
-        ? $self->{config_file}
-        : 'config/envui.json';
-
-    $self->_parse_config($self->{config_file});
 
     return $self;
 }
