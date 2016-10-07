@@ -10,6 +10,7 @@ our $VERSION = '0.22';
 
 my $api = App::RPi::EnvUI::API->new;
 
+my $log = $api->log()->child('webapp');
 $api->_reset();
 $api->_config_light();
 $api->env($api->read_sensor);
@@ -20,64 +21,100 @@ $api->events;
 #
 
 get '/' => sub {
-    # return template 'main';
-    return template 'test';
-};
+        my $log = $log->child('/');
+        $log->_7("entered");
+        # return template 'main';
+        return template 'test';
+    };
 
 get '/light' => sub {
-    return to_json $api->_config_light();
-};
+        my $log = $log->child('/light');
+        $log->_7("entered");
+        return to_json $api->_config_light();
+    };
 
 get '/water' => sub {
-    return to_json $api->_config_water();
-};
+        my $log = $log->child('/water');
+        $log->_7("entered");
+        return to_json $api->_config_water();
+    };
 
 get '/get_config/:want' => sub {
-    my $want = params->{want};
-    my $value = $api->_config_core($want);
-    return $value;
-};
+        my $want = params->{want};
+
+        my $log = $log->child('/get_config');
+
+        my $value = $api->_config_core($want);
+
+        $log->_5("param: $want, value: $value");
+
+        return $value;
+    };
 
 get '/get_control/:want' => sub {
-    my $want = params->{want};
-    my $value = $api->_config_control($want);
-    return $value;
-};
+        my $want = params->{want};
+
+        my $log = $log->child('/get_control');
+
+        my $value = $api->_config_control($want);
+
+        $log->_5("param: $want, value: $value");
+
+        return $value;
+    };
 
 get '/get_aux/:aux' => sub {
-    my $aux_id = params->{aux};
-    $api->switch($aux_id);
-    return to_json $api->aux($aux_id);
-};
+        my $aux_id = params->{aux};
+
+        my $log = $log->child('/get_aux');
+        $log->_5("fetching aux object for $aux_id");
+
+        $api->switch($aux_id);
+
+
+        return to_json $api->aux($aux_id);
+    };
 
 get '/fetch_env' => sub {
-    my $data = $api->env();
-    return to_json {
-        temp => $data->{temp},
-        humidity => $data->{humidity}
+        my $log = $log->child('/fetch_env');
+
+        my $data = $api->env();
+
+        $log->_5("temp: $data->{temp}, humidity: $data->{humidity}");
+        return to_json {
+            temp => $data->{temp},
+            humidity => $data->{humidity}
+        };
     };
-};
 
 #
 # set routes
 #
 
 get '/set_aux/:aux/:state' => sub {
-    my $aux_id = params->{aux};
+        my $aux_id = params->{aux};
+        my $state = $api->_bool(params->{state});
 
-    my $state = $api->_bool(params->{state});
-    $state = $api->aux_state($aux_id, $state);
+        my $log = $log->child('/fetch_env');
+        $log->_5("aux_id: $aux_id, state: $state");
 
-    my $override = $api->aux_override($aux_id) ? 0 : 1;
-    $override = $api->aux_override($aux_id, $override);
+        $state = $api->aux_state($aux_id, $state);
 
-    $api->switch($aux_id);
+        $log->_6("$aux_id updated state: $state");
 
-    return to_json {
-        aux => $aux_id,
-        state => $state,
+        my $override = $api->aux_override($aux_id) ? 0 : 1;
+        $log->_6("$aux_id override: $override");
+
+        $override = $api->aux_override($aux_id, $override);
+        $log->_6("$aux_id new override: $override");
+
+        $api->switch($aux_id);
+
+        return to_json {
+            aux => $aux_id,
+            state => $state,
+        };
     };
-};
 
 true;
 
