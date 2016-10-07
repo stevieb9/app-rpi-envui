@@ -19,7 +19,8 @@ my $wp_sub;
 my $log_file = 'envui.log';
 my $master_log = Logging::Simple->new(
     name => 'EnvUI',
-    file => $log_file,
+    print => 0,
+    #file => $log_file,
     level => 7
 );
 
