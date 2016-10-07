@@ -103,6 +103,12 @@ Now direct your browser at your Pi, on port 3000:
 
 =head1 DESCRIPTION
 
+*** THIS IS A CPAN Testers RELEASE ***
+
+v1.00 will be the first stable release ready for production. Anything less than
+v1.00 is an unstable, unreliable cut, and has not been proven out. You have been
+warned.
+
 This distribution is alpha. It does not install the same way most CPAN modules
 install, and has some significant requirements Most specifically, the
 L<wiringPi|http://wiringpi.com> libraries, and the fact it can only run on a

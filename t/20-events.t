@@ -153,8 +153,6 @@ is $hpin, 0, "set humidity aux to pin for testing ok";
     sleep 1;
     $event->stop;
 
-
-
     is
         $api->aux_state($taux),
         1,
