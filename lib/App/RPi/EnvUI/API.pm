@@ -176,7 +176,7 @@ sub action_light {
 
     $log->_7("on_hour: $on_hour, on_min: $on_min");
 
-    if ($now->hour > $on_hour || ($now->hour == $on_hour && $now->minute >= $on_min && ! $self->_config_light('on_since'))){
+    if (! $self->_config_light('on_since') && $now->hour > $on_hour || ($now->hour == $on_hour && $now->minute >= $on_min)){
         $log->_5("enabling light");
 
         $self->{db}->update('light', 'value', time(), 'id', 'on_since');
@@ -186,7 +186,6 @@ sub action_light {
         # turn light on here!
         #
 
-        print "******* light on!\n";
         write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
     }
     if ($self->_config_light('on_since')){

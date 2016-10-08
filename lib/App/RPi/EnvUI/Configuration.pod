@@ -47,7 +47,7 @@ Default: C<4>
 Value: A time zone as accepted by L<DateTime>'s C<new()> method's C<time_zone>
 parameter.
 
-Default: C<local>
+Default: C<America/Edmonton> (MST)
 
 =head3 testing
 

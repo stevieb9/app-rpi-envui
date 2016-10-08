@@ -55,7 +55,7 @@ INSERT INTO core VALUES ('event_action_timer', 3);
 INSERT INTO core VALUES ('event_display_timer', 4);
 INSERT INTO core VALUES ('sensor_pin', -1);
 INSERT INTO core VALUES ('testing', 0);
-INSERT INTO core VALUES ('time_zone', 'local');
+INSERT INTO core VALUES ('time_zone', 'America/Edmonton');
 
 DROP TABLE IF EXISTS water;
 
