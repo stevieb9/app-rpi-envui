@@ -187,7 +187,7 @@ sub action_light {
         #
 
         print "******* light on!\n";
-        write_pin($self->_config_control('light_aux'), HIGH);
+        write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
     }
     if ($self->_config_light('on_since')){
         my $on_since = $self->_config_light('on_since');
@@ -209,7 +209,7 @@ sub action_light {
             # turn light off here!
             #
 
-            write_pin($self->_config_control('light_aux'), LOW);
+            write_pin($self->aux_pin($self->_config_control('light_aux')), LOW) ;
         }
     }
 }
