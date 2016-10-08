@@ -83,7 +83,7 @@ $api->_parse_config;
     );
 
     my @values = qw(
-        15 3 4 -1 0 local
+        15 3 4 -1 0 America/Edmonton
     );
 
     my $i = 0;

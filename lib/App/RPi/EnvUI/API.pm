@@ -228,6 +228,7 @@ sub action_humidity {
         if ($humidity < $limit && $self->aux_time($aux_id) == 0) {
             $log->_5("humidity limit reached turning $aux_id to HIGH");
             $self->aux_state($aux_id, HIGH);
+            print "**** $aux_id\n";
             $self->aux_time($aux_id, time());
         }
         if ($humidity >= $limit && $self->aux_time($aux_id) >= $min_run) {
