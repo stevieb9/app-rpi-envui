@@ -78,10 +78,10 @@ $(document).ready(function(){
                 return;
             }
             if (light.toggle == 'disabled'){
-                $('#aux5').switchbutton('disable');
+                $('#aux3').switchbutton('disable');
             }
             else {
-                $('#aux5').switchbutton('enable');
+                $('#aux3').switchbutton('enable');
             }
             $('#light_on_hours').text(light.on_hours);
             $('#light_on_at').text(light.on_at);

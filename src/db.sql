@@ -18,9 +18,9 @@ CREATE TABLE aux (
 
 INSERT INTO aux VALUES ('aux1', 'temp', -1, 0, 0, 0);
 INSERT INTO aux VALUES ('aux2', 'humidity', -1, 0, 0, 0);
-INSERT INTO aux VALUES ('aux3', 'water1', -1, 0, 0, 0);
-INSERT INTO aux VALUES ('aux4', 'water2', -1, 0, 0, 0);
-INSERT INTO aux VALUES ('aux5', 'light', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux3', 'light', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux4', 'water1', -1, 0, 0, 0);
+INSERT INTO aux VALUES ('aux5', 'water2', -1, 0, 0, 0);
 INSERT INTO aux VALUES ('aux6', '', -1, 0, 0, 0);
 INSERT INTO aux VALUES ('aux7', '', -1, 0, 0, 0);
 INSERT INTO aux VALUES ('aux8', '', -1, 0, 0, 0);

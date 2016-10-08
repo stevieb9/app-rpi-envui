@@ -63,7 +63,7 @@
     <th><font size="5">Hours Per Day</font></th>
     <th><font size="5">Next On</font></th>
     <tr>
-        <td><input id="aux5" class="button" style="width:120px;height:30px"></td>
+        <td><input id="aux3" class="button" style="width:120px;height:30px"></td>
         <td><div id="light_on_at"></div></td>
         <td><div id="light_on_hours"></div></td>
         <td><div id="light_on_in"></div></td>

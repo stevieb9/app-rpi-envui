@@ -94,7 +94,6 @@ sub new {
             require RPi::DHT11;
             RPi::DHT11->import;
         }
-
         $log->_6("required/imported WiringPi::API and RPi::DHT11");
 
         $self->{db} = App::RPi::EnvUI::DB->new;
@@ -186,6 +185,9 @@ sub action_light {
         #
         # turn light on here!
         #
+
+        print "******* light on!\n";
+        write_pin($self->_config_control('light_aux'), HIGH);
     }
     if ($self->_config_light('on_since')){
         my $on_since = $self->_config_light('on_since');
@@ -206,6 +208,8 @@ sub action_light {
             #
             # turn light off here!
             #
+
+            write_pin($self->_config_control('light_aux'), LOW);
         }
     }
 }
