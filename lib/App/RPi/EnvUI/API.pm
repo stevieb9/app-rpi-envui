@@ -5,6 +5,7 @@ use App::RPi::EnvUI::Event;
 use Data::Dumper;
 use DateTime;
 use JSON::XS;
+use Logging::Simple;
 use Mock::Sub no_warnings => 1;
 use RPi::WiringPi::Constant qw(:all);
 
@@ -15,10 +16,21 @@ our $VERSION = '0.22';
 my $temp_sub;
 my $hum_sub;
 my $wp_sub;
+my $log_file = 'envui.log';
+my $master_log = Logging::Simple->new(
+    name => 'EnvUI',
+    print => 0,
+    #file => $log_file,
+    level => 7
+);
+
+my $log = $master_log->child('API');
 
 sub new {
     my $self = bless {}, shift;
     %$self = @_;
+
+    my $log = $log->child('new');
 
     # check if we're testing or not. If a testing.lck file is present, its a UI
     # test run, and we need to bypass the loading of the
@@ -28,7 +40,11 @@ sub new {
     #FIXME: testing 1 and testing 2 needs to be made more descriptive
 
     if (-e 't/testing.lck' || $self->{testing}){
+        $log->_6("testing mode");
+
         if (-e 't/testing.lck') {
+            $log->_6("UI testing mode");
+
             $self->{testing} = 1;
 
             my $mock = Mock::Sub->new;
@@ -38,23 +54,36 @@ sub new {
                 return_value => 80
             );
 
+            $log->_7("mocked RPi::DHT11::temp");
+
             $hum_sub = $mock->mock(
                 'RPi::DHT11::humidity',
                 return_value => 20
             );
 
+            $log->_7("mocked RPi::DHT11::humidity");
+
             $wp_sub = $mock->mock(
                 'App::RPi::EnvUI::API::write_pin',
                 return_value => 'ok'
+            );
+
+            $log->_7(
+                "mocked WiringPi::write_pin as App::RPi::EnvUI::API::write_pin"
             );
         }
 
         warn "API in test mode\n";
 
         $self->{sensor} = bless {}, 'RPi::DHT11';
+
+        $log->_7("blessed a fake sensor");
+
         $self->{db} = App::RPi::EnvUI::DB->new(
             testing => $self->{testing}
         );
+
+        $log->_7("created a DB object with testing enabled");
     }
     else {
         if (! exists $INC{'WiringPi/API.pm'}){
@@ -66,23 +95,35 @@ sub new {
             RPi::DHT11->import;
         }
 
+        $log->_6("required/imported WiringPi::API and RPi::DHT11");
+
         $self->{db} = App::RPi::EnvUI::DB->new;
+
+        $log->_7("created a new DB object");
 
         $self->{sensor} = RPi::DHT11->new(
             $self->_config_core( 'sensor_pin' )
         );
+
+        $log->_6("instantiated a new RPi::DHT11 sensor object");
     }
 
     $self->{config_file} = defined $self->{config_file}
         ? $self->{config_file}
         : 'config/envui.json';
 
+    $log->_6("using $self->{config_file} as the config file");
+
     $self->_parse_config($self->{config_file});
+
+    $log->_7("successfully parsed the config file");
 
     return $self;
 }
 sub events {
     my $self = shift;
+
+    my $log = $self->log('events');
 
     my $events = App::RPi::EnvUI::Event->new;
 
@@ -91,36 +132,54 @@ sub events {
 
     $self->{events}{env_to_db}->start;
     $self->{events}{env_action}->start;
+
+    $log->_7("events successfully started");
 }
 sub read_sensor {
     my $self = shift;
 
+    my $log = $log->child('read_sensor');
+
     my $temp = $self->{sensor}->temp('f');
     my $hum = $self->{sensor}->humidity;
+
+    $log->_5("temp: $temp, humidity: $hum");
 
     return ($temp, $hum);
 }
 sub switch {
-    my $self = shift;
-    my $aux_id = shift;
+    my ($self, $aux_id) = @_;
+
+    my $log = $log->child('switch');
 
     my $state = $self->aux_state($aux_id);
     my $pin = $self->aux_pin($aux_id);
 
     if ($pin != -1){
-        $state
-            ? write_pin($pin, HIGH)
-            : write_pin($pin, LOW);
+        if ($state){
+            $log->_5("set $pin state to HIGH");
+            write_pin($pin, HIGH);
+        }
+        else {
+            $log->_5("set $pin state to LOW");
+            write_pin($pin, LOW);
+        }
     }
 }
 sub action_light {
     my $self = shift;
 
+    my $log = $log->child('action_light');
+
     my $now = DateTime->now(time_zone => $self->_config_core('time_zone'));
 
     my ($on_hour, $on_min) = split /:/, $self->_config_light('on_at');
 
+    $log->_7("on_hour: $on_hour, on_min: $on_min");
+
     if ($now->hour > $on_hour || ($now->hour == $on_hour && $now->minute >= $on_min && ! $self->_config_light('on_since'))){
+        $log->_5("enabling light");
+
         $self->{db}->update('light', 'value', time(), 'id', 'on_since');
         $self->aux_state($self->_config_control('light_aux'), ON);
 
@@ -133,10 +192,14 @@ sub action_light {
         my $on_hours = $self->_config_light('on_hours');
         my $on_secs = $on_hours * 60 * 60;
 
+        $log->_7("light is currently on...");
+        $log->_5("since: $on_since, on_hours: $on_hours, on_secs: $on_secs");
+
         my $time = time();
         my $remaining = $time - $on_since;
 
         if ($remaining >= $on_secs){
+            $log->_7("light is now being turned off");
             $self->{db}->update('light', 'value', 0, 'id', 'on_since');
             $self->aux_state($self->_config_control('light_aux'), OFF);
 
@@ -150,15 +213,23 @@ sub action_humidity {
     my $self = shift;
     my ($aux_id, $humidity) = @_;
 
+    my $log = $log->child('action_humidity');
+    $log->_5("aux: $aux_id, humidity: $humidity");
+
     my $limit = $self->_config_control('humidity_limit');
     my $min_run = $self->_config_control('humidity_aux_on_time');
 
+    $log->_5("limit: $limit, minimum runtime: $min_run");
+
     if (! $self->aux_override($aux_id)) {
         if ($humidity < $limit && $self->aux_time($aux_id) == 0) {
+            $log->_5("humidity limit reached turning $aux_id to HIGH");
             $self->aux_state($aux_id, HIGH);
             $self->aux_time($aux_id, time());
         }
         if ($humidity >= $limit && $self->aux_time($aux_id) >= $min_run) {
+            $log->_5("humidity above limit setting $aux_id to LOW");
+
             $self->aux_state($aux_id, LOW);
             $self->aux_time($aux_id, 0);
         }
@@ -168,33 +239,51 @@ sub action_temp {
     my $self = shift;
     my ($aux_id, $temp) = @_;
 
+    my $log = $log->child('action_temp');
+
     my $limit = $self->_config_control('temp_limit');
     my $min_run = $self->_config_control('temp_aux_on_time');
 
+    $log->_5("limit: $limit, minimum runtime: $min_run");
+
     if (! $self->aux_override($aux_id)){
         if ($temp > $limit && $self->aux_time($aux_id) == 0){
+            $log->_5("temp limit reached turning $aux_id to HIGH");
             $self->aux_state($aux_id, HIGH);
             $self->aux_time($aux_id, time);
         }
         elsif ($temp <= $limit && $self->aux_time($aux_id) >= $min_run){
+            $log->_5("temp below limit setting $aux_id to LOW");
             $self->aux_state($aux_id, LOW);
             $self->aux_time($aux_id, 0);
         }
     }
 }
 sub aux {
-    my $self = shift;
-    my $aux_id = shift;
+    my ($self, $aux_id) = @_;
+
+    my $log = $log->child('aux');
+
+    $log->_7("getting aux information for $aux_id");
 
     my $aux = $self->{db}->aux($aux_id);
     return $aux;
 }
 sub auxs {
     my $self = shift;
+
+    my $log = $log->child('auxs');
+    $log->_7("retrieving all auxs");
+
     return $self->{db}->auxs;
 }
 sub aux_id {
-    return $_[1]->{id};
+    my ($self, $aux) = @_;
+
+    my $log = $log->child('aux_id');
+    $log->_7("aux ID is $aux->{id}");
+
+    return $aux->{id};
 }
 sub aux_state {
     my $self = shift;
@@ -202,14 +291,20 @@ sub aux_state {
 
     my ($aux_id, $state) = @_;
 
+    my $log = $log->child('aux_state');
+
     if ($aux_id !~ /^aux/){
         die "aux_state() requires an aux ID as its first param\n";
     }
 
     if (defined $state){
+        $log->_5("setting state to $state for $aux_id");
         $self->{db}->update('aux', 'state', $state, 'id', $aux_id);
     }
-    return $self->aux($aux_id)->{state};
+
+    $state = $self->aux($aux_id)->{state};
+    $log->_5("$aux_id state = $state");
+    return $state;
 }
 sub aux_time {
     my $self = shift;
@@ -414,6 +509,9 @@ sub _bool {
     my ($self, $bool) = @_;
     die "bool() needs either 'true' or 'false' as param\n" if ! defined $bool;
     return $bool eq 'true' ? 1 : 0;
+}
+sub log {
+    return $master_log;
 }
 
 true;
