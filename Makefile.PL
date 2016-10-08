@@ -92,6 +92,7 @@ WriteMakefile(
         'DBD::SQLite' => 0,
         'DateTime'  => 0,
         'JSON::XS' => 0,
+        'Logging::Simple' => '1.01',
         'Mock::Sub' => '1.07',
         'Plack::Test' => 0,
         'RPi::DHT11' => '1.00',
