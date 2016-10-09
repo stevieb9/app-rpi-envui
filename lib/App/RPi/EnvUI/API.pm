@@ -107,7 +107,6 @@ sub new {
         );
 
         $log->_6("instantiated a new RPi::DHT11 sensor object");
-        $self->events;
     }
 
     $self->{config_file} = defined $self->{config_file}
@@ -119,6 +118,8 @@ sub new {
     $self->_parse_config($self->{config_file});
 
     $log->_7("successfully parsed the config file");
+
+    $self->events if ! $self->{testing};
 
     return $self;
 }
@@ -432,7 +433,7 @@ sub env {
         $self->{db}->insert_env($temp, $hum);
     }
 
-    return $self->{db}->env;
+    return $self->{db}->env || 0;
 }
 sub temp {
     my $self = shift;
