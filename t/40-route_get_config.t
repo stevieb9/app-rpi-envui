@@ -7,7 +7,9 @@ use Test::More;
 BEGIN {
     use lib 't/';
     use TestBase;
+    config();
     set_testing();
+    db_create();
 }
 
 use FindBin;
@@ -26,7 +28,7 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     );
 
     my @values = qw(
-        15 3 4 -1 0 local
+        15 3 4 -1 0 America/Edmonton
     );
 
     is @directives, @values, "test configuration ok";
@@ -41,6 +43,7 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     }
 }
 
+#db_remove();
 unset_testing();
 done_testing();
 

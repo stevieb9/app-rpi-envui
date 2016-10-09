@@ -15,6 +15,12 @@ use Test::More;
 
 #FIXME: add tests to test overrides for hum and temp
 
+
+my $api = App::RPi::EnvUI::API->new(
+    testing => 1,
+    config_file => 't/envui.json'
+);
+
 # mock out some subs that rely on external C libraries
 
 my $mock = Mock::Sub->new;
@@ -34,10 +40,6 @@ my $wp_sub = $mock->mock(
     return_value => 'ok'
 );
 
-my $api = App::RPi::EnvUI::API->new(
-    testing => 1,
-    config_file => 't/envui.json'
-);
 my $db = App::RPi::EnvUI::DB->new(testing => 1);
 
 is ref $api, 'App::RPi::EnvUI::API', "new() returns a proper object";
@@ -207,8 +209,10 @@ $api->_parse_config;
 
     for (1..8){
         my $id = "aux$_";
-        $api->aux_pin($id, 1);
+        $api->aux_pin($id, 0);
         my $ret = $api->switch($id);
+
+        is $api->aux_pin($id), 0, "aux $id pin set to 0";
 
         is $wp_sub->called, 1, "switch(): wp called if pin isn't -1";
         is $ret, 'ok', "switch(): if pin isn't -1, we call write_pin(), $id";
@@ -231,6 +235,7 @@ $api->_parse_config;
         is $ret, '', "switch(): if pin is -1, we don't call write_pin(), $id";
     }
 }
+
 { # env()
 
     my $ret = $api->env(99, 1);

@@ -5,6 +5,7 @@ use warnings;
 BEGIN {
     use lib 't/';
     use TestBase;
+    config();
     set_testing();
 }
 

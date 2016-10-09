@@ -11,7 +11,7 @@ ok 1, "cleanup test loaded ok";
 for ($tfile, $cfile, $lfile){
     if (-e $_){
         unlink $_ or die $!;
-        is -e $_, 0, "$_ temp test file removed ok";
+        is -e $_, undef, "$_ temp test file removed ok";
     }
 }
 

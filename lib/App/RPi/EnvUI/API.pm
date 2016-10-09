@@ -42,6 +42,8 @@ sub new {
     if (-e 't/testing.lck' || $self->{testing}){
         $log->_6("testing mode");
 
+        $self->{config_file} = 't/envui.json';
+
         if (-e 't/testing.lck') {
             $log->_6("UI testing mode");
 
