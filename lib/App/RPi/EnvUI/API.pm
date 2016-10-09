@@ -105,6 +105,7 @@ sub new {
         );
 
         $log->_6("instantiated a new RPi::DHT11 sensor object");
+        $self->events;
     }
 
     $self->{config_file} = defined $self->{config_file}
@@ -117,7 +118,6 @@ sub new {
 
     $log->_7("successfully parsed the config file");
 
-    $self->events;
     return $self;
 }
 sub events {
@@ -229,7 +229,6 @@ sub action_humidity {
         if ($humidity < $limit && $self->aux_time($aux_id) == 0) {
             $log->_5("humidity limit reached turning $aux_id to HIGH");
             $self->aux_state($aux_id, HIGH);
-            print "**** $aux_id\n";
             $self->aux_time($aux_id, time());
         }
         if ($humidity >= $limit && $self->aux_time($aux_id) >= $min_run) {
@@ -469,6 +468,7 @@ sub _parse_config {
 
     for (1..8){
         my $aux_id = "aux$_";
+        print "... $aux_id\n";
         my $pin = $conf->{$aux_id}{pin};
         $self->aux_pin($aux_id, $pin);
     }
