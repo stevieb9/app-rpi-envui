@@ -191,6 +191,7 @@ sub action_light {
     if (! $on_since  && $hour_same && $min_geq){
         $self->{db}->update('light', 'value', time(), 'id', 'on_since');
         $self->aux_state($self->_config_control('light_aux'), ON);
+        write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
     }
 
     if ($on_since) {
