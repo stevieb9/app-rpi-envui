@@ -101,7 +101,7 @@ sub new {
         $log->_7("created a new DB object");
 
         $self->{sensor} = RPi::DHT11->new(
-            $self->_config_core( 'sensor_pin' )
+            $self->_config_core('sensor_pin'), 1
         );
 
         $log->_6("instantiated a new RPi::DHT11 sensor object");
