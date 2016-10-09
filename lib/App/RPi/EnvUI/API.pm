@@ -433,6 +433,8 @@ sub env {
         $self->{db}->insert_env($temp, $hum);
     }
 
+    my $ret = $self->{db}->env;
+    return {temp => 0, humidity => 0} if ! defined $ret;
     return $self->{db}->env;
 }
 sub temp {
