@@ -468,7 +468,6 @@ sub _parse_config {
 
     for (1..8){
         my $aux_id = "aux$_";
-        print "... $aux_id\n";
         my $pin = $conf->{$aux_id}{pin};
         $self->aux_pin($aux_id, $pin);
     }
