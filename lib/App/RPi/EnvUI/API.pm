@@ -506,6 +506,8 @@ sub _reset {
     for (1..8){
         my $aux_id = "aux$_";
         $self->aux_time($aux_id, 0);
+        $self->aux_state($aux_id, 0);
+        $self->aux_override($aux_id, 0);
     }
 }
 sub _bool {

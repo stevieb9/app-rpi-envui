@@ -14,7 +14,6 @@ my $log = $api->log()->child('webapp');
 $api->_reset();
 $api->_config_light();
 $api->env($api->read_sensor);
-#$api->events;
 
 #
 # fetch routes
@@ -70,7 +69,6 @@ get '/get_aux/:aux' => sub {
         $log->_5("fetching aux object for $aux_id");
 
         $api->switch($aux_id);
-
 
         return to_json $api->aux($aux_id);
     };
