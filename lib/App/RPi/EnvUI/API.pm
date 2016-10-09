@@ -433,7 +433,7 @@ sub env {
         $self->{db}->insert_env($temp, $hum);
     }
 
-    return $self->{db}->env || 0;
+    return $self->{db}->env;
 }
 sub temp {
     my $self = shift;
