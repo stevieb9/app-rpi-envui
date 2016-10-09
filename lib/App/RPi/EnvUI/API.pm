@@ -20,7 +20,7 @@ my $log_file = 'envui.log';
 my $master_log = Logging::Simple->new(
     name => 'EnvUI',
     print => 0,
-    #file => $log_file,
+#    file => $log_file,
     level => 7
 );
 
@@ -117,6 +117,7 @@ sub new {
 
     $log->_7("successfully parsed the config file");
 
+    $self->events;
     return $self;
 }
 sub events {

@@ -14,7 +14,7 @@ my $log = $api->log()->child('webapp');
 $api->_reset();
 $api->_config_light();
 $api->env($api->read_sensor);
-$api->events;
+#$api->events;
 
 #
 # fetch routes
