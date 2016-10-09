@@ -167,49 +167,43 @@ sub switch {
     }
 }
 sub action_light {
-    my $self = shift;
+    my ($self) = @_;
 
     my $log = $log->child('action_light');
 
-    my $now = DateTime->now(time_zone => $self->_config_core('time_zone'));
+    my $now = DateTime->now(
+        time_zone => $self->_config_core('time_zone')
+    );
 
     my ($on_hour, $on_min) = split /:/, $self->_config_light('on_at');
 
     $log->_7("on_hour: $on_hour, on_min: $on_min");
 
-    if (! $self->_config_light('on_since') && $now->hour > $on_hour || ($now->hour == $on_hour && $now->minute >= $on_min)){
-        $log->_5("enabling light");
+    my $timer = $now->clone;
+    $timer->set(hour => $on_hour);
+    $timer->set(minute => $on_min);
 
+    my $hour_same = $now->hour == $timer->hour;
+    my $min_geq = $now->minute >= $timer->minute;
+
+    my $on_since = $self->_config_light('on_since');
+
+    if (! $on_since  && $hour_same && $min_geq){
         $self->{db}->update('light', 'value', time(), 'id', 'on_since');
         $self->aux_state($self->_config_control('light_aux'), ON);
-
-        #
-        # turn light on here!
-        #
-
-        write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
     }
-    if ($self->_config_light('on_since')){
-        my $on_since = $self->_config_light('on_since');
-        my $on_hours = $self->_config_light('on_hours');
+
+    if ($on_since) {
+        my $on_hours = $self->_config_light( 'on_hours' );
         my $on_secs = $on_hours * 60 * 60;
 
-        $log->_7("light is currently on...");
-        $log->_5("since: $on_since, on_hours: $on_hours, on_secs: $on_secs");
+        my $t = time();
+        my $diff = $t - $on_since;
 
-        my $time = time();
-        my $remaining = $time - $on_since;
-
-        if ($remaining >= $on_secs){
-            $log->_7("light is now being turned off");
-            $self->{db}->update('light', 'value', 0, 'id', 'on_since');
-            $self->aux_state($self->_config_control('light_aux'), OFF);
-
-            #
-            # turn light off here!
-            #
-
-            write_pin($self->aux_pin($self->_config_control('light_aux')), LOW) ;
+        if ($diff > $on_secs) {
+            $self->{db}->update( 'light', 'value', 0, 'id', 'on_since' );
+            $self->aux_state( $self->_config_control( 'light_aux' ), OFF );
+            write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
         }
     }
 }
