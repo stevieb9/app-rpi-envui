@@ -81,10 +81,6 @@ sub new {
 
         $log->_7("blessed a fake sensor");
 
-        $self->{db} = App::RPi::EnvUI::DB->new(
-            testing => $self->{testing}
-        );
-
         $log->_7("created a DB object with testing enabled");
     }
     else {
@@ -97,8 +93,6 @@ sub new {
             RPi::DHT11->import;
         }
         $log->_6("required/imported WiringPi::API and RPi::DHT11");
-
-        $self->{db} = App::RPi::EnvUI::DB->new;
 
         $log->_7("created a new DB object");
 
@@ -161,10 +155,12 @@ sub switch {
     if ($pin != -1){
         if ($state){
             $log->_5("set $pin state to HIGH");
+            pin_mode($pin, OUTPUT);
             write_pin($pin, HIGH);
         }
         else {
             $log->_5("set $pin state to LOW");
+            pin_mode($pin, OUTPUT);
             write_pin($pin, LOW);
         }
     }
@@ -194,6 +190,7 @@ sub action_light {
     if (! $on_since  && $hour_same && $min_geq){
         $self->{db}->update('light', 'value', time(), 'id', 'on_since');
         $self->aux_state($self->_config_control('light_aux'), ON);
+        pin_mode($self->_config_control('light_aux'),  OUTPUT);
         write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
     }
 
@@ -207,6 +204,7 @@ sub action_light {
         if ($diff > $on_secs) {
             $self->{db}->update( 'light', 'value', 0, 'id', 'on_since' );
             $self->aux_state( $self->_config_control( 'light_aux' ), OFF );
+            pin_mode($self->_config_control('light_aux'),  OUTPUT);
             write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
         }
     }

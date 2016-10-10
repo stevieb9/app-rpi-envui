@@ -11,6 +11,9 @@ sub new {
 sub env_to_db {
     my ($self, $api) = @_;
 
+    my $db = App::RPi::EnvUI::DB->new;
+    $api->{db} = $db;
+
     my $event = Async::Event::Interval->new(
         $api->_config_core('event_fetch_timer'),
         sub {
@@ -23,6 +26,9 @@ sub env_to_db {
 }
 sub env_action {
     my ($self, $api) = @_;
+
+    my $db = App::RPi::EnvUI::DB->new;
+    $api->{db} = $db;
 
     my $event = Async::Event::Interval->new(
         $api->_config_core('event_action_timer'),

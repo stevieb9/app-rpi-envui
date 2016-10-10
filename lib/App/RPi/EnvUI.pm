@@ -8,7 +8,8 @@ use Mock::Sub no_warnings => 1;
 
 our $VERSION = '0.22';
 
-my $api = App::RPi::EnvUI::API->new;
+my $db = App::RPi::EnvUI::DB->new;
+my $api = App::RPi::EnvUI::API->new(db => $db);
 
 my $log = $api->log()->child('webapp');
 $api->_reset();
