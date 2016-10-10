@@ -16,6 +16,8 @@ our $VERSION = '0.22';
 my $temp_sub;
 my $hum_sub;
 my $wp_sub;
+my $pm_sub;
+
 my $log_file = 'envui.log';
 my $master_log = Logging::Simple->new(
     name => 'EnvUI',
@@ -65,6 +67,11 @@ sub new {
 
             $log->_7("mocked RPi::DHT11::humidity");
 
+            $pm_sub = $mock->mock(
+                'App::RPi::EnvUI::API::pin_mode',
+                return_value => 'ok'
+            );
+
             $wp_sub = $mock->mock(
                 'App::RPi::EnvUI::API::write_pin',
                 return_value => 'ok'
@@ -81,6 +88,10 @@ sub new {
 
         $log->_7("blessed a fake sensor");
 
+        $self->{db} = App::RPi::EnvUI::DB->new(
+            testing => $self->{testing}
+        );
+
         $log->_7("created a DB object with testing enabled");
     }
     else {
@@ -93,8 +104,6 @@ sub new {
             RPi::DHT11->import;
         }
         $log->_6("required/imported WiringPi::API and RPi::DHT11");
-
-        $log->_7("created a new DB object");
 
         $self->{sensor} = RPi::DHT11->new(
             $self->_config_core('sensor_pin'), 1
@@ -122,7 +131,7 @@ sub events {
 
     my $log = $self->log('events');
 
-    my $events = App::RPi::EnvUI::Event->new;
+    my $events = App::RPi::EnvUI::Event->new($self->{testing});
 
     $self->{events}{env_to_db} = $events->env_to_db($self);
     $self->{events}{env_action} = $events->env_action($self);

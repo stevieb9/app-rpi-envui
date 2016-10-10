@@ -6,12 +6,13 @@ use Data::Dumper;
 our $VERSION = '0.22';
 
 sub new {
-    return bless {}, shift;
+    my ($class, %args) = @_;
+    return bless {%args}, shift;
 }
 sub env_to_db {
     my ($self, $api) = @_;
 
-    my $db = App::RPi::EnvUI::DB->new;
+    my $db = App::RPi::EnvUI::DB->new(testing => $self->{testing});
     $api->{db} = $db;
 
     my $event = Async::Event::Interval->new(
@@ -25,9 +26,9 @@ sub env_to_db {
     return $event;
 }
 sub env_action {
-    my ($self, $api) = @_;
+    my ($self, $api, $testing) = @_;
 
-    my $db = App::RPi::EnvUI::DB->new;
+    my $db = App::RPi::EnvUI::DB->new(testing => $self->{testing});
     $api->{db} = $db;
 
     my $event = Async::Event::Interval->new(

@@ -40,6 +40,11 @@ my $wp_sub = $mock->mock(
     return_value => 'ok'
 );
 
+my $pm_sub = $mock->mock(
+    'App::RPi::EnvUI::API::pin_mode',
+    return_value => 'ok'
+);
+
 my $db = App::RPi::EnvUI::DB->new(testing => 1);
 
 is ref $api, 'App::RPi::EnvUI::API', "new() returns a proper object";

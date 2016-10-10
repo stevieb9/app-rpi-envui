@@ -42,7 +42,7 @@ my $api = App::RPi::EnvUI::API->new(
 );
 
 my $db = App::RPi::EnvUI::DB->new(testing => 2);
-my $evt = App::RPi::EnvUI::Event->new;
+my $evt = App::RPi::EnvUI::Event->new(testing => 2);
 
 is ref $evt, 'App::RPi::EnvUI::Event', "new() returns a proper object";
 is $api->{testing}, 2, "testing param to new() ok";
