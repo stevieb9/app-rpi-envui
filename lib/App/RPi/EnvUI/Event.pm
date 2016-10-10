@@ -10,10 +10,10 @@ sub new {
     return bless {%args}, shift;
 }
 sub env_to_db {
-    my ($self, $api) = @_;
+    my ($self) = @_;
 
     my $db = App::RPi::EnvUI::DB->new(testing => $self->{testing});
-    $api->{db} = $db;
+    my $api = App::RPi::EnvUI::API->evt($db);
 
     my $event = Async::Event::Interval->new(
         $api->_config_core('event_fetch_timer'),
@@ -26,10 +26,10 @@ sub env_to_db {
     return $event;
 }
 sub env_action {
-    my ($self, $api, $testing) = @_;
+    my ($self) = @_;
 
     my $db = App::RPi::EnvUI::DB->new(testing => $self->{testing});
-    $api->{db} = $db;
+    my $api = App::RPi::EnvUI::API->evt($db);
 
     my $event = Async::Event::Interval->new(
         $api->_config_core('event_action_timer'),

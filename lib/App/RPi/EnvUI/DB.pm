@@ -52,7 +52,7 @@ sub new {
             "dbi:SQLite:dbname=db/envui.db",
             "",
             "",
-            {RaiseError => 1}
+#            {RaiseError => 1}
         ) or die $DBI::errstr;
     }
     return $self;

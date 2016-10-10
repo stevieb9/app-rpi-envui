@@ -27,6 +27,7 @@ my $master_log = Logging::Simple->new(
 );
 
 my $log = $master_log->child('API');
+my $sensor;
 
 sub new {
     my $self = bless {}, shift;
@@ -105,10 +106,10 @@ sub new {
         }
         $log->_6("required/imported WiringPi::API and RPi::DHT11");
 
-        $self->{sensor} = RPi::DHT11->new(
+        $sensor =  RPi::DHT11->new(
             $self->_config_core('sensor_pin'), 1
         );
-
+        $self->{sensor} = $sensor;
         $log->_6("instantiated a new RPi::DHT11 sensor object");
     }
 
@@ -126,6 +127,14 @@ sub new {
 
     return $self;
 }
+sub evt {
+    my ($class, $db) = @_;
+    my $self = bless {}, $class;
+    $self->{sensor} = $sensor;
+    $self->{db} = $db;
+    return $self;
+}
+
 sub events {
     my $self = shift;
 
