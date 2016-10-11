@@ -13,7 +13,10 @@ sub env_to_db {
     my ($self) = @_;
 
     my $db = App::RPi::EnvUI::DB->new(testing => $self->{testing});
-    my $api = App::RPi::EnvUI::API->evt($db);
+    my $api = App::RPi::EnvUI::API->new(testing => $self->{testing});
+
+    $api->{db} = $db;
+    $self->{db} = $db;
 
     my $event = Async::Event::Interval->new(
         $api->_config_core('event_fetch_timer'),
@@ -29,7 +32,10 @@ sub env_action {
     my ($self) = @_;
 
     my $db = App::RPi::EnvUI::DB->new(testing => $self->{testing});
-    my $api = App::RPi::EnvUI::API->evt($db);
+    my $api = App::RPi::EnvUI::API->evt(testing => $self->{testing});
+
+    $api->{db} = $db;
+    $self->{db} = $db;
 
     my $event = Async::Event::Interval->new(
         $api->_config_core('event_action_timer'),

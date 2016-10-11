@@ -2,6 +2,7 @@ package App::RPi::EnvUI::API;
 
 use App::RPi::EnvUI::DB;
 use App::RPi::EnvUI::Event;
+use Carp qw(confess);
 use Data::Dumper;
 use DateTime;
 use JSON::XS;
@@ -142,8 +143,8 @@ sub events {
 
     my $events = App::RPi::EnvUI::Event->new($self->{testing});
 
-    $self->{events}{env_to_db} = $events->env_to_db($self);
-    $self->{events}{env_action} = $events->env_action($self);
+    $self->{events}{env_to_db} = $events->env_to_db;
+    $self->{events}{env_action} = $events->env_action;
 
     $self->{events}{env_to_db}->start;
     $self->{events}{env_action}->start;
@@ -155,6 +156,9 @@ sub read_sensor {
 
     my $log = $log->child('read_sensor');
 
+    if (! defined $self->{sensor}){
+        confess "\$self->{sensor} is not defined";
+    }
     my $temp = $self->{sensor}->temp('f');
     my $hum = $self->{sensor}->humidity;
 

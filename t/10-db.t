@@ -5,6 +5,7 @@ BEGIN {
     use lib 't/';
     use TestBase;
     config();
+    db_create();
 }
 
 use App::RPi::EnvUI::API;
@@ -237,4 +238,5 @@ $api->_parse_config;
     }
 }
 unconfig();
+db_remove();
 done_testing();

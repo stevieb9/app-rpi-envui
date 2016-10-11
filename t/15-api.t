@@ -5,6 +5,7 @@ BEGIN {
     use lib 't/';
     use TestBase;
     config();
+    db_create();
 }
 
 use App::RPi::EnvUI::API;
@@ -651,5 +652,6 @@ $api->_parse_config;
 # $db->{db}->sqlite_backup_to_file('test.db');
 
 unconfig();
+db_remove();
 done_testing();
 

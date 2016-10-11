@@ -7,54 +7,25 @@ use RPi::WiringPi::Constant qw(:all);
 
 our $VERSION = '0.22';
 
-#FIXME: the following will have to be cleaned up into a conditional
-# we create a db handle globally so that if subsequent calls to new() are done,
-# the test env won't have separate memory databases
-
-my $dbh = DBI->connect(
-    "dbi:SQLite:database=:memory:",
-    "",
-    "",
-    {RaiseError => 1}
-) or die $DBI::errstr;
-
-$dbh->sqlite_backup_from_file('src/envui-dist.db');
-
 sub new {
-    my $self = bless {}, shift;
-    my %args = @_;
+    my ($class, %args) = @_;
 
-    #FIXME: testing 1 and testing 2 needs to be made more descriptive
-    # 1: testing for web ui and non-event tests
-    # 2: testing for separate procs (events)
+    my $self = bless {%args}, $class;
 
-    if (-e 't/testing.lck' || defined $args{testing}){
+    my $db_file = defined $self->{testing}
+        ? 't/envui.db'
+        : 'db/envui.db';
 
-        warn "DB in test mode\n";
+        warn "DB in test mode\n" if $self->{testing};
 
-        if ($args{testing} == 1 || -e 't/testing.lck'){
-            # memory db testing
-            $self->{testing} = 1;
-            $self->{db} = $dbh;
-        }
-        if ($args{testing} == 2){
-            $self->{db} = DBI->connect(
-                # file db testing (events)
-                "dbi:SQLite:dbname=t/envui.db",
-                "",
-                "",
-                {RaiseError => 1}
-            ) or die $DBI::errstr;
-        }
-    }
-    else {
         $self->{db} = DBI->connect(
-            "dbi:SQLite:dbname=db/envui.db",
+            # file db testing (events)
+            "dbi:SQLite:dbname=$db_file",
             "",
             "",
-#            {RaiseError => 1}
+            {RaiseError => 1}
         ) or die $DBI::errstr;
-    }
+
     return $self;
 }
 sub aux {
@@ -165,7 +136,6 @@ sub update {
         $sth->execute($value, $where_val);
     }
 }
-
 
 true;
 __END__

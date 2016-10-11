@@ -8,6 +8,7 @@ BEGIN {
     use lib 't/';
     use TestBase;
     set_testing();
+    db_create();
 }
 
 use FindBin;
@@ -42,5 +43,6 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
 }
 
 unset_testing();
+db_remove();
 done_testing();
 

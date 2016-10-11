@@ -15,6 +15,18 @@ use Data::Dumper;
 use Mock::Sub no_warnings => 1;
 use Test::More;
 
+my $api = App::RPi::EnvUI::API->new(
+    testing => 1,
+    config_file => 't/envui.json'
+);
+my $evt = App::RPi::EnvUI::Event->new(testing => 1);
+
+my $db = App::RPi::EnvUI::DB->new(testing => 1);
+$api->{db} = $db;
+
+is ref $evt, 'App::RPi::EnvUI::Event', "new() returns a proper object";
+is $api->{testing}, 1, "testing param to new() ok";
+
 #FIXME: add tests to test overrides for hum and temp
 
 # mock out some subs that rely on external C libraries
@@ -36,16 +48,9 @@ my $wp_sub = $mock->mock(
     return_value => 'ok'
 );
 
-my $api = App::RPi::EnvUI::API->new(
-    testing => 2,
-    config_file => 't/envui.json'
-);
 
-my $db = App::RPi::EnvUI::DB->new(testing => 2);
-my $evt = App::RPi::EnvUI::Event->new(testing => 2);
 
-is ref $evt, 'App::RPi::EnvUI::Event', "new() returns a proper object";
-is $api->{testing}, 2, "testing param to new() ok";
+
 
 $api->_parse_config;
 
@@ -80,7 +85,7 @@ is $hpin, 0, "set humidity aux to pin for testing ok";
 
 { # env_to_db()
 
-    my $event = $evt->env_to_db( $api );
+    my $event = $evt->env_to_db;
 
     $event->start;
     sleep 1;

@@ -9,6 +9,7 @@ BEGIN {
     use lib 't/';
     use TestBase;
     set_testing();
+    db_create();
 }
 
 use Mock::Sub no_warnings => 1;
@@ -81,6 +82,8 @@ sub aux {
         state => $perl->{state},
     };
 }
+
 unset_testing();
+db_remove();
 done_testing();
 
