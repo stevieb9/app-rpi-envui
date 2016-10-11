@@ -13,7 +13,8 @@ Changes history for App::RPi::EnvUI
         - replaced all die() calls in API to confess(), makes it much easier to
           track things down
 
-0.22/23 2016-10-11
+0.23    2016-10-11
+        - this update contains changes for 0.22 which wasn't released properly
         - fixed critical bug where each process (events) were sharing a copy of
           the same DB handle (via the DB object stored within the API object),
           which was breaking periodically due to contention. (See
