@@ -7,7 +7,7 @@ our $VERSION = '0.24';
 
 sub new {
     my ($class, %args) = @_;
-    return bless {%args}, shift;
+    return bless {%args}, $class;
 }
 sub env_to_db {
     my ($self) = @_;
@@ -32,7 +32,7 @@ sub env_action {
     my ($self) = @_;
 
     my $db = App::RPi::EnvUI::DB->new(testing => $self->{testing});
-    my $api = App::RPi::EnvUI::API->evt(testing => $self->{testing});
+    my $api = App::RPi::EnvUI::API->new(testing => $self->{testing});
 
     $api->{db} = $db;
     $self->{db} = $db;

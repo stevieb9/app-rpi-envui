@@ -12,35 +12,23 @@ use RPi::WiringPi::Constant qw(:all);
 
 our $VERSION = '0.24';
 
-# these are mocked sub handles for when we're in testing mode
+# mocked sub handles for when we're in testing mode
 
-my $temp_sub;
-my $hum_sub;
-my $wp_sub;
-my $pm_sub;
+my ($temp_sub, $hum_sub, $wp_sub, $pm_sub);
 
-my $log_file = 'envui.log';
-my $master_log = Logging::Simple->new(
-    name => 'EnvUI',
-    print => 0,
-#    file => $log_file,
-    level => 7
-);
+# class variables
 
-my $log = $master_log->child('API');
+my $master_log;
+my $log;
 my $sensor;
 
 sub new {
     my $self = bless {}, shift;
     %$self = @_;
 
+    $self->_log;
+    $self->_config;
     $self->_init;
-
-    my $log = $log->child('new');
-
-    $self->{config_file} = defined $self->{config_file}
-        ? $self->{config_file}
-        : 'config/envui.json';
 
     $log->_6("using $self->{config_file} as the config file");
 
@@ -52,14 +40,6 @@ sub new {
 
     return $self;
 }
-sub evt {
-    my ($class, $db) = @_;
-    my $self = bless {}, $class;
-    $self->{sensor} = $sensor;
-    $self->{db} = $db;
-    return $self;
-}
-
 sub events {
     my $self = shift;
 
@@ -416,7 +396,7 @@ sub _parse_config {
         $self->aux_pin($aux_id, $pin);
     }
 
-    for my $conf_section (qw(aux control core light water)){
+    for my $conf_section (qw(control core light water)){
         for my $directive (keys %{ $conf->{$conf_section} }){
             $self->{db}->update(
                 $conf_section,
@@ -426,20 +406,6 @@ sub _parse_config {
                 $directive
             );
         }
-    }
-
-    #FIXME: I don't think auxs are being read correctly here...
-    # it seems as though there shouldn't be a $conf->{aux}, as all of the
-    # aux entries are suffixed with a number
-
-    for my $directive (keys %{ $conf->{aux} }){
-        $self->{db}->update(
-            'aux',
-            'value',
-            $conf->{aux}{$directive},
-            'id',
-            $directive
-        );
     }
 }
 sub _reset {
@@ -467,11 +433,6 @@ sub _init {
     my ($self) = @_;
 
     my $log = $log->child('_init()');
-
-    # check if we're testing or not. If a testing.lck file is present, its a UI
-    # test run, and we need to bypass the loading of the
-    # RPi::DHT11 and WiringPi::API modules, and set up a fake sensor within
-    # this package (other tests API/DB should mock the subs there)
 
     if (-e 't/testing.lck' || $self->{testing}){
         $log->_6("testing mode");
@@ -538,12 +499,36 @@ sub _init {
         $log->_6("required/imported WiringPi::API and RPi::DHT11");
 
         $sensor =  RPi::DHT11->new(
+            #FIXME: new param to new() for DHT11 debug
             $self->_config_core('sensor_pin'), 1
         );
         $self->{sensor} = $sensor;
         $log->_6("instantiated a new RPi::DHT11 sensor object");
     }
 }
+sub _config {
+    my ($self) = @_;
+    $self->{config_file} = defined $self->{config_file}
+        ? $self->{config_file}
+        : 'config/envui.json';
+}
+sub _log {
+    my ($self) = @_;
+
+    my $file = defined $self->{log_file}
+        ? $self->{log_file}
+        : undef;
+
+    $master_log = Logging::Simple->new(
+        name => 'EnvUI',
+        print => 0,
+        file => $file,
+        level => defined $self->{log_level} ? $self->{log_level} : 4
+    );
+
+    $log = $master_log->child('API');
+}
+
 true;
 __END__
 
