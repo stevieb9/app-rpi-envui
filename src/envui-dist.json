@@ -5,7 +5,10 @@
     "event_display_timer": "4",
     "time_zone": "America/Edmonton",
     "sensor_pin": "-1",
-    "testing": "0"
+    "testing": "0",
+    "debug_sensor": "0",
+    "log_file": "",
+    "log_level": "-1"
   },
   "control": {
     "temp_limit": "80",

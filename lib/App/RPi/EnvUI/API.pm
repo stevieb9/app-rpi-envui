@@ -288,8 +288,13 @@ sub db {
     return $self->{db};
 }
 sub debug_sensor {
-     $_[0]->{debug_sensor} = $_[1] if defined $_[1];
-    return $_[0]->{debug_sensor};
+    my ($self, $bool) = @_;
+
+    if (defined $bool){
+        $self->{debug_sensor} = $bool;
+    }
+
+    return $self->{debug_sensor};
 }
 sub env {
     my ($self, $temp, $hum) = @_;
@@ -343,17 +348,32 @@ sub humidity {
     return $self->env()->{humidity};
 }
 sub log {
+    my $self = shift;
+    $master_log->file($self->log_file);
+    $master_log->level($self->log_level);
     return $master_log;
 }
 sub log_file {
-     $_[0]->{log_file} = $_[1] if defined $_[1];
-    return $_[0]->{log_file};
+    my ($self, $fn) = @_;
+
+    if (defined $fn){
+        $self->{log_file} = $fn;
+    }
+
+    return $self->{log_file};
 }
 sub log_level {
-     $_[0]->{log_level} = $_[1] if defined $_[1];
-    return defined $_[0]->{log_level}
-        ? $_[0]->{log_level}
-        : -1;
+    my ($self, $level) = @_;
+
+    if (defined $level){
+        if ($level < -1 || $level > 7){
+            warn "log level has to be between 0 and 7... disabling logging\n";
+            $level = -1;
+        }
+        $self->{log_level} = $level;
+    }
+
+    return $self->{log_level};
 }
 sub read_sensor {
     my $self = shift;
@@ -401,8 +421,12 @@ sub temp {
     return $self->env()->{temp};
 }
 sub testing {
-    $_[0]->{testing} = $_[1] if defined $_[1];
-    return $_[0]->{testing};
+    my ($self, $bool) = @_;
+
+    if (defined $bool){
+        $self->{testing} = $bool;
+    }
+    return $self->{testing};
 }
 
 # private
@@ -603,6 +627,14 @@ sub _parse_config {
                 'id',
                 $directive
             );
+
+            # populate some internal variables from the 'core'
+            # config section
+
+            if ($conf_section eq 'core'){
+                next if $directive eq 'testing';
+                $self->{$directive} = $conf->{$conf_section}{$directive};
+            }
         }
     }
 }
