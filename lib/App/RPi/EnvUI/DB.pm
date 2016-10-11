@@ -19,7 +19,6 @@ sub new {
         warn "DB in test mode\n" if $self->{testing};
 
         $self->{db} = DBI->connect(
-            # file db testing (events)
             "dbi:SQLite:dbname=$db_file",
             "",
             "",
@@ -154,14 +153,148 @@ sysytem
 
 =head1 DESCRIPTION
 
-This is the database interaction class for L<App::RPi::EnvUI>. It abstracts
+This is the database abstraction class for L<App::RPi::EnvUI>. It abstracts
 away the database work from the API and the webapp itself.
 
 =head1 METHODS
 
-=head2 new
+=head2 new(%args)
 
-Returns a new C<App::RPi::EnvUI::DB> object.
+Returns a new L<App::RPi::EnvUI::DB> object. All parameters are sent in as a
+hash structure.
+
+Parameters:
+
+    testing
+
+Optional, Bool. C<1> to enable testing mode, C<0> to disable.
+
+Default: C<0> (off)
+
+=head2 aux($aux_id)
+
+Fetches and returns a hash reference containing the details of an auxillary
+channel.
+
+Parameters:
+
+    $aux_id
+
+Mandatory, String. The string name of the auxillary channel (eg: C<aux1>)
+
+Return: Hash reference (see above)
+
+=head2 auxs
+
+Fetches and returns a hash reference of hash references. The keys of the
+top-level hash is a list of all the auxillary channel names, and each key has
+a value of another hash reference, containing the details of that specific
+aux channel. Takes no parameters.
+
+=head2 config_control($want)
+
+Fetches and returns the value of a specific C<control> configuration variable.
+
+Parameters:
+
+    $want
+
+Mandatory, String. The name of the configuration variable to fetch the value
+for.
+
+Return: The value of the specified variable.
+
+=head2 config_core($want)
+
+Fetches and returns the value of a specific C<core> configuration variable.
+
+Parameters:
+
+    $want
+
+Mandatory, String. The name of the configuration variable to fetch the value
+for.
+
+Return: The value of the specified variable.
+
+=head2 config_light($want)
+
+Fetches and returns either a specific C<light> configuration variable value, or
+the entire C<light> configuration section.
+
+Parameters:
+
+    $want
+
+Optional, String. If specified, we'll fetch only the value of this specific
+configuration variable.
+
+Return: Single scalar value if C<$want> is sent in, or a hash reference of the
+entire configuration section where the keys are the variable names, and the
+values are the configuration values.
+
+=head2 config_water($want)
+
+Works exactly the same as C<config_light()> above, but for the feeding
+configuration.
+
+=head2 env
+
+Fetches and returns as a hash reference the last database entry of the C<stats>
+(environment) database table. This hash contains the latest
+temperature/humidity update, along with a timestamp and row ID. Takes no
+parameters.
+
+=head2 insert_env($temp, $humidity)
+
+Inserts into the C<stats> database table a new row containing a row ID,
+timestamp, and the values sent in with the parameters.
+
+Parameters:
+
+    $temp
+
+Mandatory, Integer: The temperature.
+
+    $humidity
+
+Mandatory, Integer: The humidity.
+
+=head2 last_id
+
+Returns the ID of the last row entered into the C<stats> database table.
+
+=head2 update($table, $column, $value, $where_col, $where_val)
+
+Performs an update action on a given database table.
+
+Parameters:
+
+    $table
+
+Mandatory, String: The name of the database table to act upon.
+
+    $column
+
+Mandatory, String: The column of the specified table to operate on.
+
+    $value
+
+Mandatory, depends: The value you want the column set to.
+
+    $where_col
+
+Optional, String: The name of the column to perform a C<WHERE> clause on. If
+this is not sent in, we'll operate on all rows.
+
+    $where_val
+
+Optional, depends: The value of the column we're looking for in a C<WHERE>
+clause. This value is ignored if C<$where_col> is not specified.
+
+NOTE: If C<$where_col> is not sent in, we will operate on all rows in the
+specified table.
+
 
 =head1 AUTHOR
 

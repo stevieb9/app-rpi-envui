@@ -26,19 +26,16 @@ get '/' => sub {
         # return template 'main';
         return template 'test';
     };
-
 get '/light' => sub {
         my $log = $log->child('/light');
         $log->_7("entered");
         return to_json $api->_config_light();
     };
-
 get '/water' => sub {
         my $log = $log->child('/water');
         $log->_7("entered");
         return to_json $api->_config_water();
     };
-
 get '/get_config/:want' => sub {
         my $want = params->{want};
 
@@ -50,7 +47,6 @@ get '/get_config/:want' => sub {
 
         return $value;
     };
-
 get '/get_control/:want' => sub {
         my $want = params->{want};
 
@@ -62,7 +58,6 @@ get '/get_control/:want' => sub {
 
         return $value;
     };
-
 get '/get_aux/:aux' => sub {
         my $aux_id = params->{aux};
 
@@ -73,7 +68,6 @@ get '/get_aux/:aux' => sub {
 
         return to_json $api->aux($aux_id);
     };
-
 get '/fetch_env' => sub {
         my $log = $log->child('/fetch_env');
 
@@ -139,25 +133,40 @@ Now direct your browser at your Pi, on port 3000:
 
 =head1 DESCRIPTION
 
-*** THIS IS A CPAN Testers RELEASE ***
+A self-contained web application that runs on a Raspberry Pi and monitors and
+manages an indoor grow room environment, with an API that can be used external
+to the web app itself.
 
-v1.00 will be the first stable release ready for production. Anything less than
-v1.00 is an unstable, unreliable cut, and has not been proven out. You have been
-warned.
+***NOTE*** This distribution is still in heavy development. It will unit test
+on any *nix PC, but at this time, it will only run correctly on a Raspberry Pi
+with L<wiringPi|http://wiringpi.com> installed. We also require C<sudo> to run
+the webapp, due to limitations in other software I rely upon, but I've got fixes
+in the works to eliminate the C<sudo> requirement.
 
-This distribution is alpha. It does not install the same way most CPAN modules
-install, and has some significant requirements Most specifically, the
-L<wiringPi|http://wiringpi.com> libraries, and the fact it can only run on a
-Raspberry Pi (except for unit testing).
+This distribution reads environmental sensors, turns on/off devices based on
+specific thresholds, contains an adjustable grow light timer, as well as
+feeding timers.
 
-When installed, it'll install all of the relevant information in a directory
-named C<envui> in your home directory.
+The software connects to Raspberry Pi GPIO pins for each C<"auxillary">, and at
+specific times or thresholds, turns on and or off the 120/240v devices that
+you've relayed to that voltage (if you choose to use this functionality).
 
-Test coverage is only about 50%, and there's really no documentation as of yet.
+Whether or not you connect/use the automation functionality, the web UI is a
+one-page app that relies on jQuery/Javascript to pull updates from the server,
+push changes to the server, and display up-to-date live information relating to
+all functionality.
 
-This is my first web app in many, many years, so the technologies (jQuery,
-L<Dancer2> etc) are brand new to me, so as I go, I'll be refactoring heavily as
-I continue to learn.
+Buttons are present to manually override devices (turn on/off) outside of their
+schedule or whether they've hit thresholds or not. Devices that have been
+overridden through the web UI will not be triggered by automation until the
+override is lifted.
+
+The current temperature and humidity is prominently displayed as are all of the
+other features/statistics.
+
+This is pretty much a singleton application, meaning that all web browsers open
+to the app's UI page will render updates at the same time, regardless if another
+browser or the automation makes any changes.
 
 =head1 WHAT IT DOES
 
@@ -185,6 +194,117 @@ but that can be disabled to prevent any accidents.
 
 ...manages auto-feeding too, but that's not any where near complete yet.
 
+=head1 HOW IT WORKS
+
+Upon installation of this module, a new directory C<envui> will be created in
+your home directory. All of the necessary pieces of code required for this web
+app to run are copied into that directory. You simply change into that
+directory, and run C<sudo plackup bin/app.pl>, then point your browser to
+C<http://raspberry.pi:3000>.
+
+=head1 ROUTES
+
+=head2 /
+
+Use: Browser
+
+Returns the pre-populated template to the UI. Once the browser loads it, it does
+not have to be reloaded again.
+
+Return: L<Template::Toolkit> template in HTML
+
+=head2 /light
+
+Use: Internal
+
+Returns a JSON string containing the configuration for the C<light> section of
+the page.
+
+Return: JSON
+
+=head2 /water
+
+Use: Internal
+
+Returns a JSON string containing the configuration for the C<water> (feeding)
+section of the page.
+
+Return: JSON
+
+=head2 /get_config/:want
+
+Use: Internal
+
+Fetches and returns a value from the C<core> section of a configuration file.
+
+Parameters:
+
+    :want
+
+The C<core> configuration directive to retrieve the value for.
+
+Return: String. The value for the specified directive.
+
+=head2 /get_control/:want
+
+Use: Internal
+
+Fetches and returns a value from the C<control> section of a configuration file.
+
+Parameters:
+
+    :want
+
+The C<control> configuration directive to retrieve the value for.
+
+Return: String. The value for the specified directive.
+
+=head2 /get_aux/:aux
+
+Use: Internal
+
+Fetches an auxillary channel's information, and on the way through, makes an
+L<App::RPi::EnvUI::API> C<switch()> call, which turns on/off the auxillary
+channel if necessary.
+
+Parameters:
+
+    :aux
+
+Mandatory, String. The string name of the auxillary channel to fetch
+(eg: C<aux1>).
+
+Return: JSON. The JSON stringified version of an auxillary channel hashref.
+
+=head2 /fetch_env
+
+Use: Internal
+
+Fetches the most recent enviromnent details from the database (temperature and
+humidity). Takes no parameters.
+
+Return: JSON. A JSON string in the form C<{"temp": "Int", "humidity": "Int"}>
+
+=head2 /set_aux/:aux/:state
+
+Use: Internal
+
+Sets the state of an auxillary channel, when an on-change event occurs to a
+button that is associated with an auxillary.
+
+Parameters:
+
+    :aux
+
+Mandatory: String. The string name of the auxillary channel to change state on
+(eg: C<aux1>).
+
+    :state
+
+Mandatory: Bool. The state of the auxillary after the button change.
+
+Return: JSON. Returns the current state of the auxillary in the format
+C<>{"aux": "aux_name", "state": "bool"}>.
 
 =head1 AUTHOR
 

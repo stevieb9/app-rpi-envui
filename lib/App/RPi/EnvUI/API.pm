@@ -43,6 +43,9 @@ sub new {
     return $self;
 }
 sub action_humidity {
+    #FIXME: this, and action_temp() should retrieve their own aux id
+    # from the db directly, instead of having it passed in?
+
     my $self = shift;
     my ($aux_id, $humidity) = @_;
 
@@ -65,6 +68,50 @@ sub action_humidity {
 
             $self->aux_state($aux_id, LOW);
             $self->aux_time($aux_id, 0);
+        }
+    }
+}
+sub action_light {
+    my ($self) = @_;
+
+    my $log = $log->child('action_light');
+
+    my $now = DateTime->now(
+        time_zone => $self->_config_core('time_zone')
+    );
+
+    my ($on_hour, $on_min) = split /:/, $self->_config_light('on_at');
+
+    $log->_7("on_hour: $on_hour, on_min: $on_min");
+
+    my $timer = $now->clone;
+    $timer->set(hour => $on_hour);
+    $timer->set(minute => $on_min);
+
+    my $hour_same = $now->hour == $timer->hour;
+    my $min_geq = $now->minute >= $timer->minute;
+
+    my $on_since = $self->_config_light('on_since');
+
+    if (! $on_since  && $hour_same && $min_geq){
+        $self->db()->update('light', 'value', time(), 'id', 'on_since');
+        $self->aux_state($self->_config_control('light_aux'), ON);
+        pin_mode($self->_config_control('light_aux'),  OUTPUT);
+        write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
+    }
+
+    if ($on_since) {
+        my $on_hours = $self->_config_light( 'on_hours' );
+        my $on_secs = $on_hours * 60 * 60;
+
+        my $t = time();
+        my $diff = $t - $on_since;
+
+        if ($diff > $on_secs) {
+            $self->db()->update( 'light', 'value', 0, 'id', 'on_since' );
+            $self->aux_state( $self->_config_control( 'light_aux' ), OFF );
+            pin_mode($self->_config_control('light_aux'),  OUTPUT);
+            write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
         }
     }
 }
@@ -162,45 +209,6 @@ sub aux_id {
 
     return $aux->{id};
 }
-sub aux_state {
-    my $self = shift;
-    # maintains the auxillary state (on/off)
-
-    my ($aux_id, $state) = @_;
-
-    my $log = $log->child('aux_state');
-
-    if ($aux_id !~ /^aux/){
-        confess "aux_state() requires an aux ID as its first param\n";
-    }
-
-    if (defined $state){
-        $log->_5("setting state to $state for $aux_id");
-        $self->db()->update('aux', 'state', $state, 'id', $aux_id);
-    }
-
-    $state = $self->aux($aux_id)->{state};
-    $log->_5("$aux_id state = $state");
-    return $state;
-}
-sub aux_time {
-    my $self = shift;
-    # maintains the auxillary state (on/off)
-
-    my ($aux_id, $time) = @_;
-
-    if ($aux_id !~ /^aux/){
-        confess "aux_time() requires an aux ID as its first param\n";
-    }
-
-    if (defined $time) {
-        $self->db()->update('aux', 'on_time', $time, 'id', $aux_id);
-    }
-
-    my $on_time = $self->aux($aux_id)->{on_time};
-    my $on_length = time() - $on_time;
-    return $on_time == 0 ? 0 : $on_length;
-}
 sub aux_override {
     my $self = shift;
     # sets a manual override flag if an aux is turned on manually (via button)
@@ -230,6 +238,45 @@ sub aux_pin {
         $self->db()->update('aux', 'pin', $pin, 'id', $aux_id);
     }
     return $self->aux($aux_id)->{pin};
+}
+sub aux_state {
+    my $self = shift;
+    # maintains the auxillary state (on/off)
+
+    my ($aux_id, $state) = @_;
+
+    my $log = $log->child('aux_state');
+
+    if ($aux_id !~ /^aux/){
+        confess "aux_state() requires an aux ID as its first param\n";
+    }
+
+    if (defined $state){
+        $log->_5("setting state to $state for $aux_id");
+        $self->db()->update('aux', 'state', $state, 'id', $aux_id);
+    }
+
+    $state = $self->aux($aux_id)->{state};
+    $log->_5("$aux_id state = $state");
+    return $state;
+}
+sub aux_time {
+    my $self = shift;
+    # maintains the auxillary on time
+
+    my ($aux_id, $time) = @_;
+
+    if ($aux_id !~ /^aux/){
+        confess "aux_time() requires an aux ID as its first param\n";
+    }
+
+    if (defined $time) {
+        $self->db()->update('aux', 'on_time', $time, 'id', $aux_id);
+    }
+
+    my $on_time = $self->aux($aux_id)->{on_time};
+    my $on_length = time() - $on_time;
+    return $on_time == 0 ? 0 : $on_length;
 }
 sub config {
     $_[0]->{config_file} = $_[1] if defined $_[1];
@@ -304,7 +351,9 @@ sub log_file {
 }
 sub log_level {
      $_[0]->{log_level} = $_[1] if defined $_[1];
-    return $_[0]->{log_level};
+    return defined $_[0]->{log_level}
+        ? $_[0]->{log_level}
+        : -1;
 }
 sub read_sensor {
     my $self = shift;
@@ -577,67 +626,378 @@ __END__
 
 =head1 NAME
 
-App::RPi::EnvUI - One-page asynchronous grow room environment control web
-application
+App::RPi::EnvUI::API - Core API abstraction class for the
+App::RPi::EnvUI web app
 
 =head1 SYNOPSIS
 
-    sudo plackup ./envui
+    my $api = App::RPi::EnvUI::API->new;
+
+    ... #FIXME: add a real example
 
 =head1 DESCRIPTION
 
-This distribution is alpha. It does not install the same way most CPAN modules
-install, and has some significant requirements Most specifically, the
-L<wiringPi|http://wiringpi.com> libraries, and the fact it can only run on a
-Raspberry Pi. To boot, you have to have an elaborate electrical relay
-configuration set up etc.
+This class can be used outside of the L<App::RPi::EnvUI> web application to
+update settings, read statuses, perform analysis and generate reports.
 
-Right now, I'm testing an L<App::FatPacker> install method, where the packed 
-web app is bundled into a single file called C<envui>, and placed in your
-current working directory. See L</SYNOPSIS> for running the app. I doubt this
-will work as expected on my first try.
+It's primary purpose is to act as an intermediary between the web app itself,
+the asynchronous events that run within their own processes, the environment
+sensors, and the application database.
 
-It's got no tests yet, and barely any documentation. It's only here so I can
-begin testing the installation routine.
+=head1 METHODS
 
-This is my first web app in many, many years, so the technologies (jQuery,
-L<Dancer2> etc) are brand new to me, so as I go, I'll be refactoring heavily as
-I continue to learn.
+=head2 new(%args)
 
-At this stage, after I sort the installer, I will be focusing solely on tests.
-After tests are done, I'll clean up the code (refactor), then complete the
-existing non-finished functionality, and add the rest of the functionality I
-want to add.
+Instantiates a new core API object. Send any/all parameters in within hash
+format (eg: C< testing =\> 1)).
 
-I'll then add pictures, diagrams and schematics of my physical layout of the Pi
-all electrical components, and the electrical circuits.
+Parameters:
 
-=head1 WHAT IT DOES
+    config
 
-Reads temperature and humidity data via a hygrometer sensor through the
-L<RPi::DHT11> distribution.
+Optional, String. Name of the configuration file to use. Very rarely required.
 
-It then allows, through a one-page asynchronous web UI to turn on and off
-120/240v devices through buttons, timers and reached threshold limits.
+Default: C<config/envui.json>
 
-For example. We have a max temperature limit of 80F. We assign an auxillary
-(GPIO pin) that is connected to a relay to a 120v exhaust fan. Through the
-configuration file, we load the temp limit, and if the temp goes above it, we
-enable the fan via the GPIO pin.
+    testing
 
-To prevent the fan from going on/off repeatedly if the temp hovers at the limit,
-a minimum "on time" is also set, so by default, if the fan turns on, it'll stay
-on for 30 minutes, no matter if the temp drops back below the limit.
+Optional, Bool. Send in C<1> to enable testing, C<0> to disable it.
 
-Each auxillary has a manual override switch in the UI, and if overridden in the
-UI, it'll remain in the state you set.
+Default: C<0>
 
-We also include a grow light scheduler, so that you can connect your light, set
-the schedule, and we'll manage it. The light has an override switch in the UI,
-but that can be disabled to prevent any accidents.
+    log_level
 
-...manages auto-feeding too, but that's not any where near complete yet.
+Optional, Integer. Send in a level of C<0-7> to enable logging.
 
+Default: C<-1> (logging disabled)
+
+    log_file
+
+Optional, String. Name of file to log to. We log to C<STDOUT> by default. The
+C<log_level> parameter must be changed from default for this parameter to have
+any effect.
+
+Default: C<undef>
+
+    debug_sensor
+
+Optional, Bool. Enable/disable debug print output from the L<RPi::DHT11> sensor
+code. Send in C<1> to enable, and C<0> to disable.
+
+Default: C<0> (off)
+
+=head2 action_humidity($aux_id, $humidity)
+
+Performs the check of the current humidity against the configured set limit, and
+enables/disables any devices attached to the humidity auxillary GPIO pin, if
+set.
+
+Parameters:
+
+    $aux_id
+
+Mandatory, String. The string name representation of the humidity auxillary. By
+default, this will be C<aux2>.
+
+    $humidity
+
+Mandatory: Integer. The integer value of the current humidity (typically
+supplied by the C<RPi::DHT11> hygrometer sensor.
+
+=head2 action_light
+
+Performs the time calculations on the configured light on/off event settings,
+and turns the GPIO pin associated with the light auxillary channel on and off as
+required.
+
+Takes no parameters.
+
+=head2 action_temp($aux_id, $temperature)
+
+Performs the check of the current temperature against the configured set limit,
+and enables/disables any devices attached to the temp auxillary GPIO pin, if
+set.
+
+Parameters:
+
+    $aux_id
+
+Mandatory, String. The string name representation of the temperature auxillary.
+By default, this will be C<aux1>.
+
+=head2 aux($aux_id)
+
+Retrieves from the database a hash reference that contains the details of a
+specific auxillary channel, and returns it.
+
+Parameters:
+
+    $aux_id
+
+Mandatory, String. The string name representation of the auxillary channel to
+retrieve (eg: C<aux1>).
+
+Returns: Hash reference with the auxillary channel details.
+
+=head2 auxs
+
+Fetches the details of all the auxillary channels from the database. Takes no
+parameters.
+
+Return: A hash reference of hash references, where each auxillary channel name
+is a key, and the value is a hash reference containing that auxillary channel's
+details.
+
+=head2 aux_id($aux)
+
+Extracts the name/ID of a specific auxillary channel.
+
+Parameters:
+
+    $aux
+
+Mandatory, href. A hash reference as returned from a call to C<aux()>.
+
+Return: String. The name/ID of the specified auxillary channel.
+
+=head2 aux_override($aux_id, $override)
+
+Sets/gets the override status of a specific aux channel.
+
+The override functionality is a flag in the database that informs the system
+that automated triggering of an auxillary GPIO pin should be bypassed due to
+user override.
+
+Parameters:
+
+    $aux_id
+
+Mandatory, String. The string name of an auxillary channel (eg: C<aux1>).
+
+    $state
+
+Optional, Bool. C<0> to disable an aux pin override, C<1> to enable it.
+
+Return: Bool. Returns the current status of the aux channel's override flag.
+
+=head2 aux_pin($aux_id, $pin)
+
+Associates a GPIO pin to a specific auxillary channel.
+
+Parameters:
+
+    $aux_id
+
+Mandatory, String. The string name of an auxillary channel (eg: C<aux1>).
+
+    $pin
+
+Optional, Integer. The GPIO pin number that you want associated with the
+specified auxillary channel.
+
+Return: The GPIO pin number associated with the auxillary channel specified.
+
+=head2 aux_state($aux_id, $state)
+
+Sets/gets the state (ie. on/off) value of a specific auxillary channel's GPIO
+pin.
+
+Parameters:
+
+    $aux_id
+
+Mandatory, String. The string name of an auxillary channel (eg: C<aux1>).
+
+    $state
+
+Optional, Bool. C<0> to turn the pin off (C<LOW>), or C<1> to turn it on
+(C<HIGH>).
+
+Return: Bool. Returns the current state of the aux pin.
+
+=head2 aux_time($aux_id, $time)
+
+Sets/gets the length of time an auxillary channel's GPIO pin has been C<HIGH>
+(on). Mainly used to determine timers.
+
+Parameters:
+
+    $aux_id
+
+Mandatory, String. The string name of an auxillary channel (eg: C<aux1>).
+
+    $time
+
+Optional, output from C<time()>. If sent in, we'll set the start time of a pin
+on event to this.
+
+Return, Integer (seconds). Returns the elapsed time in seconds since the last
+timestamp was sent in with the C<$time> parameter, after being subtracted with
+a current C<time()> call. If C<$time> has not been sent in, or an internal timer
+has reset this value, the return will be zero (C<0>).
+
+=head2 config($conf_file)
+
+Sets/gets the currently loaded configuration file.
+
+Parameters:
+
+    $conf_file
+
+Optional, String. The name of a configuration file. This is only useful on
+instantiation of a new object.
+
+Default: C<config/envui.json>
+
+Returns the currently loaded configuration file name.
+
+=head2 db($db_object)
+
+Sets/gets the internal L<App::RPi::EnvUI::DB> object. This method allows you to
+swap DB objects (and thereby DB handles) within separate processes.
+
+Parameters:
+
+    $db_object
+
+Optional, L<App::RPi::EnvUI::DB> object instance.
+
+Returns: The currently loaded DB object instance.
+
+=head2 debug_sensor($bool)
+
+Enable/disable L<RPi::DHT11> sensor's debug print output.
+
+Parameters:
+
+    $bool
+
+Optional, Bool. C<1> to enable debugging, C<0> to disable.
+
+Return: Bool. The current state of the sensor's debug state.
+
+Default: False (C<0>)
+
+=head2 env($temp, $humidity)
+
+Sets/gets the current temperature and humidity pair.
+
+Parameters:
+
+All parameters are optional, but if one is sent in, both must be sent in.
+
+    $temp
+
+Optional, Integer. The current temperature.
+
+    $humidity
+
+Optional, Integer. The current humidity .
+
+Return: A hash reference in the format C<{temp => Int, humidity => Int}>
+
+=head2 env_humidity_aux
+
+Returns the string name of the humidity auxillary channel (default: C<aux2>).
+Takes no parameters.
+
+=head2 env_temp_aux
+
+Returns the string name of the temperature auxillary channel (default: C<aux1>).
+Takes no parameters.
+
+=head2 events
+
+Initializes and starts the asynchronous timed events that operate in their own
+processes, performing actions outside of the main thread.
+
+Takes no parameters, has no return.
+
+=head2 humidity
+
+Returns as an integer, the current humidity level.
+
+=head2 temp
+
+Returns as an integer, the current temperature level.
+
+=head2 log
+
+Returns a pre-configured L<Logging::Simple> object, ready to be cloned with its
+C<child()> method.
+
+=head2 log_file($filename)
+
+Sets/gets the log file for the internal logger.
+
+Parameters:
+
+    $filename
+
+Optional, String. The name of the log file to use. Note that this won't have any
+effect when used in user space, and is mainly a convenience method. It's used
+when instantiating a new object.
+
+Return: The string name of the currently in-use log file, if set.
+
+=head2 log_level($level)
+
+Sets/gets the current logging level.
+
+Parameters:
+
+    $level
+
+Optional, Integer. Sets the logging level between C<0-7>.
+
+Return: Integer, the current level.
+
+Default: C<-1> (logging disabled)
+
+=head2 read_sensor
+
+Retrieves and returns the current temperature and humidity within an array of
+two integers.
+
+=head2 sensor($sensor)
+
+Sets/gets the current hygrometer sensor object. This method is here so that for
+testing, we can send in mocked sensor objects.
+
+Parameters:
+
+    $sensor
+
+Optional, L<RPi::DHT11> object instance.
+
+Return: The sensor object.
+
+=head2 switch($aux_id)
+
+Enables/disables the GPIO pin associated with the specified auxillary channel,
+based on what the current state of the pin is. If it's currently off, it'll be
+turned on, and vice-versa.
+
+Parameters:
+
+    $aux_id
+
+Mandatory, String. The string name of the auxillary channel to have it's GPIO
+pin switched (eg: C<aux1>).
+
+Return: none
+
+=head2 testing($bool)
+
+Used primarily internally, sets/gets whether we're in testing mode or not.
+
+Parameters:
+
+    $bool
+
+Optional, Bool. C<0> for production mode, and C<1> for testing mode.
+
+Return: Bool, whether we're in testing mode or not.
 
 =head1 AUTHOR
 

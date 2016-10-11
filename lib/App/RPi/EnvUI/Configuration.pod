@@ -22,15 +22,17 @@ directives, which pertain to the core operation of the system.
 
 =head3 event_fetch_timer
 
-Value: Integer, representing the interval (seconds) that the client UI will
-fetch the environment (temperature/humidity) from the server.
+Value: Integer, the number of seconds we'll poll the environment sensors and
+update the database with the new information.
+
+Default: C<15>
 
 Default: C<5>
 
 =head3 event_action_timer
 
 Value: Integer, representing the interval (seconds) that the server will read
-the current state of the system, and will enabl/disable any functional GPIO
+the current state of the system, and will enable/disable any functional GPIO
 pins.
 
 Default: C<3>
@@ -118,17 +120,23 @@ Default: C<aux2>
 Value: String, in the form C<auxN>, where C<N> is a value from 1-8. This
 specifies that we'll associate that auxillary with the light on/off event.
 
+Default: C<aux3>
+
 =head3 water1_aux
 
 Value: String, in the form C<auxN>, where C<N> is a value from 1-8. This
 specifies that we'll associate that auxillary with the water tank 1 on/off
 event.
 
+Default: C<aux4>
+
 =head3 water2_aux
 
 Value: String, in the form C<auxN>, where C<N> is a value from 1-8. This
 specifies that we'll associate that auxillary with the water tank 2 on/off
 event.
+
+Default: C<aux5>
 
 =head2 LIGHT CONFIGURATION SECTION
 
@@ -204,9 +212,9 @@ Default:
 
     aux1: temp
     aux2: humidity
-    aux3: water1
-    aux4: water2
-    aux5: light
+    aux3: light
+    aux4: water1
+    aux5: water2
     aux6: none
     aux7: none
     aux8: none
