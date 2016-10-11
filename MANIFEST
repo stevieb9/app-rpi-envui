@@ -30,8 +30,6 @@ t/50-route_get_aux.t
 t/55-route_fetch_env.t
 t/60-route_set_aux.t
 t/99-cleanup.t
-t/file.log
-t/log.pl
 t/TestBase.pm
 views/main.tt
 views/test.tt

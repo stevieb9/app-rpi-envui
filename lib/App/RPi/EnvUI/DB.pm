@@ -5,7 +5,7 @@ use DateTime;
 use DBI;
 use RPi::WiringPi::Constant qw(:all);
 
-our $VERSION = '0.22';
+our $VERSION = '0.24';
 
 sub new {
     my ($class, %args) = @_;

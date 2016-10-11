@@ -48,10 +48,6 @@ my $wp_sub = $mock->mock(
     return_value => 'ok'
 );
 
-
-
-
-
 $api->_parse_config;
 
 # set the event timers
