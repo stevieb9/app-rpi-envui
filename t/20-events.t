@@ -22,10 +22,10 @@ my $api = App::RPi::EnvUI::API->new(
 my $evt = App::RPi::EnvUI::Event->new(testing => 1);
 
 my $db = App::RPi::EnvUI::DB->new(testing => 1);
-$api->{db} = $db;
+$api->db($db);
 
 is ref $evt, 'App::RPi::EnvUI::Event', "new() returns a proper object";
-is $api->{testing}, 1, "testing param to new() ok";
+is $api->testing, 1, "testing param to new() ok";
 
 #FIXME: add tests to test overrides for hum and temp
 

@@ -22,118 +22,25 @@ my $master_log;
 my $log;
 my $sensor;
 
+# public
+
 sub new {
     my $self = bless {}, shift;
-    %$self = @_;
+    $self->_args(@_);
 
     $self->_log;
-    $self->_config;
+    $self->config;
     $self->_init;
 
-    $log->_6("using $self->{config_file} as the config file");
+    $log->_6($self->config. " is the config file");
 
-    $self->_parse_config($self->{config_file});
+    $self->_parse_config($self->config);
 
     $log->_7("successfully parsed the config file");
 
-    $self->events if ! $self->{testing};
+    $self->events if ! $self->testing;
 
     return $self;
-}
-sub events {
-    my $self = shift;
-
-    my $log = $self->log('events');
-
-    my $events = App::RPi::EnvUI::Event->new($self->{testing});
-
-    $self->{events}{env_to_db} = $events->env_to_db;
-    $self->{events}{env_action} = $events->env_action;
-
-    $self->{events}{env_to_db}->start;
-    $self->{events}{env_action}->start;
-
-    $log->_7("events successfully started");
-}
-sub read_sensor {
-    my $self = shift;
-
-    my $log = $log->child('read_sensor');
-
-    if (! defined $self->{sensor}){
-        confess "\$self->{sensor} is not defined";
-    }
-    my $temp = $self->{sensor}->temp('f');
-    my $hum = $self->{sensor}->humidity;
-
-    $log->_5("temp: $temp, humidity: $hum");
-
-    return ($temp, $hum);
-}
-sub switch {
-    my ($self, $aux_id) = @_;
-
-    my $log = $log->child('switch');
-
-    my $state = $self->aux_state($aux_id);
-    my $pin = $self->aux_pin($aux_id);
-
-    if ($pin != -1){
-        if ($state){
-            $log->_5("set $pin state to HIGH");
-            pin_mode($pin, OUTPUT);
-            write_pin($pin, HIGH);
-        }
-        else {
-            $log->_5("set $pin state to LOW");
-            pin_mode($pin, OUTPUT);
-            write_pin($pin, LOW);
-        }
-    }
-}
-sub action_light {
-    my ($self) = @_;
-
-    my $log = $log->child('action_light');
-
-    my $now = DateTime->now(
-        time_zone => $self->_config_core('time_zone')
-    );
-
-    my ($on_hour, $on_min) = split /:/, $self->_config_light('on_at');
-
-    $log->_7("on_hour: $on_hour, on_min: $on_min");
-
-    my $timer = $now->clone;
-    $timer->set(hour => $on_hour);
-    $timer->set(minute => $on_min);
-
-    my $hour_same = $now->hour == $timer->hour;
-    my $min_geq = $now->minute >= $timer->minute;
-
-    my $on_since = $self->_config_light('on_since');
-
-    if (! $on_since  && $hour_same && $min_geq){
-        $self->{db}->update('light', 'value', time(), 'id', 'on_since');
-        $self->aux_state($self->_config_control('light_aux'), ON);
-        pin_mode($self->_config_control('light_aux'),  OUTPUT);
-        write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
-    }
-
-    if ($on_since) {
-        my $on_hours = $self->_config_light( 'on_hours' );
-        my $on_secs = $on_hours * 60 * 60;
-
-        my $t = time();
-        my $diff = $t - $on_since;
-
-        if ($diff > $on_secs) {
-            $self->{db}->update( 'light', 'value', 0, 'id', 'on_since' );
-            $self->aux_state( $self->_config_control( 'light_aux' ), OFF );
-            pin_mode($self->_config_control('light_aux'),  OUTPUT);
-            write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
-        }
-    }
 }
 sub action_humidity {
     my $self = shift;
@@ -185,6 +92,50 @@ sub action_temp {
         }
     }
 }
+sub action_light {
+    my ($self) = @_;
+
+    my $log = $log->child('action_light');
+
+    my $now = DateTime->now(
+        time_zone => $self->_config_core('time_zone')
+    );
+
+    my ($on_hour, $on_min) = split /:/, $self->_config_light('on_at');
+
+    $log->_7("on_hour: $on_hour, on_min: $on_min");
+
+    my $timer = $now->clone;
+    $timer->set(hour => $on_hour);
+    $timer->set(minute => $on_min);
+
+    my $hour_same = $now->hour == $timer->hour;
+    my $min_geq = $now->minute >= $timer->minute;
+
+    my $on_since = $self->_config_light('on_since');
+
+    if (! $on_since  && $hour_same && $min_geq){
+        $self->db()->update('light', 'value', time(), 'id', 'on_since');
+        $self->aux_state($self->_config_control('light_aux'), ON);
+        pin_mode($self->_config_control('light_aux'),  OUTPUT);
+        write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
+    }
+
+    if ($on_since) {
+        my $on_hours = $self->_config_light( 'on_hours' );
+        my $on_secs = $on_hours * 60 * 60;
+
+        my $t = time();
+        my $diff = $t - $on_since;
+
+        if ($diff > $on_secs) {
+            $self->db()->update( 'light', 'value', 0, 'id', 'on_since' );
+            $self->aux_state( $self->_config_control( 'light_aux' ), OFF );
+            pin_mode($self->_config_control('light_aux'),  OUTPUT);
+            write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
+        }
+    }
+}
 sub aux {
     my ($self, $aux_id) = @_;
 
@@ -192,7 +143,7 @@ sub aux {
 
     $log->_7("getting aux information for $aux_id");
 
-    my $aux = $self->{db}->aux($aux_id);
+    my $aux = $self->db()->aux($aux_id);
     return $aux;
 }
 sub auxs {
@@ -201,7 +152,7 @@ sub auxs {
     my $log = $log->child('auxs');
     $log->_7("retrieving all auxs");
 
-    return $self->{db}->auxs;
+    return $self->db()->auxs;
 }
 sub aux_id {
     my ($self, $aux) = @_;
@@ -220,12 +171,12 @@ sub aux_state {
     my $log = $log->child('aux_state');
 
     if ($aux_id !~ /^aux/){
-        die "aux_state() requires an aux ID as its first param\n";
+        confess "aux_state() requires an aux ID as its first param\n";
     }
 
     if (defined $state){
         $log->_5("setting state to $state for $aux_id");
-        $self->{db}->update('aux', 'state', $state, 'id', $aux_id);
+        $self->db()->update('aux', 'state', $state, 'id', $aux_id);
     }
 
     $state = $self->aux($aux_id)->{state};
@@ -239,11 +190,11 @@ sub aux_time {
     my ($aux_id, $time) = @_;
 
     if ($aux_id !~ /^aux/){
-        die "aux_time() requires an aux ID as its first param\n";
+        confess "aux_time() requires an aux ID as its first param\n";
     }
 
     if (defined $time) {
-        $self->{db}->update('aux', 'on_time', $time, 'id', $aux_id);
+        $self->db()->update('aux', 'on_time', $time, 'id', $aux_id);
     }
 
     my $on_time = $self->aux($aux_id)->{on_time};
@@ -257,11 +208,11 @@ sub aux_override {
     my ($aux_id, $override) = @_;
 
     if ($aux_id !~ /^aux/){
-        die "aux_override() requires an aux ID as its first param\n";
+        confess "aux_override() requires an aux ID as its first param\n";
     }
 
     if (defined $override){
-        $self->{db}->update('aux', 'override', $override, 'id', $aux_id);
+        $self->db()->update('aux', 'override', $override, 'id', $aux_id);
     }
     return $self->aux($aux_id)->{override};
 }
@@ -272,29 +223,175 @@ sub aux_pin {
     my ($aux_id, $pin) = @_;
 
     if ($aux_id !~ /^aux/){
-        die "aux_pin() requires an aux ID as its first param\n";
+        confess "aux_pin() requires an aux ID as its first param\n";
     }
 
     if (defined $pin){
-        $self->{db}->update('aux', 'pin', $pin, 'id', $aux_id);
+        $self->db()->update('aux', 'pin', $pin, 'id', $aux_id);
     }
     return $self->aux($aux_id)->{pin};
+}
+sub config {
+    $_[0]->{config_file} = $_[1] if defined $_[1];
+    return $_[0]->{config_file} || 'config/envui.json';
+}
+sub db {
+    my ($self, $db) = @_;
+    $self->{db} = $db if defined $db;
+    return $self->{db};
+}
+sub debug_sensor {
+     $_[0]->{debug_sensor} = $_[1] if defined $_[1];
+    return $_[0]->{debug_sensor};
+}
+sub env {
+    my ($self, $temp, $hum) = @_;
+
+    if (@_ != 1 && @_ != 3){
+        confess "env() requires either zero params, or two\n";
+    }
+
+    if (defined $temp){
+        if ($temp !~ /^\d+$/){
+            confess "env() temp param must be an integer\n";
+        }
+        if ($hum !~ /^\d+$/){
+            confess "env() humidity param must be an integer\n";
+        }
+    }
+
+    if (defined $temp){
+        $self->db()->insert_env($temp, $hum);
+    }
+
+    my $ret = $self->db()->env;
+    return {temp => 0, humidity => 0} if ! defined $ret;
+    return $self->db()->env;
+}
+sub env_humidity_aux {
+    my $self = shift;
+    return $self->_config_control('humidity_aux');
+}
+sub env_temp_aux {
+    my $self = shift;
+    return $self->_config_control('temp_aux');
+}
+sub events {
+    my $self = shift;
+
+    my $log = $self->log('events');
+
+    my $events = App::RPi::EnvUI::Event->new($self->testing);
+
+    $self->{events}{env_to_db} = $events->env_to_db;
+    $self->{events}{env_action} = $events->env_action;
+
+    $self->{events}{env_to_db}->start;
+    $self->{events}{env_action}->start;
+
+    $log->_7("events successfully started");
+}
+sub humidity {
+    my $self = shift;
+    return $self->env()->{humidity};
+}
+sub log {
+    return $master_log;
+}
+sub log_file {
+     $_[0]->{log_file} = $_[1] if defined $_[1];
+    return $_[0]->{log_file};
+}
+sub log_level {
+     $_[0]->{log_level} = $_[1] if defined $_[1];
+    return $_[0]->{log_level};
+}
+sub read_sensor {
+    my $self = shift;
+
+    my $log = $log->child('read_sensor');
+
+    if (! defined $self->sensor){
+        confess "\$self->{sensor} is not defined";
+    }
+    my $temp = $self->sensor()->temp('f');
+    my $hum = $self->sensor()->humidity;
+
+    $log->_5("temp: $temp, humidity: $hum");
+
+    return ($temp, $hum);
+}
+sub sensor {
+    my ($self, $sensor) = @_;
+    $self->{sensor} = $sensor if defined $sensor;
+    return $self->{sensor};
+}
+sub switch {
+    my ($self, $aux_id) = @_;
+
+    my $log = $log->child('switch');
+
+    my $state = $self->aux_state($aux_id);
+    my $pin = $self->aux_pin($aux_id);
+
+    if ($pin != -1){
+        if ($state){
+            $log->_5("set $pin state to HIGH");
+            pin_mode($pin, OUTPUT);
+            write_pin($pin, HIGH);
+        }
+        else {
+            $log->_5("set $pin state to LOW");
+            pin_mode($pin, OUTPUT);
+            write_pin($pin, LOW);
+        }
+    }
+}
+sub temp {
+    my $self = shift;
+    return $self->env()->{temp};
+}
+sub testing {
+    $_[0]->{testing} = $_[1] if defined $_[1];
+    return $_[0]->{testing};
+}
+
+# private
+
+sub _args {
+    my ($self, %args) = @_;
+    $self->debug_sensor($args{debug_sensor});
+    $self->config($args{config_file});
+    $self->log_file($args{log_file});
+    $self->log_level($args{log_level});
+    $self->testing($args{testing});
+}
+sub _bool {
+    # translates javascript true/false to 1/0
+
+    my ($self, $bool) = @_;
+    confess
+      "bool() needs either 'true' or 'false' as param\n" if ! defined $bool;
+    return $bool eq 'true' ? 1 : 0;
 }
 sub _config_control {
     my $self = shift;
     my $want = shift;
-    return $self->{db}->config_control($want);
+    return $self->db()->config_control($want);
 }
 sub _config_core {
     my $self = shift;
     my $want = shift;
-    return $self->{db}->config_core($want);
+    if (! defined $self->db()){
+        confess "API's DB object is not defined.";
+    }
+    return $self->db()->config_core($want);
 }
 sub _config_light {
     my $self = shift;
     my $want = shift;
 
-    my $light = $self->{db}->config_light;
+    my $light = $self->db()->config_light;
 
     my %conf;
 
@@ -304,7 +401,7 @@ sub _config_light {
 
     my ($on_hour, $on_min) = split /:/, $conf{on_at};
 
-    my $now = DateTime->now(time_zone => $self->{db}->config_core('time_zone'));
+    my $now = DateTime->now(time_zone => $self->db()->config_core('time_zone'));
     my $light_on = $now->clone;
 
     $light_on->set_hour($on_hour);
@@ -323,7 +420,7 @@ sub _config_water {
     my $self = shift;
     my $want = shift;
 
-    my $water = $self->{db}->config_water;
+    my $water = $self->db()->config_water;
 
     if (defined $want){
         return $water->{$want}{value};
@@ -337,112 +434,20 @@ sub _config_water {
 
     return \%conf;
 }
-sub env {
-    my ($self, $temp, $hum) = @_;
-
-    if (@_ != 1 && @_ != 3){
-        die "env() requires either zero params, or two\n";
-    }
-
-    if (defined $temp){
-        if ($temp !~ /^\d+$/){
-            die "env() temp param must be an integer\n";
-        }
-        if ($hum !~ /^\d+$/){
-            die "env() humidity param must be an integer\n";
-        }
-    }
-
-    if (defined $temp){
-        $self->{db}->insert_env($temp, $hum);
-    }
-
-    my $ret = $self->{db}->env;
-    return {temp => 0, humidity => 0} if ! defined $ret;
-    return $self->{db}->env;
-}
-sub temp {
-    my $self = shift;
-    return $self->env()->{temp};
-}
-sub humidity {
-    my $self = shift;
-    return $self->env()->{humidity};
-}
-sub env_humidity_aux {
-    my $self = shift;
-    return $self->_config_control('humidity_aux');
-}
-sub env_temp_aux {
-    my $self = shift;
-    return $self->_config_control('temp_aux');
-}
-sub _parse_config {
-    my $self = shift;
-
-    my $json;
-    {
-        local $/;
-        open my $fh, '<', $self->{config_file} or die $!;
-        $json = <$fh>;
-    }
-    my $conf = decode_json $json;
-
-    # auxillary channels
-
-    for (1..8){
-        my $aux_id = "aux$_";
-        my $pin = $conf->{$aux_id}{pin};
-        $self->aux_pin($aux_id, $pin);
-    }
-
-    for my $conf_section (qw(control core light water)){
-        for my $directive (keys %{ $conf->{$conf_section} }){
-            $self->{db}->update(
-                $conf_section,
-                'value',
-                $conf->{$conf_section}{$directive},
-                'id',
-                $directive
-            );
-        }
-    }
-}
-sub _reset {
-    my $self = shift;
-    # reset dynamic db attributes
-
-    for (1..8){
-        my $aux_id = "aux$_";
-        $self->aux_time($aux_id, 0);
-        $self->aux_state($aux_id, 0);
-        $self->aux_override($aux_id, 0);
-    }
-}
-sub _bool {
-    # translates javascript true/false to 1/0
-
-    my ($self, $bool) = @_;
-    die "bool() needs either 'true' or 'false' as param\n" if ! defined $bool;
-    return $bool eq 'true' ? 1 : 0;
-}
-sub log {
-    return $master_log;
-}
 sub _init {
     my ($self) = @_;
 
     my $log = $log->child('_init()');
 
-    if (-e 't/testing.lck' || $self->{testing}){
+    if ($self->_ui_test_mode || $self->testing){
         $log->_6("testing mode");
 
-        $self->{config_file} = 't/envui.json';
+        $self->config('t/envui.json');
 
-        if (-e 't/testing.lck') {
+        if ($self->_ui_test_mode) {
             $log->_6("UI testing mode");
 
-            $self->{testing} = 1;
+            $self->testing(1);
 
             my $mock = Mock::Sub->new;
 
@@ -477,12 +482,14 @@ sub _init {
 
         warn "API in test mode\n";
 
-        $self->{sensor} = bless {}, 'RPi::DHT11';
+        $self->sensor(bless {}, 'RPi::DHT11');
 
         $log->_7("blessed a fake sensor");
 
-        $self->{db} = App::RPi::EnvUI::DB->new(
-            testing => $self->{testing}
+        $self->db(
+            App::RPi::EnvUI::DB->new(
+                testing => $self->testing
+            )
         );
 
         $log->_7("created a DB object with testing enabled");
@@ -499,34 +506,70 @@ sub _init {
         $log->_6("required/imported WiringPi::API and RPi::DHT11");
 
         $sensor =  RPi::DHT11->new(
-            #FIXME: new param to new() for DHT11 debug
-            $self->_config_core('sensor_pin'), 1
+            $self->_config_core('sensor_pin'), $self->debug_sensor
         );
-        $self->{sensor} = $sensor;
+        $self->sensor($sensor);
         $log->_6("instantiated a new RPi::DHT11 sensor object");
     }
-}
-sub _config {
-    my ($self) = @_;
-    $self->{config_file} = defined $self->{config_file}
-        ? $self->{config_file}
-        : 'config/envui.json';
 }
 sub _log {
     my ($self) = @_;
 
-    my $file = defined $self->{log_file}
-        ? $self->{log_file}
-        : undef;
-
     $master_log = Logging::Simple->new(
         name => 'EnvUI',
-        print => 0,
-        file => $file,
-        level => defined $self->{log_level} ? $self->{log_level} : 4
+        print => 1,
+        file => $self->log_file,
+        level => $self->log_level
     );
 
     $log = $master_log->child('API');
+}
+sub _parse_config {
+    my ($self, $config) = @_;
+
+    $config = $self->config if ! defined $config;
+
+    my $json;
+    {
+        local $/;
+        open my $fh, '<', $config or confess $!;
+        $json = <$fh>;
+    }
+    my $conf = decode_json $json;
+
+    # auxillary channels
+
+    for (1..8){
+        my $aux_id = "aux$_";
+        my $pin = $conf->{$aux_id}{pin};
+        $self->aux_pin($aux_id, $pin);
+    }
+
+    for my $conf_section (qw(control core light water)){
+        for my $directive (keys %{ $conf->{$conf_section} }){
+            $self->db()->update(
+                $conf_section,
+                'value',
+                $conf->{$conf_section}{$directive},
+                'id',
+                $directive
+            );
+        }
+    }
+}
+sub _reset {
+    my $self = shift;
+    # reset dynamic db attributes
+
+    for (1..8){
+        my $aux_id = "aux$_";
+        $self->aux_time($aux_id, 0);
+        $self->aux_state($aux_id, 0);
+        $self->aux_override($aux_id, 0);
+    }
+}
+sub _ui_test_mode {
+    return -e 't/testing.lck';
 }
 
 true;
