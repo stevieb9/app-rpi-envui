@@ -1,5 +1,27 @@
 Changes history for App::RPi::EnvUI
 
+0.22    2016-10-11
+        - fixed critical bug where each process (events) were sharing a copy of
+          the same DB handle (via the DB object stored within the API object),
+          which was breaking periodically due to contention. (See
+          http://perlmonks.org/?node_id=1173608)
+        - added initial logging configuration with Logging::Simple
+        - re-wrote light timing logic, and performed basic 12 hour tests for
+          proper functionality
+        - added several more tests
+        - added more error check code
+        - events are now started within the API, instead of the Dancer2 app lib
+        - reset() now resets override, state and aux_on_time for all auxs on
+          app load
+        - API::env() now returns a properly structured hashref with values set
+          to zero for temp/humidity if the DB doesn't have any statistics data
+          yet
+        - in API, created a $sensor class variable to make it easier to set up
+          whether we're in tests or not
+        - more work on cleaning up in-module testing functionality, next round
+          of changes will focus specifically on this and other code refactoring,
+          along with initial draft of documentation for all modules
+
 0.21    2016-10-04
         - had to change version numbers because of a typo in 0.2, which should
           have been 0.02
