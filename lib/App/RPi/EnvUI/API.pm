@@ -34,85 +34,9 @@ sub new {
     my $self = bless {}, shift;
     %$self = @_;
 
+    $self->_init;
+
     my $log = $log->child('new');
-
-    # check if we're testing or not. If a testing.lck file is present, its a UI
-    # test run, and we need to bypass the loading of the
-    # RPi::DHT11 and WiringPi::API modules, and set up a fake sensor within
-    # this package (other tests API/DB should mock the subs there)
-
-    #FIXME: testing 1 and testing 2 needs to be made more descriptive
-
-    if (-e 't/testing.lck' || $self->{testing}){
-        $log->_6("testing mode");
-
-        $self->{config_file} = 't/envui.json';
-
-        if (-e 't/testing.lck') {
-            $log->_6("UI testing mode");
-
-            $self->{testing} = 1;
-
-            my $mock = Mock::Sub->new;
-
-            $temp_sub = $mock->mock(
-                'RPi::DHT11::temp',
-                return_value => 80
-            );
-
-            $log->_7("mocked RPi::DHT11::temp");
-
-            $hum_sub = $mock->mock(
-                'RPi::DHT11::humidity',
-                return_value => 20
-            );
-
-            $log->_7("mocked RPi::DHT11::humidity");
-
-            $pm_sub = $mock->mock(
-                'App::RPi::EnvUI::API::pin_mode',
-                return_value => 'ok'
-            );
-
-            $wp_sub = $mock->mock(
-                'App::RPi::EnvUI::API::write_pin',
-                return_value => 'ok'
-            );
-
-            $log->_7(
-                "mocked WiringPi::write_pin as App::RPi::EnvUI::API::write_pin"
-            );
-        }
-
-        warn "API in test mode\n";
-
-        $self->{sensor} = bless {}, 'RPi::DHT11';
-
-        $log->_7("blessed a fake sensor");
-
-        $self->{db} = App::RPi::EnvUI::DB->new(
-            testing => $self->{testing}
-        );
-
-        $log->_7("created a DB object with testing enabled");
-    }
-    else {
-        if (! exists $INC{'WiringPi/API.pm'}){
-            require WiringPi::API;
-            WiringPi::API->import(qw(:perl));
-        }
-        if (! exists $INC{'RPi/DHT11.pm'}){
-            require RPi::DHT11;
-            RPi::DHT11->import;
-        }
-        $log->_6("required/imported WiringPi::API and RPi::DHT11");
-
-        $sensor =  RPi::DHT11->new(
-            $self->_config_core('sensor_pin'), 1
-        );
-        $self->{sensor} = $sensor;
-        $log->_6("instantiated a new RPi::DHT11 sensor object");
-    }
 
     $self->{config_file} = defined $self->{config_file}
         ? $self->{config_file}
@@ -539,7 +463,87 @@ sub _bool {
 sub log {
     return $master_log;
 }
+sub _init {
+    my ($self) = @_;
 
+    my $log = $log->child('_init()');
+
+    # check if we're testing or not. If a testing.lck file is present, its a UI
+    # test run, and we need to bypass the loading of the
+    # RPi::DHT11 and WiringPi::API modules, and set up a fake sensor within
+    # this package (other tests API/DB should mock the subs there)
+
+    if (-e 't/testing.lck' || $self->{testing}){
+        $log->_6("testing mode");
+
+        $self->{config_file} = 't/envui.json';
+
+        if (-e 't/testing.lck') {
+            $log->_6("UI testing mode");
+
+            $self->{testing} = 1;
+
+            my $mock = Mock::Sub->new;
+
+            $temp_sub = $mock->mock(
+                'RPi::DHT11::temp',
+                return_value => 80
+            );
+
+            $log->_7("mocked RPi::DHT11::temp");
+
+            $hum_sub = $mock->mock(
+                'RPi::DHT11::humidity',
+                return_value => 20
+            );
+
+            $log->_7("mocked RPi::DHT11::humidity");
+
+            $pm_sub = $mock->mock(
+                'App::RPi::EnvUI::API::pin_mode',
+                return_value => 'ok'
+            );
+
+            $wp_sub = $mock->mock(
+                'App::RPi::EnvUI::API::write_pin',
+                return_value => 'ok'
+            );
+
+            $log->_7(
+                "mocked WiringPi::write_pin as App::RPi::EnvUI::API::write_pin"
+            );
+        }
+
+        warn "API in test mode\n";
+
+        $self->{sensor} = bless {}, 'RPi::DHT11';
+
+        $log->_7("blessed a fake sensor");
+
+        $self->{db} = App::RPi::EnvUI::DB->new(
+            testing => $self->{testing}
+        );
+
+        $log->_7("created a DB object with testing enabled");
+    }
+    else {
+        if (! exists $INC{'WiringPi/API.pm'}){
+            require WiringPi::API;
+            WiringPi::API->import(qw(:perl));
+        }
+        if (! exists $INC{'RPi/DHT11.pm'}){
+            require RPi::DHT11;
+            RPi::DHT11->import;
+        }
+        $log->_6("required/imported WiringPi::API and RPi::DHT11");
+
+        $sensor =  RPi::DHT11->new(
+            $self->_config_core('sensor_pin'), 1
+        );
+        $self->{sensor} = $sensor;
+        $log->_6("instantiated a new RPi::DHT11 sensor object");
+    }
+}
 true;
 __END__
 
