@@ -13,6 +13,8 @@ use App::RPi::EnvUI::DB;
 use Data::Dumper;
 use Test::More;
 
+$| = 1; # autoflush so we can read log file while it's still open
+
 #FIXME: add tests to test overrides for hum and temp
 
 my $api = App::RPi::EnvUI::API->new(
@@ -35,27 +37,41 @@ is $api->{testing}, 1, "testing param to new() ok";
 
 { # log file
 
-    $api->log_level(7);
+    $api->log_level( 7 );
 
     my $fn = $api->log_file;
     is $fn, '', "log file is not set in default config";
 
-    $api->log_file('t/test.log');
+    $api->log_file( 't/test.log' );
     is $api->log_file, 't/test.log', "log_file() w/ param ok";
 
-    my $log = $api->log()->child('api_test');
+    my $log = $api->log()->child('log_test');
     is ref $log, 'Logging::Simple', "logging agent is in proper class";
 
-    $log->_7("test");
+    is $log->level, 7, "log level was set correctly through api to log";
+
+    $log->_0( "test" );
 
     open my $fh, '<', $api->log_file or die $!;
 
-    my $entry = <$fh>;
-#    like $entry, qr/test$/, "log file has correct entry";
-#    like $entry, qr/\[api_test\]/, "...and has proper child name";
+    while (my $entry = <$fh>){
+        like $entry, qr/test$/, "log file has correct entry";
+        like $entry, qr/\[EnvUI.log_test\]/, "...and has proper child name";
+    }
 
     $api->log_file('');
+    is $api->log_file, '', "api log reset to no file";
+
     $api->log_level(-1);
+    is $api->log_level, -1, "api log level reset to -1";
+
+    is
+        $log->file,
+        't/test.log',
+        "resetting \$api->log_file doesn't affect existing logs";
+
+    is $log->level, 7, "\$api->log_level doesn't affect existing logs";
+
     unlink 't/test.log' or die $!;
 }
 

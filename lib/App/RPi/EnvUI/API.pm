@@ -446,6 +446,7 @@ sub test_mock {
     $self->{test_mock} = 1 if ! defined $self->{test_mock};
     return $self->{test_mock};
 }
+
 # private
 
 sub _args {

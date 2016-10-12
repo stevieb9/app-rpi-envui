@@ -1,5 +1,21 @@
 Changes history for App::RPi::EnvUI
 
+0.25 NOREL
+        - separated out API::new() initialization code into _init(), and
+          _test_mode() and _prod_mode() to make things cleaner (closes #18)
+        - the t/15-api.t file was split apart into numerous files, each one now
+          tests a specific part of the API (closes #17)
+        - due to Event tests needing to mock out certain subs within the test
+          file itself (as opposed to API handling this), created a new
+          flag/getter & setter "test_mock", which is sent into the API::new()
+          when we're testing Event routines
+        - test files (other than one that tests Event code) no longer need to
+          mock out hardware-based subs themselves. The API now does this in
+          _test_mode()
+        - added debug_sensor, log_level and log_file core config directives to
+          the Configuration POD
+        -
+
 0.24    2016-10-11
         - all modules now have initial draft POD
         - separated out setting/fetching API variables from $self->{} to
