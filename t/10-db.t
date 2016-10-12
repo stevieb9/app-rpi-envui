@@ -250,7 +250,7 @@ $api->_parse_config;
 
     my $db = App::RPi::EnvUI::DB->new(testing => 1);
 
-    is ref $db->{db}, 'App::RPi::EnvUI::DB', "dbh loaded ok";
+    is ref $db->{db}, 'DBI::db', "dbh loaded ok";
 
 }
 unconfig();
