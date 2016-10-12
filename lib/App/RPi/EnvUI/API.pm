@@ -26,7 +26,9 @@ my $sensor;
 
 sub new {
     my $self = bless {}, shift;
-    $self->_args(@_);
+
+    my $caller = (caller)[0];
+    $self->_args(@_, caller => $caller);
 
     $self->_log;
     $self->_init;
@@ -435,6 +437,15 @@ sub testing {
     return $self->{testing};
 }
 
+sub test_mock {
+    my ($self, $mock) = @_;
+
+    if (defined $mock){
+        $self->{test_mock} = $mock;
+    }
+    $self->{test_mock} = 1 if ! defined $self->{test_mock};
+    return $self->{test_mock};
+}
 # private
 
 sub _args {
@@ -444,6 +455,7 @@ sub _args {
     $self->log_file($args{log_file});
     $self->log_level($args{log_level});
     $self->testing($args{testing});
+    $self->test_mock($args{test_mock});
 }
 sub _bool {
     # translates javascript true/false to 1/0
@@ -540,35 +552,35 @@ sub _test_mode {
     $self->config('t/envui.json');
     $self->_parse_config;
 
-    $log->_6("UI testing mode");
-
     $self->testing(1);
 
-    my $mock = Mock::Sub->new;
+    if ($self->test_mock) {
+        my $mock = Mock::Sub->new;
 
-    $temp_sub = $mock->mock(
-        'RPi::DHT11::temp',
-        return_value => 80
-    );
+        $temp_sub = $mock->mock(
+            'RPi::DHT11::temp',
+            return_value => 80
+        );
 
-    $log->_7("mocked RPi::DHT11::temp");
+        $log->_7( "mocked RPi::DHT11::temp" );
 
-    $hum_sub = $mock->mock(
-        'RPi::DHT11::humidity',
-        return_value => 20
-    );
+        $hum_sub = $mock->mock(
+            'RPi::DHT11::humidity',
+            return_value => 20
+        );
 
-    $log->_7("mocked RPi::DHT11::humidity");
+        $log->_7( "mocked RPi::DHT11::humidity" );
 
-    $pm_sub = $mock->mock(
-        'App::RPi::EnvUI::API::pin_mode',
-        return_value => 'ok'
-    );
-
-    $wp_sub = $mock->mock(
-        'App::RPi::EnvUI::API::write_pin',
+        $pm_sub = $mock->mock(
+            'App::RPi::EnvUI::API::pin_mode',
             return_value => 'ok'
         );
+
+        $wp_sub = $mock->mock(
+            'App::RPi::EnvUI::API::write_pin',
+            return_value => 'ok'
+        );
+    }
 
     $log->_7(
         "mocked WiringPi::write_pin as App::RPi::EnvUI::API::write_pin"
@@ -717,6 +729,14 @@ Default: C<config/envui.json>
 Optional, Bool. Send in C<1> to enable testing, C<0> to disable it.
 
 Default: C<0>
+
+    test_mock
+
+This flag is only useful when C<testing> param is set to true, and should only
+be used when writing unit tests for the L<App::RPi::EnvUI::Event> class. Due to
+the way the system works, the API has to avoid mocking out items in test mode,
+and the mocks have to be set within the test file itself. Do not use this flag
+unless you are writing unit tests.
 
     log_level
 

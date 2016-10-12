@@ -13,7 +13,10 @@ sub env_to_db {
     my ($self) = @_;
 
     my $db = App::RPi::EnvUI::DB->new(testing => $self->{testing});
-    my $api = App::RPi::EnvUI::API->new(testing => $self->{testing});
+    my $api = App::RPi::EnvUI::API->new(
+        testing => $self->{testing},
+        test_mock => 0
+    );
 
     $api->{db} = $db;
     $self->{db} = $db;
@@ -32,7 +35,10 @@ sub env_action {
     my ($self) = @_;
 
     my $db = App::RPi::EnvUI::DB->new(testing => $self->{testing});
-    my $api = App::RPi::EnvUI::API->new(testing => $self->{testing});
+    my $api = App::RPi::EnvUI::API->new(
+        testing => $self->{testing},
+        test_mock => 0
+    );
 
     $api->{db} = $db;
     $self->{db} = $db;

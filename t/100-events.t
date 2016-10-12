@@ -17,6 +17,7 @@ use Test::More;
 
 my $api = App::RPi::EnvUI::API->new(
     testing => 1,
+    test_mock => 0,
     config_file => 't/envui.json'
 );
 my $evt = App::RPi::EnvUI::Event->new(testing => 1);
@@ -24,31 +25,24 @@ my $evt = App::RPi::EnvUI::Event->new(testing => 1);
 my $db = App::RPi::EnvUI::DB->new(testing => 1);
 $api->db($db);
 
+my $mock = Mock::Sub->new;
+
+my $temp_sub = $mock->mock(
+    'RPi::DHT11::temp',
+    return_value => 80
+);
+
+my $hum_sub = $mock->mock(
+    'RPi::DHT11::humidity',
+    return_value => 20
+);
+
 is ref $evt, 'App::RPi::EnvUI::Event', "new() returns a proper object";
 is $api->testing, 1, "testing param to new() ok";
 
 #FIXME: add tests to test overrides for hum and temp
 
 # mock out some subs that rely on external C libraries
-
-my $mock = Mock::Sub->new;
-
-my $temp_sub = $mock->mock(
-    'RPi::DHT11::temp',
-    return_value => 99
-);
-
-my $hum_sub = $mock->mock(
-    'RPi::DHT11::humidity',
-    return_value => 99
-);
-
-my $wp_sub = $mock->mock(
-    'App::RPi::EnvUI::API::write_pin',
-    return_value => 'ok'
-);
-
-$api->_parse_config;
 
 # set the event timers
 
@@ -72,6 +66,9 @@ is $hpin, 0, "set humidity aux to pin for testing ok";
 
 { # read_sensor()
 
+    $temp_sub->return_value(99);
+    $hum_sub->return_value(99);
+
     my @env = $api->read_sensor;
 
     is @env, 2, "mocked read_sensor() returns proper count of values";
@@ -80,6 +77,9 @@ is $hpin, 0, "set humidity aux to pin for testing ok";
 }
 
 { # env_to_db()
+
+    $temp_sub->return_value(99);
+    $hum_sub->return_value(99);
 
     my $event = $evt->env_to_db;
 
@@ -201,7 +201,7 @@ is $hpin, 0, "set humidity aux to pin for testing ok";
 
 { # env_action() humidity above limit
 
-    my $event = $evt->env_action($api);
+    my $event = $evt->env_action;
     $db->insert_env(99, 1);
 
     $event->start;
@@ -216,7 +216,7 @@ is $hpin, 0, "set humidity aux to pin for testing ok";
 
 { # env_action() humidity above but override
 
-    my $event = $evt->env_action($api);
+    my $event = $evt->env_action;
     $db->insert_env(99, 21);
 
     $api->aux_state($haux, 0);
@@ -231,7 +231,6 @@ is $hpin, 0, "set humidity aux to pin for testing ok";
         $api->aux_state($haux),
         0,
         "env_action() doesn't change humidity pin state if override";
-
 
     $api->aux_override($haux, 0);
     is $api->aux_override($haux), 0, "humidity aux override reset to default";
