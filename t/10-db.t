@@ -240,7 +240,17 @@ $api->_parse_config;
 
 { # crash the connect()
 
-    my $db_obj = App::RPi::EnvUI::DB->new(db_file => '/');
+    my $ok = eval { App::RPi::EnvUI::DB->new(db_file => '/'); 1; };
+
+    is $ok, undef, "when a DBH can't be created, we die";
+    like $@, qr/unable to open database/, "...and the error message is sane";
+}
+
+{ # good connect()
+
+    my $db = App::RPi::EnvUI::DB->new(testing => 1);
+
+    is ref $db->{db}, 'App::RPi::EnvUI::DB', "dbh loaded ok";
 
 }
 unconfig();
