@@ -29,12 +29,7 @@ sub new {
     $self->_args(@_);
 
     $self->_log;
-    $self->config;
     $self->_init;
-
-    $log->_6($self->config. " is the config file");
-
-    $self->_parse_config($self->config);
 
     $log->_7("successfully parsed the config file");
 
@@ -512,78 +507,91 @@ sub _init {
 
     my $log = $log->child('_init()');
 
+    $self->db(
+        App::RPi::EnvUI::DB->new(
+            testing => $self->testing
+        )
+    );
+
     if ($self->_ui_test_mode || $self->testing){
-        $log->_6("testing mode");
-
-        $self->config('t/envui.json');
-
-        if ($self->_ui_test_mode) {
-            $log->_6("UI testing mode");
-
-            $self->testing(1);
-
-            my $mock = Mock::Sub->new;
-
-            $temp_sub = $mock->mock(
-                'RPi::DHT11::temp',
-                return_value => 80
-            );
-
-            $log->_7("mocked RPi::DHT11::temp");
-
-            $hum_sub = $mock->mock(
-                'RPi::DHT11::humidity',
-                return_value => 20
-            );
-
-            $log->_7("mocked RPi::DHT11::humidity");
-
-            $pm_sub = $mock->mock(
-                'App::RPi::EnvUI::API::pin_mode',
-                return_value => 'ok'
-            );
-
-            $wp_sub = $mock->mock(
-                'App::RPi::EnvUI::API::write_pin',
-                return_value => 'ok'
-            );
-
-            $log->_7(
-                "mocked WiringPi::write_pin as App::RPi::EnvUI::API::write_pin"
-            );
-        }
-
-        warn "API in test mode\n";
-
-        $self->sensor(bless {}, 'RPi::DHT11');
-
-        $log->_7("blessed a fake sensor");
-
-        $self->db(
-            App::RPi::EnvUI::DB->new(
-                testing => $self->testing
-            )
-        );
-
-        $log->_7("created a DB object with testing enabled");
+        $self->_test_mode
     }
     else {
-        if (! exists $INC{'WiringPi/API.pm'}){
-            require WiringPi::API;
-            WiringPi::API->import(qw(:perl));
-        }
-        if (! exists $INC{'RPi/DHT11.pm'}){
-            require RPi::DHT11;
-            RPi::DHT11->import;
-        }
-        $log->_6("required/imported WiringPi::API and RPi::DHT11");
-
-        $sensor =  RPi::DHT11->new(
-            $self->_config_core('sensor_pin'), $self->debug_sensor
-        );
-        $self->sensor($sensor);
-        $log->_6("instantiated a new RPi::DHT11 sensor object");
+        $self->_prod_mode;
     }
+}
+sub _test_mode {
+    my ($self) = @_;
+
+    my $log = $log->child('_test_mode');
+    $log->_6("testing mode");
+
+    $self->config('t/envui.json');
+    $self->_parse_config;
+
+    if ($self->_ui_test_mode) {
+        $log->_6("UI testing mode");
+
+        $self->testing(1);
+
+        my $mock = Mock::Sub->new;
+
+        $temp_sub = $mock->mock(
+            'RPi::DHT11::temp',
+            return_value => 80
+        );
+
+        $log->_7("mocked RPi::DHT11::temp");
+
+        $hum_sub = $mock->mock(
+            'RPi::DHT11::humidity',
+            return_value => 20
+        );
+
+        $log->_7("mocked RPi::DHT11::humidity");
+
+        $pm_sub = $mock->mock(
+            'App::RPi::EnvUI::API::pin_mode',
+            return_value => 'ok'
+        );
+
+        $wp_sub = $mock->mock(
+            'App::RPi::EnvUI::API::write_pin',
+            return_value => 'ok'
+        );
+
+        $log->_7(
+            "mocked WiringPi::write_pin as App::RPi::EnvUI::API::write_pin"
+        );
+    }
+
+    warn "API in test mode\n";
+
+    $self->sensor(bless {}, 'RPi::DHT11');
+
+    $log->_7("blessed a fake sensor");
+
+}
+sub _prod_mode {
+    my ($self) = @_;
+
+    $self->_parse_config;
+
+    if (! exists $INC{'WiringPi/API.pm'}){
+        require WiringPi::API;
+        WiringPi::API->import(qw(:perl));
+    }
+    if (! exists $INC{'RPi/DHT11.pm'}){
+        require RPi::DHT11;
+        RPi::DHT11->import;
+    }
+    $log->_6("required/imported WiringPi::API and RPi::DHT11");
+
+    $sensor =  RPi::DHT11->new(
+        $self->_config_core('sensor_pin'), $self->debug_sensor
+    );
+    $self->sensor($sensor);
+    $log->_6("instantiated a new RPi::DHT11 sensor object");
 }
 sub _log {
     my ($self) = @_;
