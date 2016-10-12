@@ -3,7 +3,6 @@ package App::RPi::EnvUI;
 use App::RPi::EnvUI::API;
 use Data::Dumper;
 use Dancer2;
-use Dancer2::Plugin::Database;
 use Mock::Sub no_warnings => 1;
 
 our $VERSION = '0.25';
