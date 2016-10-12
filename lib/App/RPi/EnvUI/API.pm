@@ -298,7 +298,7 @@ sub env {
     }
 
     my $ret = $self->db()->env;
-    return {temp => 0, humidity => 0} if ! defined $ret;
+    return {temp => -1, humidity => -1} if ! defined $ret;
     return $self->db()->env;
 }
 sub humidity {
@@ -474,8 +474,13 @@ sub _config_control {
 sub _config_core {
     my $self = shift;
     my $want = shift;
+
     if (! defined $self->db()){
         confess "API's DB object is not defined.";
+    }
+
+    if (! defined $want){
+        confess "_config_core() requires a \$want param\n";
     }
     return $self->db()->config_core($want);
 }

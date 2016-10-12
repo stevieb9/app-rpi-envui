@@ -11,6 +11,7 @@ BEGIN {
 use App::RPi::EnvUI::API;
 use App::RPi::EnvUI::DB;
 use Data::Dumper;
+use Hook::Output::Tiny;
 use Test::More;
 
 #FIXME: add tests to test overrides for hum and temp
@@ -30,6 +31,23 @@ is $api->{testing}, 1, "testing param to new() ok";
     is @env, 2, "mocked read_sensor() returns proper count of values";
     is $env[0], 80, "first elem of return ok (temp)";
     is $env[1], 20, "second elem of return ok (humidity)";
+
+    # sensor not defined
+
+    my $sensor = $api->{sensor};
+    $api->{sensor} = undef;
+
+    my $ok = eval { $api->read_sensor; 1; };
+
+    is $ok, undef, "without a sensor object, we die";
+    like $@, qr/is not defined/, "...and coughs the proper error message";
+
+    $api->{sensor} = $sensor;
+
+    $ok = eval { $api->read_sensor; 1; };
+
+    is $ok, 1, "re-assigned the sensor object ok";
+
 }
 
 { # bool()

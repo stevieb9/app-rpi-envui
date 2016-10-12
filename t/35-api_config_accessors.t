@@ -41,6 +41,13 @@ is $api->{testing}, 1, "testing param to new() ok";
     is $api->env_humidity_aux, 'aux2', "...and works ok going back too";
 }
 
+{ # debug sensor
+
+    is $api->debug_sensor(0), 0, "debug_sensor() is disabled by default";
+    is $api->debug_sensor(1), 1, "debug_sensor() is enabled with a 1";
+    is $api->debug_sensor(0), 0, "debug_sensor() is disabled with a param of 0";
+
+}
 unconfig();
 db_remove();
 done_testing();

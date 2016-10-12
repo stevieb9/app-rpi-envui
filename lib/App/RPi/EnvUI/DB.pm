@@ -16,14 +16,16 @@ sub new {
         ? 't/envui.db'
         : 'db/envui.db';
 
-        warn "DB in test mode\n" if $self->{testing};
+    $db_file = $self->{db_file} if defined $self->{db_file};
 
-        $self->{db} = DBI->connect(
-            "dbi:SQLite:dbname=$db_file",
-            "",
-            "",
-            {RaiseError => 1}
-        ) or die $DBI::errstr;
+    warn "DB in test mode\n" if $self->{testing};
+
+    $self->{db} = DBI->connect(
+        "dbi:SQLite:dbname=$db_file",
+        "",
+        "",
+        {RaiseError => 1}
+    ) or die $DBI::errstr;
 
     return $self;
 }

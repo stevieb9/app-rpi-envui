@@ -156,6 +156,18 @@ is $api->{testing}, 1, "testing param to new() ok";
         $api->aux_state($id),
         0,
         "hum aux is on w/o override when hum > limit and min_time expired";
+
+    # override is on
+
+    $api->aux_override($id, 1);
+    is $api->aux_override($id), 1, "humidity override on for test";
+    $api->action_humidity($id, 1);
+    is $api->aux_state($id), 0, "humidity low, override on, pin stays off";
+    is $api->aux_time($id), 0, "humidity low, override on, on time not set";
+
+    $api->aux_override($id, 0);
+    is $api->aux_override($id), 0, "humidity reset to off";
+
 }
 
 { # action_temp()
@@ -180,8 +192,6 @@ is $api->{testing}, 1, "testing param to new() ok";
     $api->action_temp($id, 81);
 
     sleep 1;
-
-    #print "*** " . $api->aux_time($id) . "\n";
 
     ok $api->aux_time($id) > 0, "temp on aux_time ok";
     is $api->aux_state($id), 1, "temp aux is on w/o override";
@@ -216,6 +226,19 @@ is $api->{testing}, 1, "testing param to new() ok";
         $api->aux_state($id),
         0,
         "temp aux is on w/o override when temp > limit and min_time expired";
+
+     # override is on
+
+    $api->aux_override($id, 1);
+    is $api->aux_override($id), 1, "temp override on for test";
+
+    $api->action_temp($id, 99);
+
+    is $api->aux_state($id), 0, "temp low, override on, pin stays off";
+    is $api->aux_time($id), 0, "temp low, override on, on time not set";
+
+    $api->aux_override($id, 0);
+    is $api->aux_override($id), 0, "temp reset to off";
 }
 
 unconfig();

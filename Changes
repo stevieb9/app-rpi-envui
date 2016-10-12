@@ -1,8 +1,8 @@
 Changes history for App::RPi::EnvUI
 
 0.25 NOREL
-        - separated out API::new() initialization code into _init(), and
-          _test_mode() and _prod_mode() to make things cleaner (closes #18)
+        - separated out API::new() initialization code into _init(), which loads
+          _test_mode() or _prod_mode() to make things cleaner (closes #18)
         - the t/15-api.t file was split apart into numerous files, each one now
           tests a specific part of the API (closes #17)
         - due to Event tests needing to mock out certain subs within the test
@@ -14,6 +14,9 @@ Changes history for App::RPi::EnvUI
           _test_mode()
         - added debug_sensor, log_level and log_file core config directives to
           the Configuration POD
+        - aux overrides for temp/humidity now have tests
+        - if 'stats' table is empty on first API::env() call, we now return an
+          href where the temp and hum are both -1 (added tests as well)
         -
 
 0.24    2016-10-11

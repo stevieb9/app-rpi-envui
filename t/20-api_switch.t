@@ -62,6 +62,22 @@ is $api->{testing}, 1, "testing param to new() ok";
             "switch(): write_pin() not called if pin state is -1: $id";
         is $ret, '', "switch(): if pin is -1, we don't call write_pin(), $id";
     }
+
+    # state is on, turning off
+
+    for (1..8){
+        my $id = "aux$_";
+
+        is $api->aux_pin($id, 0), 0, "$id pin set to 0 for test";
+        is $api->aux_state($id, 1), 1, "$id state set to 1 for test";
+
+        $api->switch($id);
+
+        is $api->aux_state($id), 1, "with state=1, switch() turns it on";
+
+        is $api->aux_pin($id, -1), -1, "$id pin set to -1";
+        is $api->aux_state($id, 0), 0, "$id state set to 0";
+    }
 }
 
 unconfig();

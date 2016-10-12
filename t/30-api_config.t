@@ -65,6 +65,26 @@ is $api->{testing}, 1, "testing param to new() ok";
         is $value, $values[$i], "core $_ has value $values[$i] by default";
         $i++;
     }
+
+    my $db_obj = $api->db();
+    $api->{db} = undef;
+
+    my $ok = eval { $api->_config_core; 1; };
+    is $ok, undef, "_config_core() dies if the db object is undef";
+    like $@, qr/DB object is not defined/, "...and spits the proper error";
+
+    $api->db($db_obj);
+
+    is
+        $api->_config_core('time_zone'),
+        'America/Edmonton',
+        "...and when the db object is put back, all is well";
+
+    # $want param missing
+
+    $ok = eval { $api->_config_core; 1; };
+    is $ok, undef, "_config_core requires a \$want param";
+    like $@, qr/requires a \$want param/, "...and spits proper error msg";
 }
 
 { # config_light()
@@ -80,8 +100,6 @@ is $api->{testing}, 1, "testing param to new() ok";
     is @directives, @values, "config_light() test is set up equally";
 
     my $c = $api->_config_light;
-
-    print Dumper $c;
 
     is ref $c, 'HASH', "_config_light() returns a hashref w/o params";
     is keys %$c, 6, "...and has proper count of keys";

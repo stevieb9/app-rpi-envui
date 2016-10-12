@@ -237,6 +237,12 @@ $api->_parse_config;
         is $api->aux_state($id), 0, "update() back to default ok for $id";
     }
 }
+
+{ # crash the connect()
+
+    my $db_obj = App::RPi::EnvUI::DB->new(db_file => '/');
+
+}
 unconfig();
 db_remove();
 done_testing();

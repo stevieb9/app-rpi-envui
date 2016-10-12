@@ -11,6 +11,7 @@ BEGIN {
 use App::RPi::EnvUI::API;
 use App::RPi::EnvUI::DB;
 use Data::Dumper;
+use Mock::Sub no_warnings => 1;
 use Test::More;
 
 #FIXME: add tests to test overrides for hum and temp
@@ -63,6 +64,24 @@ is $api->{testing}, 1, "testing param to new() ok";
         is $ok, undef, "env() dies if humidity arg isn't a number\n";
         like $@, qr/must be an integer/, "...and for humidity, error is ok";
     }
+}
+
+{ # no return from env()
+
+    my $m = Mock::Sub->new;
+    my $db_sub = $m->mock(
+        'App::RPi::EnvUI::DB::env',
+        return_value => undef
+    );
+
+    my $ret = $api->env;
+    unmock $db_sub;
+
+    is ref $ret, 'HASH', "env() returns a hashref with the db() mocked";
+
+    is keys %$ret, 2, "...and has proper key count";
+    is $ret->{temp}, -1, "if the stats table is empty, temp returned is -1";
+    is $ret->{humidity}, -1, "if the stats table is empty, hum returned is -1";
 }
 
 { # temp(), humidity()

@@ -75,6 +75,22 @@ is $api->{testing}, 1, "testing param to new() ok";
     unlink 't/test.log' or die $!;
 }
 
+{ # level < -1
+
+    my $w;
+    local $SIG{__WARN__} = sub { $w = shift; };
+    $api->log_level(-2);
+    like $w, qr/^log level has to be between/, "log_level(-2) warns";
+}
+
+{ # level > 7
+
+    my $w;
+    local $SIG{__WARN__} = sub { $w = shift; };
+    $api->log_level(8);
+    like $w, qr/^log level has to be between/, "log_level(8) warns";
+}
+
 unconfig();
 db_remove();
 done_testing();
