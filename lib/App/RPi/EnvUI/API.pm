@@ -14,7 +14,7 @@ our $VERSION = '0.25';
 
 # mocked sub handles for when we're in testing mode
 
-my ($temp_sub, $hum_sub, $wp_sub, $pm_sub);
+our ($temp_sub, $hum_sub, $wp_sub, $pm_sub);
 
 # class variables
 
@@ -540,41 +540,39 @@ sub _test_mode {
     $self->config('t/envui.json');
     $self->_parse_config;
 
-    if ($self->_ui_test_mode) {
-        $log->_6("UI testing mode");
+    $log->_6("UI testing mode");
 
-        $self->testing(1);
+    $self->testing(1);
 
-        my $mock = Mock::Sub->new;
+    my $mock = Mock::Sub->new;
 
-        $temp_sub = $mock->mock(
-            'RPi::DHT11::temp',
-            return_value => 80
-        );
+    $temp_sub = $mock->mock(
+        'RPi::DHT11::temp',
+        return_value => 80
+    );
 
-        $log->_7("mocked RPi::DHT11::temp");
+    $log->_7("mocked RPi::DHT11::temp");
 
-        $hum_sub = $mock->mock(
-            'RPi::DHT11::humidity',
-            return_value => 20
-        );
+    $hum_sub = $mock->mock(
+        'RPi::DHT11::humidity',
+        return_value => 20
+    );
 
-        $log->_7("mocked RPi::DHT11::humidity");
+    $log->_7("mocked RPi::DHT11::humidity");
 
-        $pm_sub = $mock->mock(
-            'App::RPi::EnvUI::API::pin_mode',
+    $pm_sub = $mock->mock(
+        'App::RPi::EnvUI::API::pin_mode',
+        return_value => 'ok'
+    );
+
+    $wp_sub = $mock->mock(
+        'App::RPi::EnvUI::API::write_pin',
             return_value => 'ok'
         );
 
-        $wp_sub = $mock->mock(
-            'App::RPi::EnvUI::API::write_pin',
-            return_value => 'ok'
-        );
-
-        $log->_7(
-            "mocked WiringPi::write_pin as App::RPi::EnvUI::API::write_pin"
-        );
-    }
+    $log->_7(
+        "mocked WiringPi::write_pin as App::RPi::EnvUI::API::write_pin"
+    );
 
     warn "API in test mode\n";
 

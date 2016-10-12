@@ -11,39 +11,13 @@ BEGIN {
 use App::RPi::EnvUI::API;
 use App::RPi::EnvUI::DB;
 use Data::Dumper;
-use Mock::Sub no_warnings => 1;
 use Test::More;
 
 #FIXME: add tests to test overrides for hum and temp
 
-
 my $api = App::RPi::EnvUI::API->new(
     testing => 1,
     config_file => 't/envui.json'
-);
-
-# mock out some subs that rely on external C libraries
-
-my $mock = Mock::Sub->new;
-
-my $temp_sub = $mock->mock(
-    'RPi::DHT11::temp',
-    return_value => 80
-);
-
-my $hum_sub = $mock->mock(
-    'RPi::DHT11::humidity',
-    return_value => 20
-);
-
-my $wp_sub = $mock->mock(
-    'App::RPi::EnvUI::API::write_pin',
-    return_value => 'ok'
-);
-
-my $pm_sub = $mock->mock(
-    'App::RPi::EnvUI::API::pin_mode',
-    return_value => 'ok'
 );
 
 my $db = App::RPi::EnvUI::DB->new(testing => 1);
@@ -220,7 +194,7 @@ $api->_parse_config;
 
         is $api->aux_pin($id), 0, "aux $id pin set to 0";
 
-        is $wp_sub->called, 1, "switch(): wp called if pin isn't -1";
+        is $App::RPi::EnvUI::API::wp_sub->called, 1, "switch(): wp called if pin isn't -1";
         is $ret, 'ok', "switch(): if pin isn't -1, we call write_pin(), $id";
 
         $api->aux_pin($id, -1);
@@ -228,14 +202,14 @@ $api->_parse_config;
         is $api->aux_pin($id), -1, "successfully reset $id pin to -1";
     }
 
-    $wp_sub->reset;
+    $App::RPi::EnvUI::API::wp_sub->reset;
 
     for (1..8){
         my $id = "aux$_";
         my $ret = $api->switch($id);
 
         is
-            $wp_sub->called,
+            $App::RPi::EnvUI::API::wp_sub->called,
             0,
             "switch(): write_pin() not called if pin state is -1: $id";
         is $ret, '', "switch(): if pin is -1, we don't call write_pin(), $id";
