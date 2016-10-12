@@ -17,7 +17,10 @@ Changes history for App::RPi::EnvUI
         - aux overrides for temp/humidity now have tests
         - if 'stats' table is empty on first API::env() call, we now return an
           href where the temp and hum are both -1 (added tests as well)
-        -
+        - fixed an issue where the DB::new() connect() call wasn't able to be
+          tested thoroughly (thanks 'NetWallah' from Perlmonks:
+          http://perlmonks.org/?node_id=1173884
+
 
 0.24    2016-10-11
         - all modules now have initial draft POD

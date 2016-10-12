@@ -24,7 +24,7 @@ sub new {
         "dbi:SQLite:dbname=$db_file",
         "",
         "",
-        {RaiseError => 1}
+        {RaiseError => $self->{db_err}}
     ) or die $DBI::errstr;
 
     return $self;
