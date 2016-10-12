@@ -11,7 +11,6 @@ BEGIN {
 use App::RPi::EnvUI::API;
 use App::RPi::EnvUI::DB;
 use Data::Dumper;
-use Hook::Output::Tiny;
 use Test::More;
 
 #FIXME: add tests to test overrides for hum and temp
