@@ -22,7 +22,7 @@ my $master_log;
 my $log;
 my $sensor;
 
-# public
+# public environment methods
 
 sub new {
     my $self = bless {}, shift;
@@ -275,24 +275,6 @@ sub aux_time {
     my $on_length = time() - $on_time;
     return $on_time == 0 ? 0 : $on_length;
 }
-sub config {
-    $_[0]->{config_file} = $_[1] if defined $_[1];
-    return $_[0]->{config_file} || 'config/envui.json';
-}
-sub db {
-    my ($self, $db) = @_;
-    $self->{db} = $db if defined $db;
-    return $self->{db};
-}
-sub debug_sensor {
-    my ($self, $bool) = @_;
-
-    if (defined $bool){
-        $self->{debug_sensor} = $bool;
-    }
-
-    return $self->{debug_sensor};
-}
 sub env {
     my ($self, $temp, $hum) = @_;
 
@@ -317,60 +299,9 @@ sub env {
     return {temp => 0, humidity => 0} if ! defined $ret;
     return $self->db()->env;
 }
-sub env_humidity_aux {
-    my $self = shift;
-    return $self->_config_control('humidity_aux');
-}
-sub env_temp_aux {
-    my $self = shift;
-    return $self->_config_control('temp_aux');
-}
-sub events {
-    my $self = shift;
-
-    my $log = $self->log('events');
-
-    my $events = App::RPi::EnvUI::Event->new($self->testing);
-
-    $self->{events}{env_to_db} = $events->env_to_db;
-    $self->{events}{env_action} = $events->env_action;
-
-    $self->{events}{env_to_db}->start;
-    $self->{events}{env_action}->start;
-
-    $log->_7("events successfully started");
-}
 sub humidity {
     my $self = shift;
     return $self->env()->{humidity};
-}
-sub log {
-    my $self = shift;
-    $master_log->file($self->log_file) if $self->log_file;
-    $master_log->level($self->log_level);
-    return $master_log;
-}
-sub log_file {
-    my ($self, $fn) = @_;
-
-    if (defined $fn){
-        $self->{log_file} = $fn;
-    }
-
-    return $self->{log_file};
-}
-sub log_level {
-    my ($self, $level) = @_;
-
-    if (defined $level){
-        if ($level < -1 || $level > 7){
-            warn "log level has to be between 0 and 7... disabling logging\n";
-            $level = -1;
-        }
-        $self->{log_level} = $level;
-    }
-
-    return $self->{log_level};
 }
 sub read_sensor {
     my $self = shift;
@@ -386,11 +317,6 @@ sub read_sensor {
     $log->_5("temp: $temp, humidity: $hum");
 
     return ($temp, $hum);
-}
-sub sensor {
-    my ($self, $sensor) = @_;
-    $self->{sensor} = $sensor if defined $sensor;
-    return $self->{sensor};
 }
 sub switch {
     my ($self, $aux_id) = @_;
@@ -416,6 +342,89 @@ sub switch {
 sub temp {
     my $self = shift;
     return $self->env()->{temp};
+}
+
+# public core operational methods
+
+sub events {
+    my $self = shift;
+
+    my $log = $self->log('events');
+
+    my $events = App::RPi::EnvUI::Event->new($self->testing);
+
+    $self->{events}{env_to_db} = $events->env_to_db;
+    $self->{events}{env_action} = $events->env_action;
+
+    $self->{events}{env_to_db}->start;
+    $self->{events}{env_action}->start;
+
+    $log->_7("events successfully started");
+}
+sub log {
+    my $self = shift;
+    $master_log->file($self->log_file) if $self->log_file;
+    $master_log->level($self->log_level);
+    return $master_log;
+}
+
+# public configuration getters
+
+sub env_humidity_aux {
+    my $self = shift;
+    return $self->_config_control('humidity_aux');
+}
+sub env_temp_aux {
+    my $self = shift;
+    return $self->_config_control('temp_aux');
+}
+
+# public instance variable methods
+
+sub config {
+    $_[0]->{config_file} = $_[1] if defined $_[1];
+    return $_[0]->{config_file} || 'config/envui.json';
+}
+sub db {
+    my ($self, $db) = @_;
+    $self->{db} = $db if defined $db;
+    return $self->{db};
+}
+sub debug_sensor {
+    my ($self, $bool) = @_;
+
+    if (defined $bool){
+        $self->{debug_sensor} = $bool;
+    }
+
+    return $self->{debug_sensor};
+}
+sub log_file {
+    my ($self, $fn) = @_;
+
+    if (defined $fn){
+        $self->{log_file} = $fn;
+    }
+
+    return $self->{log_file};
+}
+sub log_level {
+    my ($self, $level) = @_;
+
+    if (defined $level){
+        if ($level < -1 || $level > 7){
+            warn "log level has to be between 0 and 7... disabling logging\n";
+            $level = -1;
+        }
+        $self->{log_level} = $level;
+    }
+
+    return $self->{log_level};
+}
+sub sensor {
+    my ($self, $sensor) = @_;
+    $self->{sensor} = $sensor if defined $sensor;
+    return $self->{sensor};
 }
 sub testing {
     my ($self, $bool) = @_;
