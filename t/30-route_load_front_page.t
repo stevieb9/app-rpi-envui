@@ -27,6 +27,7 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
 }
 
 unset_testing();
+unconfig();
 db_remove();
 done_testing();
 

@@ -31,9 +31,11 @@ sub new {
     $self->_log;
     $self->_init;
 
-    $log->_7("successfully parsed the config file");
+    $log->_7("successfully initialized the system");
 
     $self->events if ! $self->testing;
+
+    $log->_7("successfully started the async events");
 
     return $self;
 }
@@ -344,7 +346,7 @@ sub humidity {
 }
 sub log {
     my $self = shift;
-    $master_log->file($self->log_file);
+    $master_log->file($self->log_file) if $self->log_file;
     $master_log->level($self->log_level);
     return $master_log;
 }
@@ -575,6 +577,8 @@ sub _test_mode {
 sub _prod_mode {
     my ($self) = @_;
 
+    my $log = $log->child('_prod_mode');
+
     $self->_parse_config;
 
     if (! exists $INC{'WiringPi/API.pm'}){
@@ -595,6 +599,8 @@ sub _prod_mode {
 }
 sub _log {
     my ($self) = @_;
+
+    # configures the class-level log
 
     $master_log = Logging::Simple->new(
         name => 'EnvUI',
