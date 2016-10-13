@@ -94,6 +94,21 @@ is $api->{testing}, 1, "testing param to new() ok";
     is ref $api->sensor, 'RPi::DHT11', "_prod_mode() generates a sensor";
 
 }
+
+{ # config file not found
+
+    unconfig();
+
+    is -e 't/envui.json', undef, "for testing, config file has been removed ok";
+
+    my $ok = eval { App::RPi::EnvUI::API->new(testing => 1); 1; };
+
+    is $ok, undef, "we die if a config file is not found";
+    like $@, qr/config file .*? not found/, "...the error message is sane";
+
+    config();
+}
+
 unconfig();
 db_remove();
 done_testing();

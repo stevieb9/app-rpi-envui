@@ -20,7 +20,7 @@ Changes history for App::RPi::EnvUI
         - fixed an issue where the DB::new() connect() call wasn't able to be
           tested thoroughly (thanks 'NetWallah' from Perlmonks:
           http://perlmonks.org/?node_id=1173884
-
+        - added a check to ensure we found the config file ok in API
 
 0.24    2016-10-11
         - all modules now have initial draft POD

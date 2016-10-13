@@ -641,6 +641,10 @@ sub _parse_config {
 
     $config = $self->config if ! defined $config;
 
+    if (! -e $config){
+        confess "\n\nconfig file '$config' not found...\n\n";
+    }
+
     my $json;
     {
         local $/;
