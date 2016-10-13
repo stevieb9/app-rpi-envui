@@ -3,6 +3,7 @@ package App::RPi::EnvUI::API;
 use App::RPi::EnvUI::DB;
 use App::RPi::EnvUI::Event;
 use Carp qw(confess);
+use Crypt::SaltedHash;
 use Data::Dumper;
 use DateTime;
 use JSON::XS;
@@ -348,6 +349,23 @@ sub temp {
 
 # public core operational methods
 
+sub passwd {
+    my ($self, $pw) = @_;
+
+    if (! defined $pw){
+        confess "\n\nplain text password string required\n\n";
+    }
+
+    my $csh = Crypt::SaltedHash->new(
+        algorithm => 'SHA1',
+    );
+
+    $csh->add('secret');
+
+    my $salted = $csh->generate;
+
+    return $salted;
+}
 sub events {
     my $self = shift;
 
@@ -436,7 +454,6 @@ sub testing {
     }
     return $self->{testing};
 }
-
 sub test_mock {
     my ($self, $mock) = @_;
 
@@ -1036,6 +1053,18 @@ Optional, Integer. Sets the logging level between C<0-7>.
 Return: Integer, the current level.
 
 Default: C<-1> (logging disabled)
+
+=head2 passwd($pw)
+
+Generates an SHA-1 hashed password.
+
+Parameters:
+
+    $pw
+
+Mandatory, String. A plain text string (the password).
+
+Return: SHA-1 hashed password string.
 
 =head2 read_sensor
 

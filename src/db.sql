@@ -82,3 +82,12 @@ INSERT INTO light VALUES ('on_hours', '12');
 INSERT INTO light VALUES ('on_since', 0);
 INSERT INTO light VALUES ('toggle', 'disabled');
 INSERT INTO light VALUES ('enable', 0);
+
+DROP TABLE IF EXISTS auth;
+
+CREATE TABLE auth (
+    user VARCHAR(50),
+    pass VARCHAR(50)
+);
+
+

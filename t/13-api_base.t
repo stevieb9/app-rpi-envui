@@ -10,6 +10,7 @@ BEGIN {
 
 use App::RPi::EnvUI::API;
 use App::RPi::EnvUI::DB;
+use Crypt::SaltedHash;
 use Data::Dumper;
 use Mock::Sub no_warnings => 1;
 use Test::More;
@@ -92,7 +93,6 @@ is $api->{testing}, 1, "testing param to new() ok";
 
     is $dht_new_sub->called, 1, "RPi::DHT11->new is called by _prod_mode()";
     is ref $api->sensor, 'RPi::DHT11', "_prod_mode() generates a sensor";
-
 }
 
 { # config file not found
@@ -107,6 +107,15 @@ is $api->{testing}, 1, "testing param to new() ok";
     like $@, qr/config file .*? not found/, "...the error message is sane";
 
     config();
+}
+
+{ # passwd()
+
+    my $pw = 'secret';
+    my $enc = $api->passwd($pw);
+
+    my $csh = Crypt::SaltedHash->new(algorithm => 'SHA1');
+    is $csh->validate($enc, $pw), 1, "passwd() returns an ok crypted pw";
 }
 
 unconfig();
