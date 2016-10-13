@@ -3,8 +3,10 @@ Changes
 config.yml
 config/envui.json
 db/envui.db
+db/envui.db-journal
 lib/App/RPi/EnvUI.pm
 lib/App/RPi/EnvUI/API.pm
+lib/App/RPi/EnvUI/Auth.pm
 lib/App/RPi/EnvUI/Configuration.pod
 lib/App/RPi/EnvUI/DB.pm
 lib/App/RPi/EnvUI/Event.pm

@@ -1,7 +1,15 @@
+session: "JSON"
+
+engines:
+  session:
+    JSON:
+      session_dir: "/tmp/sessions"
+
 plugins:
-    Database:
-        driver: SQLite
-        database: 'db/envui.db'
-        dbi_params:
-          RaiseError: 1
-          AutoCommit: 1
+  Auth::Extensible:
+    realms:
+      login:
+        disable_roles: 1
+        provider: "App::RPi::EnvUI::Auth"
+
+

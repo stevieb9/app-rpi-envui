@@ -3,6 +3,8 @@ package App::RPi::EnvUI;
 use App::RPi::EnvUI::API;
 use Data::Dumper;
 use Dancer2;
+use Dancer2::Plugin::Auth::Extensible;
+#use Dancer2::Session::JSON;
 use Mock::Sub no_warnings => 1;
 
 our $VERSION = '0.25';
@@ -20,7 +22,8 @@ $api->env($api->read_sensor);
 # fetch routes
 #
 
-get '/' => sub {
+get '/' => require_login sub {
+        session auth => 1;
         my $log = $log->child('/');
         $log->_7("entered");
         # return template 'main';
@@ -108,6 +111,7 @@ get '/set_aux/:aux/:state' => sub {
             state => $state,
         };
     };
+
 
 true;
 

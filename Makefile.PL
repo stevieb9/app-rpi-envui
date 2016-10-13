@@ -88,6 +88,9 @@ WriteMakefile(
     PREREQ_PM => {
         'Async::Event::Interval' => 0,
         'Dancer2'     => 0.203001,
+        'Dancer2::Plugin::Auth::Extensible' => 0,
+        'Dancer2::Plugin::Auth::Extensible::Provider::Base' => 0,
+        'Dancer2::Session::JSON' => 0,
         'DBI' => 0,
         'DBD::SQLite' => 0,
         'DateTime'  => 0,
