@@ -90,4 +90,5 @@ CREATE TABLE auth (
     pass VARCHAR(50)
 );
 
+INSERT INTO auth VALUES ('admin', '{SSHA1}B3WvkiZINyUB1JiP83xQ4evOe9EsrpIK');
 

@@ -22,13 +22,18 @@ $api->env($api->read_sensor);
 # fetch routes
 #
 
-get '/' => require_login sub {
-        session auth => 1;
+get '/' => sub {
         my $log = $log->child('/');
         $log->_7("entered");
         # return template 'main';
         return template 'test';
     };
+
+get '/test_login' => require_login sub {
+        session auth => 1;
+        return template 'test';
+    };
+
 get '/light' => sub {
         my $log = $log->child('/light');
         $log->_7("entered");

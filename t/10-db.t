@@ -21,7 +21,7 @@ my $api = App::RPi::EnvUI::API->new(
     testing => 1,
     config_file => 't/envui.json'
 );
-$api->_parse_config;
+#$api->_parse_config;
 
 { # auxs()
 
@@ -262,6 +262,14 @@ $api->_parse_config;
     is ref $db->{db}, 'DBI::db', "dbh loaded ok";
 
 }
+
+{ # passwd()
+
+    my $un = 'admin';
+    my $crypt = $db->passwd($un);
+    like $crypt, qr/^{SSHA1\}/, "passwd() returns an SHA-1 crypted password";
+}
+
 unconfig();
 db_remove();
 done_testing();

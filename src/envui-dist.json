@@ -8,8 +8,7 @@
     "testing": "0",
     "debug_sensor": "0",
     "log_file": "",
-    "log_level": "-1",
-    "pw_salt": "84sdrtx!3"
+    "log_level": "-1"
   },
   "control": {
     "temp_limit": "80",

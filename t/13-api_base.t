@@ -111,13 +111,20 @@ is $api->{testing}, 1, "testing param to new() ok";
 
 { # passwd()
 
-    my $pw = 'secret';
+    my $pw = 'admin';
     my $enc = $api->passwd($pw);
 
     my $csh = Crypt::SaltedHash->new(algorithm => 'SHA1');
     is $csh->validate($enc, $pw), 1, "passwd() returns an ok crypted pw";
 }
 
+{ # auth()
+
+    my $un = 'admin';
+    my $pw = 'admin';
+
+    my $ok = $api->auth($un, $pw);
+}
 unconfig();
 db_remove();
 done_testing();

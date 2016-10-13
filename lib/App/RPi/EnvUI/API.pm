@@ -349,22 +349,22 @@ sub temp {
 
 # public core operational methods
 
-sub passwd {
-    my ($self, $pw) = @_;
+sub auth {
+    my ($self, $user, $pw) = @_;
 
-    if (! defined $pw){
-        confess "\n\nplain text password string required\n\n";
+    if (! defined $user){
+        confess "\n\nauth() requires a username sent in\n\n";
     }
 
-    my $csh = Crypt::SaltedHash->new(
-        algorithm => 'SHA1',
-    );
+    if (! defined $pw){
+        confess "\n\nauth() requires a password sent in\n\n";
 
-    $csh->add('secret');
+    }
+    my $csh = Crypt::SaltedHash->new(algorithm => 'SHA1');
 
-    my $salted = $csh->generate;
+    my $crypted = $self->db()->passwd($user);
 
-    return $salted;
+    return $csh->validate($crypted, $pw);
 }
 sub events {
     my $self = shift;
@@ -387,7 +387,32 @@ sub log {
     $master_log->level($self->log_level);
     return $master_log;
 }
+sub passwd {
+    my ($self, $pw) = @_;
 
+    if (! defined $pw){
+        confess "\n\nplain text password string required\n\n";
+    }
+
+    my $csh = Crypt::SaltedHash->new(
+        algorithm => 'SHA1',
+    );
+
+    $csh->add($pw);
+
+    my $salted = $csh->generate;
+
+    return $salted;
+}
+sub user {
+    my ($self, $un) = @_;
+
+    if (! defined $un){
+        confess "\n\nuser() requires a username to be sent in\n\n";
+    }
+
+    return $self->db()->passwd($un);
+}
 # public configuration getters
 
 sub env_humidity_aux {
@@ -572,10 +597,11 @@ sub _test_mode {
     my $log = $log->child('_test_mode');
     $log->_6("testing mode");
 
+    $self->testing(1);
+    $self->db(App::RPi::EnvUI::DB->new(testing => 1));
     $self->config('t/envui.json');
     $self->_parse_config;
 
-    $self->testing(1);
 
     if ($self->test_mock) {
         my $mock = Mock::Sub->new;
@@ -824,6 +850,23 @@ Parameters:
 
 Mandatory, String. The string name representation of the temperature auxillary.
 By default, this will be C<aux1>.
+
+=head2 auth($user, $pw)
+
+Checks whether a user is supplying the correct password.
+
+Parameters:
+
+    $user
+
+Mandatory, String. The user name to validate the password for.
+
+    $pw
+
+Mandatory, String. The plain text password to verify.
+
+
+Return: True (C<1>) if successful, C<undef> otherwise.
 
 =head2 aux($aux_id)
 
@@ -1124,6 +1167,18 @@ Parameters:
 Optional, Bool. C<0> to disable, C<1> to enable.
 
 Default: C<1>, enabled (the API will mock in test mode)
+
+=head2 user($user)
+
+Fetches a user's details (currently only the hashed password).
+
+Parameters:
+
+    $user
+
+Mandatory, String. The username of the user to fetch details for.
+
+Return: String, the SHA-1 hashed password for the user.
 
 =head1 AUTHOR
 
