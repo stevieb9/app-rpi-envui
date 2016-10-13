@@ -606,11 +606,11 @@ sub _prod_mode {
 
     $self->_parse_config;
 
-    if (! exists $INC{'WiringPi/API.pm'}){
+    if (! exists $INC{'WiringPi/API.pm'} && ! $self->testing){
         require WiringPi::API;
         WiringPi::API->import(qw(:perl));
     }
-    if (! exists $INC{'RPi/DHT11.pm'}){
+    if (! exists $INC{'RPi/DHT11.pm'} && ! $self->testing){
         require RPi::DHT11;
         RPi::DHT11->import;
     }
@@ -1077,6 +1077,20 @@ Parameters:
 Optional, Bool. C<0> for production mode, and C<1> for testing mode.
 
 Return: Bool, whether we're in testing mode or not.
+
+=head2 test_mock($bool)
+
+This is for use internally when testing the L<App::RPi::EnvUI::Event> module.
+Normally, the API mocks out items for testing, but in C<Event>'s case, the test
+file itself has to do the mocking.
+
+Parameters:
+
+    $bool
+
+Optional, Bool. C<0> to disable, C<1> to enable.
+
+Default: C<1>, enabled (the API will mock in test mode)
 
 =head1 AUTHOR
 

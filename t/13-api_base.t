@@ -11,6 +11,7 @@ BEGIN {
 use App::RPi::EnvUI::API;
 use App::RPi::EnvUI::DB;
 use Data::Dumper;
+use Mock::Sub no_warnings => 1;
 use Test::More;
 
 #FIXME: add tests to test overrides for hum and temp
@@ -78,6 +79,21 @@ is $api->{testing}, 1, "testing param to new() ok";
     }
 }
 
+{ # _prod_mode()
+
+    my $m = Mock::Sub->new;
+
+    my $dht_new_sub = $m->mock(
+        'RPi::DHT11::new',
+        return_value => bless {}, 'RPi::DHT11'
+    );
+
+    $api->_prod_mode;
+
+    is $dht_new_sub->called, 1, "RPi::DHT11->new is called by _prod_mode()";
+    is ref $api->sensor, 'RPi::DHT11', "_prod_mode() generates a sensor";
+
+}
 unconfig();
 db_remove();
 done_testing();
