@@ -10,9 +10,9 @@ with 'Dancer2::Plugin::Auth::Extensible::Role::Provider';
 our $VERSION = '0.25';
 
 sub authenticate_user {
-    my ($self, $username, $password) = @_;
-    my $pw = $self->get_user_details($username) or return;
-    my $auth = $self->match_password($password, $pw);
+    my ($self, $user, $pass) = @_;
+    my $user_details = $self->get_user_details($user) or return;
+    my $auth = $self->match_password($pass, $user_details->{pass});
     return $auth;
 }
 

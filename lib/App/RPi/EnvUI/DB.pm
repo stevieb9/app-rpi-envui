@@ -29,11 +29,11 @@ sub new {
 
     return $self;
 }
-sub passwd {
+sub user {
     my ($self, $user) = @_;
 
     my $sth = $self->{db}->prepare(
-        "SELECT pass FROM auth WHERE user=?;"
+        "SELECT * FROM auth WHERE user=?;"
     );
 
     $sth->execute($user);
@@ -42,7 +42,7 @@ sub passwd {
 
     return ! ref $res eq 'HASH'
         ? undef
-        : $res->{pass};
+        : $res;
 }
 sub aux {
     my ($self, $aux_id) = @_;
@@ -188,9 +188,9 @@ Optional, Bool. C<1> to enable testing mode, C<0> to disable.
 
 Default: C<0> (off)
 
-=head2 passwd($user)
+=head2 user($user)
 
-Fetches the hashed password for a user from the database's 'auth' table.
+Fetches a user's information as found in the 'auth' database table.
 
 Parameters:
 
@@ -198,7 +198,7 @@ Parameters:
 
 Mandatory, String. The name of the user to fetch the password for.
 
-Return: A string containing the SHA-1 summed password.
+Return: A hash reference containing the user's details.
 
 =head2 aux($aux_id)
 

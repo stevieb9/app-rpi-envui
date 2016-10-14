@@ -362,7 +362,7 @@ sub auth {
     }
     my $csh = Crypt::SaltedHash->new(algorithm => 'SHA1');
 
-    my $crypted = $self->db()->passwd($user);
+    my $crypted = $self->db()->passwd($user)->{pass};
 
     return $csh->validate($crypted, $pw);
 }
@@ -411,7 +411,7 @@ sub user {
         confess "\n\nuser() requires a username to be sent in\n\n";
     }
 
-    return $self->db()->passwd($un);
+    return $self->db()->user($un);
 }
 # public configuration getters
 
@@ -1170,7 +1170,7 @@ Default: C<1>, enabled (the API will mock in test mode)
 
 =head2 user($user)
 
-Fetches a user's details (currently only the hashed password).
+Fetches a user's details.
 
 Parameters:
 
@@ -1178,7 +1178,8 @@ Parameters:
 
 Mandatory, String. The username of the user to fetch details for.
 
-Return: String, the SHA-1 hashed password for the user.
+Return: href, the hash reference containing user details per the 'user' database
+table.
 
 =head1 AUTHOR
 
