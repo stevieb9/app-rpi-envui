@@ -31,8 +31,8 @@ get '/' => sub {
 
 post '/login' => sub {
         session user => params->{username};
-        session pass => params->{password};
-        return template 'test';
+        session pass => $api->user(params->{username})->{pass};
+        redirect '/';
     };
 get '/light' => sub {
         my $log = $log->child('/light');
