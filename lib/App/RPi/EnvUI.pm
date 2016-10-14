@@ -34,6 +34,11 @@ post '/login' => sub {
         session pass => $api->user(params->{username})->{pass};
         redirect '/';
     };
+
+any '/logout' => sub {
+        app->destroy_session;
+    };
+
 get '/light' => sub {
         my $log = $log->child('/light');
         $log->_7("entered");
