@@ -7,9 +7,10 @@ engines:
 
 plugins:
   Auth::Extensible:
+    no_login_handler: 1
+    disable_roles: 1
     realms:
       login:
-        disable_roles: 1
         provider: "App::RPi::EnvUI::Auth"
 
 

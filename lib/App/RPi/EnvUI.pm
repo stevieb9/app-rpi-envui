@@ -29,11 +29,11 @@ get '/' => sub {
         return template 'test';
     };
 
-get '/test_login' => require_login sub {
-        session auth => 1;
+post '/login' => sub {
+        session user => params->{username};
+        session pass => params->{password};
         return template 'test';
     };
-
 get '/light' => sub {
         my $log = $log->child('/light');
         $log->_7("entered");
