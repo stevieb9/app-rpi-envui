@@ -22,6 +22,7 @@ our ($temp_sub, $hum_sub, $wp_sub, $pm_sub);
 my $master_log;
 my $log;
 my $sensor;
+my $events;
 
 # public environment methods
 
@@ -36,7 +37,7 @@ sub new {
 
     $log->_7("successfully initialized the system");
 
-    $self->events if ! $self->testing;
+    $self->events if ! $self->testing && ! defined $events;
 
     $log->_7("successfully started the async events");
 
@@ -371,7 +372,7 @@ sub events {
 
     my $log = $self->log('events');
 
-    my $events = App::RPi::EnvUI::Event->new($self->testing);
+    $events = App::RPi::EnvUI::Event->new($self->testing);
 
     $self->{events}{env_to_db} = $events->env_to_db;
     $self->{events}{env_action} = $events->env_action;
@@ -659,9 +660,12 @@ sub _prod_mode {
     }
     $log->_6("required/imported WiringPi::API and RPi::DHT11");
 
-    $sensor =  RPi::DHT11->new(
-        $self->_config_core('sensor_pin'), $self->debug_sensor
-    );
+    if (! defined $sensor){
+        $sensor =  RPi::DHT11->new(
+            $self->_config_core('sensor_pin'), $self->debug_sensor
+        );
+    }
+
     $self->sensor($sensor);
     $log->_6("instantiated a new RPi::DHT11 sensor object");
 }
