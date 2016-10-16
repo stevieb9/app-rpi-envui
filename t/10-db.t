@@ -263,11 +263,18 @@ my $api = App::RPi::EnvUI::API->new(
 
 }
 
-{ # passwd()
+{ # user()
 
     my $un = 'admin';
-    my $crypt = $db->passwd($un);
-    like $crypt, qr/^{SSHA1\}/, "passwd() returns an SHA-1 crypted password";
+    my $user = $db->user($un);
+
+    is ref $user, 'HASH', "user() returns an href";
+    like
+        $user->{pass},
+        qr/^{SSHA1\}/,
+        "user()->{pass} returns an SHA-1 crypted password";
+
+    is $user->{user}, 'admin', "...and {user} is the username";
 }
 
 unconfig();
