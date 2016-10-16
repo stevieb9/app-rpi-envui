@@ -1,6 +1,6 @@
 Changes history for App::RPi::EnvUI
 
-0.25 NOREL
+0.25    2016-10-16
         - separated out API::new() initialization code into _init(), which loads
           _test_mode() or _prod_mode() to make things cleaner (closes #18)
         - the t/15-api.t file was split apart into numerous files, each one now
@@ -21,6 +21,8 @@ Changes history for App::RPi::EnvUI
           tested thoroughly (thanks 'NetWallah' from Perlmonks:
           http://perlmonks.org/?node_id=1173884
         - added a check to ensure we found the config file ok in API
+        - added initial user authentication implementation (outside of normal
+          run modes for now)
 
 0.24    2016-10-11
         - all modules now have initial draft POD
