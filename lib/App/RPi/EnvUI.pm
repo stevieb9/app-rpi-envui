@@ -7,7 +7,7 @@ use Dancer2::Plugin::Auth::Extensible;
 #use Dancer2::Session::JSON;
 use Mock::Sub no_warnings => 1;
 
-our $VERSION = '0.25';
+our $VERSION = '0.26';
 
 my $db = App::RPi::EnvUI::DB->new;
 my $api = App::RPi::EnvUI::API->new(db => $db);
