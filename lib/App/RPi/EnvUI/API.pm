@@ -363,7 +363,7 @@ sub auth {
     }
     my $csh = Crypt::SaltedHash->new(algorithm => 'SHA1');
 
-    my $crypted = $self->db()->passwd($user)->{pass};
+    my $crypted = $self->db()->user($user)->{pass};
 
     return $csh->validate($crypted, $pw);
 }
