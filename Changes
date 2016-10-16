@@ -23,6 +23,7 @@ Changes history for App::RPi::EnvUI
         - added a check to ensure we found the config file ok in API
         - added initial user authentication implementation (outside of normal
           run modes for now)
+        - added session support (JSON files at this time)
 
 0.24    2016-10-11
         - all modules now have initial draft POD
