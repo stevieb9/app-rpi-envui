@@ -414,6 +414,7 @@ sub user {
 
     return $self->db()->user($un);
 }
+
 # public configuration getters
 
 sub env_humidity_aux {

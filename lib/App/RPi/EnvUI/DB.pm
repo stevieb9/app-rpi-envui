@@ -40,8 +40,8 @@ sub user {
 
     my $res = $sth->fetchrow_hashref();
 
-    return ! ref $res eq 'HASH'
-        ? undef
+    return ref $res ne 'HASH'
+        ? {user => $user, pass => ''}
         : $res;
 }
 sub aux {

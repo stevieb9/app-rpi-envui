@@ -1,5 +1,9 @@
 Changes history for App::RPi::EnvUI
 
+0.26 NOREL
+        - DB::auth() now returns a hashref of the username sent in with a blank
+          password field if the user doesn't exist (added tests)
+
 0.25    2016-10-16
         - separated out API::new() initialization code into _init(), which loads
           _test_mode() or _prod_mode() to make things cleaner (closes #18)

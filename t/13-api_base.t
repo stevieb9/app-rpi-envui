@@ -124,6 +124,17 @@ is $api->{testing}, 1, "testing param to new() ok";
     my $pw = 'admin';
 
     my $ok = $api->auth($un, $pw);
+
+    is $ok, 1, "auth() ok with successful login";
+
+    $ok = $api->auth($un, 'blah');
+
+    is $ok, '', "auth() fails with invalid pw";
+
+    $ok = $api->auth('nouser', 'pass');
+
+    is $ok, '', "auth() fails with invalid username";
+
 }
 unconfig();
 db_remove();
