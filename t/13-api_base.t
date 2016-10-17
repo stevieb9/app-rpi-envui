@@ -116,6 +116,10 @@ is $api->{testing}, 1, "testing param to new() ok";
 
     my $csh = Crypt::SaltedHash->new(algorithm => 'SHA1');
     is $csh->validate($enc, $pw), 1, "passwd() returns an ok crypted pw";
+
+    my $ok = eval { $api->passwd; 1; };
+    is $ok, undef, "passwd() requires a password sent in";
+    like $@, qr/plain text password/, "...and error is ok";
 }
 
 { # auth()
@@ -135,6 +139,30 @@ is $api->{testing}, 1, "testing param to new() ok";
 
     is $ok, '', "auth() fails with invalid username";
 
+    $ok = eval { $api->auth; 1; };
+    is $ok, undef, "auth() dies if username not sent in";
+    like $@, qr/requires a username/, "...and the error is ok";
+
+    $ok = eval { $api->auth('admin'); 1; };
+    is $ok, undef, "auth() dies if password not sent in";
+    like $@, qr/requires a password/, "...and the error is ok";
+}
+
+{ # user
+
+    my $ok = eval { $api->user; 1; };
+    is $ok, undef, "user() dies if a username isn't sent in";
+    like $@, qr/requires a username/, "...and the error is sane";
+
+    my $u = $api->user('admin');
+    is ref $u, 'HASH', "user() returns a hash reference";
+
+    is $u->{user}, 'admin', "...and has a 'user' field";
+    like $u->{pass}, qr/{SSHA/, "...and has a 'pass' field";
+
+    $u = $api->user('blah');
+    is $u->{user}, 'blah', "user() returns properly even if user doesn't exist";
+    is $u->{pass}, '', "...and the 'pass' field is empty";
 }
 unconfig();
 db_remove();

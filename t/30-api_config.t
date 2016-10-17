@@ -118,7 +118,7 @@ is $api->{testing}, 1, "testing param to new() ok";
     for (@directives){
         my $value = $api->_config_light($_);
         if ($_ eq 'on_in'){
-            isnt
+            is
                 $value,
                 '00:00',
                 "_config_light() on_in value is properly set from the default";
@@ -128,6 +128,31 @@ is $api->{testing}, 1, "testing param to new() ok";
         is $value, $values[$i], "light $_ has value $values[$i] by default";
         $i++;
     }
+
+    $db->update('light', 'value', -1, 'id', 'on_hours');
+    my $ok = eval { $api->_config_light; 1; };
+    is $ok, undef, "_config_light() dies if on_hours < 0";
+    like $@, qr/between 0 and 24/, "...and the error is sane";
+
+    $db->update('light', 'value', 25, 'id', 'on_hours');
+    $ok = eval { $api->_config_light; 1; };
+    is $ok, undef, "_config_light() dies if on_hours > 24";
+    like $@, qr/between 0 and 24/, "...and the error is sane";
+
+    $db->update('light', 'value', 'aaa', 'id', 'on_hours');
+    $ok = eval { $api->_config_light; 1; };
+    is $ok, undef, "_config_light() dies if on_hours has letters";
+    like $@, qr/between 0 and 24/, "...and the error is sane";
+
+    $db->update('light', 'value', '22.5', 'id', 'on_hours');
+    $ok = eval { $api->_config_light; 1; };
+    is $ok, undef, "_config_light() dies if on_hours has a decimal";
+    like $@, qr/between 0 and 24/, "...and the error is sane";
+
+
+    $db->update('light', 'value', $c->{on_hours}, 'id', 'on_hours');
+    is $api->_config_light('on_hours'), 12, "on_hours back to default ok";
+
 }
 { # config_water()
 

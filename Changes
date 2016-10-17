@@ -3,6 +3,12 @@ Changes history for App::RPi::EnvUI
 0.26 NOREL
         - DB::auth() now returns a hashref of the username sent in with a blank
           password field if the user doesn't exist (added tests)
+        - added light_on() and light_off(), each return a DateTime object with
+          with the respective times for each operation
+        - action_light() now uses proper DateTime objects for on/off checking
+        - _config_light('on_hours') will die if hours is not an integer, is less
+          than 0 or more than 24
+        - added numerous new tests for new internal functionality and existing
 
 0.25    2016-10-16
         - separated out API::new() initialization code into _init(), which loads

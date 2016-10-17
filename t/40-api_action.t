@@ -13,8 +13,6 @@ use App::RPi::EnvUI::DB;
 use Data::Dumper;
 use Test::More;
 
-#FIXME: add tests to test overrides for hum and temp
-
 my $api = App::RPi::EnvUI::API->new(
     testing => 1,
     config_file => 't/envui.json'
@@ -24,79 +22,6 @@ my $db = App::RPi::EnvUI::DB->new(testing => 1);
 
 is ref $api, 'App::RPi::EnvUI::API', "new() returns a proper object";
 is $api->{testing}, 1, "testing param to new() ok";
-
-{ # action_light() on
-
-    my $light = $api->_config_light;
-
-    # light should be off
-
-    is $api->_config_light('on_since'), 0, "light on_since is zero";
-
-    is
-        $api->aux_state($api->_config_control('light_aux')),
-        0,
-        "light aux is currently in state off";
-
-    my $now = DateTime->now(time_zone => $api->_config_core('time_zone'));
-    my ($now_hr, $now_min) = (split /:/, $now->hms)[0, 1];
-    my ($on_hr, $on_min) = split /:/, $light->{on_at};
-
-    # force a light on event
-
-    $on_hr = $now_hr;
-    $on_min = $now_min == 0
-        ? 0
-        : $now_min - 1;
-
-    my $on_time = "$on_hr:$on_min";
-    $db->update('light', 'value', $on_time, 'id', 'on_at');
-
-    $api->action_light;
-
-    # light should be on
-
-    ok $api->_config_light('on_since') > 0, "light on_since is non-zero";
-
-    is
-        $api->aux_state($api->_config_control('light_aux')),
-        1,
-        "light aux is in on state";
-
-    # turn up on time to nearly 12 hrs, light should still be on
-
-    #my $on = $light->{on_hours} * 60 * 60 + 10;
-    my $on = 43000;
-    my $on_since = time() - $on;
-
-    $db->update('light', 'value', $on_since, 'id', 'on_since');
-
-    $api->action_light;
-
-    is
-        $api->aux_state($api->_config_control('light_aux')),
-        1,
-        "light aux is in on state when not quite all on time is done";
-
-    # light should go off again
-
-    $on = $light->{on_hours} * 60 * 60 + 10;
-
-    $on_since = time() - $on;
-
-    $db->update('light', 'value', $on_since, 'id', 'on_since');
-
-    $api->action_light;
-    is
-        $api->_config_light('on_since'),
-        0,
-        "light on_since is zero after going off";
-
-    is
-        $api->aux_state($api->_config_control('light_aux')),
-        0,
-        "light aux is off again";
-}
 
 { # action_humidity()
 

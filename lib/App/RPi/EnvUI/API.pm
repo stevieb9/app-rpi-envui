@@ -149,39 +149,41 @@ sub action_light {
         time_zone => $self->_config_core('time_zone')
     );
 
-    my ($on_hour, $on_min) = split /:/, $self->_config_light('on_at');
+    if ($self->_config_light('on_hours') == 0){
+        $self->aux_state($self->_config_control('light_aux'), OFF);
+        write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
+        return;
+    }
+    if ($self->_config_light('on_hours') == 24){
+        if(! $self->aux_state($self->_config_control('light_aux'))){
+            $self->db()->update('light', 'value', time(), 'id', 'on_since');
+            $self->aux_state($self->_config_control('light_aux'), ON);
+            pin_mode($self->_config_control('light_aux'),  OUTPUT);
+            write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
+        }
+        return;
+    }
 
-    $log->_7("on_hour: $on_hour, on_min: $on_min");
+    my $on_since  = $self->_config_light('on_since');
+    my $light_on  = $self->light_on;
+    my $light_off = $self->light_off;
 
-    my $timer = $now->clone;
-    $timer->set(hour => $on_hour);
-    $timer->set(minute => $on_min);
+    # print "now: " . $now->ymd . " " . $now->hms . "\n";
+    # print "on: " . $light_on->ymd . " " . $light_on->hms . "\n";
+    # print "off: " . $light_off->ymd . " " . $light_off->hms . "\n";
 
-    my $hour_same = $now->hour == $timer->hour;
-    my $min_geq = $now->minute >= $timer->minute;
-
-    my $on_since = $self->_config_light('on_since');
-
-    if (! $on_since  && $hour_same && $min_geq){
+    if (! $on_since  && $now > $light_on){
         $self->db()->update('light', 'value', time(), 'id', 'on_since');
         $self->aux_state($self->_config_control('light_aux'), ON);
         pin_mode($self->_config_control('light_aux'),  OUTPUT);
         write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
     }
 
-    if ($on_since) {
-        my $on_hours = $self->_config_light( 'on_hours' );
-        my $on_secs = $on_hours * 60 * 60;
-
-        my $t = time();
-        my $diff = $t - $on_since;
-
-        if ($diff > $on_secs) {
-            $self->db()->update( 'light', 'value', 0, 'id', 'on_since' );
-            $self->aux_state( $self->_config_control( 'light_aux' ), OFF );
-            pin_mode($self->_config_control('light_aux'),  OUTPUT);
-            write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
-        }
+    if ($on_since && $now > $light_off){
+        $self->db()->update( 'light', 'value', 0, 'id', 'on_since' );
+        $self->aux_state( $self->_config_control( 'light_aux' ), OFF );
+        pin_mode($self->_config_control('light_aux'),  OUTPUT);
+        write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
     }
 }
 sub aux {
@@ -425,6 +427,31 @@ sub env_temp_aux {
     my $self = shift;
     return $self->_config_control('temp_aux');
 }
+sub light_on {
+    my ($self) = @_;
+
+    my ($on_hour, $on_min) = split /:/, $self->_config_light('on_at');
+
+    my $now = DateTime->now(
+        time_zone => $self->db()->config_core('time_zone')
+    );
+
+    return
+      $now->clone()->set_hour($on_hour)->set_minute($on_min)->set_second(0);
+
+}
+sub light_off {
+    my ($self, $dt) = @_;
+
+    my $on_hours = $self->_config_light('on_hours');
+
+    if (defined $dt){
+        return $dt->clone()->add(hours => $on_hours);
+    }
+    else {
+        return $self->light_on()->clone()->add(hours => $on_hours);
+    }
+}
 
 # public instance variable methods
 
@@ -532,24 +559,20 @@ sub _config_light {
     my $self = shift;
     my $want = shift;
 
-    my $light = $self->db()->config_light;
-
     my %conf;
 
-    for (keys %$light) {
+    my $light = $self->db()->config_light;
+
+    for (keys %$light){
+        if ($_ eq 'on_hours'){
+            my $on_hrs = $light->{on_hours}->{value};
+            if ($on_hrs !~ /^\d+$/ || $on_hrs < 0 || $on_hrs > 24){
+                confess "\n\non_hours config file directive must be between ".
+                        "0 and 24\n\n"
+            }
+        }
         $conf{$_} = $light->{$_}{value};
     }
-
-    my ($on_hour, $on_min) = split /:/, $conf{on_at};
-
-    my $now = DateTime->now(time_zone => $self->db()->config_core('time_zone'));
-    my $light_on = $now->clone;
-
-    $light_on->set_hour($on_hour);
-    $light_on->set_minute($on_min);
-
-    my $dur = $now->subtract_datetime($light_on);
-    $conf{on_in} = $dur->hours . ' hrs, ' . $dur->minutes . ' mins';
 
     if (defined $want){
         return $conf{$want};
@@ -1068,6 +1091,25 @@ Returns as an integer, the current humidity level.
 =head2 temp
 
 Returns as an integer, the current temperature level.
+
+=head2 light_on
+
+Returns a L<DateTime> object with the C<HH:MM> set to the C<on_at> directive in
+the configuration file.
+
+=head2 light_off($dt)
+
+Returns a L<DateTime> object with the C<on_hours> config directive value added,
+which represents the time the light shall be turned off.
+
+Parameters:
+
+    $dt
+
+Optional, L<DateTime> object. Use only for testing. We'll use this as the on
+time C<DateTime> instead of one received from a call to C<light_on()>.
+
+Returns: C<DateTime> object.
 
 =head2 log
 
