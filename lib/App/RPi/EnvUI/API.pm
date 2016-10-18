@@ -671,8 +671,10 @@ sub _log {
 sub _parse_config {
     my ($self, $config) = @_;
 
+
     $self->db()->config;
 
+    $self->_reset;
     $config = $self->config if ! defined $config;
 
     if (! -e $config){
@@ -739,7 +741,7 @@ sub _reset {
     my $self = shift;
     # reset dynamic db attributes
 
-    $self->db()->config;
+    #$self->db()->config;
 
     $self->db()->update_bulk_all(
         'aux', 'state', [0]
@@ -751,7 +753,7 @@ sub _reset {
         'aux', 'on_time', [0]
     );
 
-    $self->db()->commit;
+    #$self->db()->commit;
 }
 sub _ui_test_mode {
     return -e 't/testing.lck';
