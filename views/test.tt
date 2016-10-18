@@ -100,10 +100,10 @@
 <br><br>
 
 <table class="light" width="1200">
-    <th><font size="5">Status</font></th>
-    <th><font size="5">Lights On</font></th>
-    <th><font size="5">Hours Per Day</font></th>
-    <th><font size="5">Next On</font></th>
+    <th><font size="3">Status</font></th>
+    <th><font size="3">Lights On</font></th>
+    <th><font size="3">Hours Per Day</font></th>
+    <th><font size="3">Next On</font></th>
     <tr>
         <td><input id="aux3" class="button" style="width:120px;height:30px"></td>
         <td><div id="light_on_at"></div></td>
