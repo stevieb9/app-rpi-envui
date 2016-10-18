@@ -83,7 +83,7 @@ my $db = App::RPi::EnvUI::DB->new(testing => 1);
     ok $api->_config_light('on_since') > 0, "light on_since is non-zero";
 
     is
-        $api->aux_state( $api->_config_control( 'light_aux' ) ),
+        $api->aux_state($api->_config_control('light_aux')),
         1,
         "light on time reached, light is on";
 
@@ -91,14 +91,14 @@ my $db = App::RPi::EnvUI::DB->new(testing => 1);
     $on_dt->subtract(hours => 12);
     $on_dt = light_on($on_dt);
 
-     $api->action_light;
+     $api->action_light($on_dt->add(hours => 12, minutes => 1));
 
     # light should be off
 
     ok $api->_config_light('on_since') == 0, "light on_since zero";
 
     is
-        $api->aux_state( $api->_config_control( 'light_aux' ) ),
+        $api->aux_state($api->_config_control('light_aux')),
         0,
         "light off time reached, light is off";
 }
@@ -149,7 +149,7 @@ sub light_on {
     my ($on_dt) = @_;
     my $time = $on_dt->hms;
     $time =~ s/:\d+$//;
-    $db->update( 'light', 'value', $time, 'id', 'on_at' );
+    $db->update('light', 'value', $time, 'id', 'on_at');
 
     return $api->light_on;
 }

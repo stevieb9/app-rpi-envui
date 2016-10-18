@@ -72,50 +72,6 @@ sub action_humidity {
         }
     }
 }
-sub action_light {
-    my ($self) = @_;
-
-    my $log = $log->child('action_light');
-
-    my $now = DateTime->now(
-        time_zone => $self->_config_core('time_zone')
-    );
-
-    my ($on_hour, $on_min) = split /:/, $self->_config_light('on_at');
-
-    $log->_7("on_hour: $on_hour, on_min: $on_min");
-
-    my $timer = $now->clone;
-    $timer->set(hour => $on_hour);
-    $timer->set(minute => $on_min);
-
-    my $hour_same = $now->hour == $timer->hour;
-    my $min_geq = $now->minute >= $timer->minute;
-
-    my $on_since = $self->_config_light('on_since');
-
-    if (! $on_since  && $hour_same && $min_geq){
-        $self->db()->update('light', 'value', time(), 'id', 'on_since');
-        $self->aux_state($self->_config_control('light_aux'), ON);
-        pin_mode($self->_config_control('light_aux'),  OUTPUT);
-        write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
-    }
-
-    if ($on_since) {
-        my $on_hours = $self->_config_light( 'on_hours' );
-        my $on_secs = $on_hours * 60 * 60;
-
-        my $t = time();
-        my $diff = $t - $on_since;
-
-        if ($diff > $on_secs) {
-            $self->db()->update( 'light', 'value', 0, 'id', 'on_since' );
-            $self->aux_state( $self->_config_control( 'light_aux' ), OFF );
-            pin_mode($self->_config_control('light_aux'),  OUTPUT);
-            write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
-        }
-    }
-}
 sub action_temp {
     my $self = shift;
     my ($aux_id, $temp) = @_;
@@ -141,13 +97,18 @@ sub action_temp {
     }
 }
 sub action_light {
-    my ($self) = @_;
+    my ($self, $dt) = @_;
 
     my $log = $log->child('action_light');
 
-    my $now = DateTime->now(
-        time_zone => $self->_config_core('time_zone')
-    );
+    my $now;
+
+    if (defined $dt){
+        $now = $dt;
+    }
+    else {
+        $now = DateTime->now(time_zone => $self->_config_core('time_zone'));
+    }
 
     if ($self->_config_light('on_hours') == 0){
         $self->aux_state($self->_config_control('light_aux'), OFF);
@@ -168,9 +129,9 @@ sub action_light {
     my $light_on  = $self->light_on;
     my $light_off = $self->light_off;
 
-    #print "now: " . $now->ymd . " " . $now->hms . "\n";
-    #print "on: " . $light_on->ymd . " " . $light_on->hms . "\n";
-    #print "off: " . $light_off->ymd . " " . $light_off->hms . "\n";
+    # print "now: " . $now->ymd . " " . $now->hms . "\n";
+    # print "on: " . $light_on->ymd . " " . $light_on->hms . "\n";
+    # print "off: " . $light_off->ymd . " " . $light_off->hms . "\n";
 
     if (! $on_since  && $now > $light_on){
         $self->db()->update('light', 'value', time(), 'id', 'on_since');
@@ -436,9 +397,10 @@ sub light_on {
         time_zone => $self->db()->config_core('time_zone')
     );
 
-    return
-      $now->clone()->set_hour($on_hour)->set_minute($on_min)->set_second(0);
+    my $on
+      = $now->clone()->set_hour($on_hour)->set_minute($on_min)->set_second(0);
 
+    return $on;
 }
 sub light_off {
     my ($self, $dt) = @_;
@@ -858,13 +820,19 @@ default, this will be C<aux2>.
 Mandatory: Integer. The integer value of the current humidity (typically
 supplied by the C<RPi::DHT11> hygrometer sensor.
 
-=head2 action_light
+=head2 action_light($dt)
 
 Performs the time calculations on the configured light on/off event settings,
 and turns the GPIO pin associated with the light auxillary channel on and off as
 required.
 
-Takes no parameters.
+Parameters (only used for testing):
+
+    $dt
+
+Optional (use for testing only!), L<DateTime> object. This object will replace
+a call to C<now()>, so that when we're testing, we can simulate now as being in
+the future to test on/off triggers properly.
 
 =head2 action_temp($aux_id, $temperature)
 
