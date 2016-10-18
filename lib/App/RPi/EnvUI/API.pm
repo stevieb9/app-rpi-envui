@@ -191,7 +191,8 @@ sub aux_override {
 sub aux_pin {
     my $self = shift;
     # returns the auxillary's GPIO pin number
-
+    print join ", ", caller();
+    print "\n";
     my ($aux_id, $pin) = @_;
 
     if ($aux_id !~ /^aux/){
@@ -692,10 +693,22 @@ sub _parse_config {
 
     # auxillary channels
 
-    for (1..8){
-        my $aux_id = "aux$_";
-        my $pin = $conf->{$aux_id}{pin};
-        $self->aux_pin($aux_id, $pin);
+    {
+        my $db_struct = [
+            'aux',
+            'pin',
+            'id'
+        ];
+        my @data;
+
+        for (1 .. 8) {
+            my $aux_id = "aux$_";
+            my $pin = $conf->{$aux_id}{pin};
+            push @data, [$pin, $aux_id];
+            #$self->aux_pin( $aux_id, $pin );
+        }
+
+        $self->db()->update_bulk(@$db_struct, \@data);
     }
 
     for my $conf_section (qw(control core light water)){

@@ -148,6 +148,8 @@ sub update {
         $sth->execute( $value );
     }
     else {
+#        print join ", ", caller();
+#        print "\n";
         my $sth = $self->{db}->prepare(
             "UPDATE $table SET $col=? WHERE $where_col=?"
         );
