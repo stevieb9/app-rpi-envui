@@ -14,9 +14,8 @@ my $api = App::RPi::EnvUI::API->new(db => $db);
 
 my $log = $api->log()->child('webapp');
 
-#$api->_reset();
 $api->_config_light();
-$api->env($api->read_sensor);
+# $api->env($api->read_sensor);
 
 #
 # fetch routes

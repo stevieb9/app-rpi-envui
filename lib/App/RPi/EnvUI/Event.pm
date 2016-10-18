@@ -51,7 +51,7 @@ sub env_action {
 
             $api->action_temp($t_aux, $api->temp);
             $api->action_humidity($h_aux, $api->humidity);
-            $api->action_light($api->_config_light)
+            $api->action_light
               if $api->_config_light('enable');
         }
     );

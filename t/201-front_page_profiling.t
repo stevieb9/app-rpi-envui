@@ -6,7 +6,8 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 
 BEGIN {
-    unless ($ENV{RPI_BOARD}) {
+print @ARGV;
+    if (! $ENV{RPI_BOARD} && ! @ARGV) {
         plan( skip_all => "set RPI_BOARD env var" );
     }
 }

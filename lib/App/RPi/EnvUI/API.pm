@@ -100,7 +100,7 @@ sub action_light {
     my ($self, $dt) = @_;
 
     my $log = $log->child('action_light');
-
+    
     my $now;
 
     if (defined $dt){
