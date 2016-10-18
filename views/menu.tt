@@ -6,8 +6,10 @@
 </head>
 
 <body>
+<table width="100%">
+    <tr><td width="90%" style="white-space: nowrap;" >
 
-<div class="menuBackground">
+    <div class="menuBackground">
 	<div class="center myMenu">
 		<ul class="dropDownMenu">
 			<li><a href="http://html-tuts.com/?p=9961">Home</a></li>
@@ -38,11 +40,15 @@
 					<li><a href="http://html-tuts.com/?p=9961">Fonts</a></li>
 					<li><a href="http://html-tuts.com/?p=9961">Wallpapers</a></li>
 				</ul>
-			</li>
-			<li><a href="http://html-tuts.com/?p=9961">Created by HTML-TUTS.com</a></li>
+            </li>
 		</ul>
 	</div>
 </div>
-
+</td>
+    <td>
+    <a href="">blah</a>
+   </td>
+    </tr>
+    </table>
 </body>
 </html>
