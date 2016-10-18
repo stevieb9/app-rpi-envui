@@ -36,8 +36,8 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
 
     }
 
-    is $p->{temp}, 80, "/fetch_env returns default value for temp ok";
-    is $p->{humidity}, 20, "/fetch_env returns default value for humidity ok";
+    is $p->{temp}, -1, "/fetch_env returns default value for temp ok";
+    is $p->{humidity}, -1, "/fetch_env returns default value for humidity ok";
 
 }
 
