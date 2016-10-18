@@ -22,7 +22,7 @@
     <div class="menuBackground">
 	<div class="center myMenu">
 		<ul class="dropDownMenu">
-			<li><a href="http://html-tuts.com/?p=9961">Home</a></li>
+			<li><a href="/">Home</a></li>
 			<li><a href="http://html-tuts.com/?p=9961">Web Design</a>
 				<ul>
 					<li><a href="http://html-tuts.com/?p=9961">HTML</a></li>
@@ -97,9 +97,9 @@
 
 <div class="light" style="width:1200px" align="center"><font size="5"><b>Light</b></font></div>
 
-<br><br>
+<br>
 
-<table class="light" width="1200">
+<table class="light" width="100%">
     <th><font size="3">Status</font></th>
     <th><font size="3">Lights On</font></th>
     <th><font size="3">Hours Per Day</font></th>
