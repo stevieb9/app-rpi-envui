@@ -9,6 +9,8 @@ Changes history for App::RPi::EnvUI
         - _config_light('on_hours') will die if hours is not an integer, is less
           than 0 or more than 24
         - added numerous new tests for new internal functionality and existing
+        - cleanup after profiling, shaved startup from 10.7 seconds to ~700ms
+          (closes #20)
 
 0.25    2016-10-16
         - separated out API::new() initialization code into _init(), which loads
