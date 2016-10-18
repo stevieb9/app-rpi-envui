@@ -16,6 +16,48 @@
 
 </head>
 <body>
+<table width="100%">
+    <tr><td width="90%" style="white-space: nowrap;" >
+
+    <div class="menuBackground">
+	<div class="center myMenu">
+		<ul class="dropDownMenu">
+			<li><a href="http://html-tuts.com/?p=9961">Home</a></li>
+			<li><a href="http://html-tuts.com/?p=9961">Web Design</a>
+				<ul>
+					<li><a href="http://html-tuts.com/?p=9961">HTML</a></li>
+					<li><a href="http://html-tuts.com/?p=9961">CSS</a></li>
+					<li><a href="http://html-tuts.com/?p=9961">JS</a></li>
+				</ul>
+			</li>
+			<li><a href="http://html-tuts.com/?p=9961">Programming</a>
+				<ul>
+					<li><a href="http://html-tuts.com/?p=9961">C++</a></li>
+					<li><a href="http://html-tuts.com/?p=9961">WordPress</a>
+						<ul>
+							<li><a href="http://html-tuts.com/?p=9961">Hacks</a></li>
+							<li><a href="http://html-tuts.com/?p=9961">Plugins</a></li>
+							<li><a href="http://html-tuts.com/?p=9961">Shortcodes</a></li>
+						</ul>
+					</li>
+					<li><a href="http://html-tuts.com/?p=9961">PHP</a></li>
+					<li><a href="http://html-tuts.com/?p=9961">jQuery</a></li>
+				</ul>
+			</li>
+			<li><a href="http://html-tuts.com/?p=9961">Resources</a>
+				<ul>
+					<li><a href="http://html-tuts.com/?p=9961">Icons</a></li>
+					<li><a href="http://html-tuts.com/?p=9961">Fonts</a></li>
+					<li><a href="http://html-tuts.com/?p=9961">Wallpapers</a></li>
+				</ul>
+            </li>
+		</ul>
+	</div>
+    </div>
+        </td>
+        <td><div id="time">blah</div></td>
+    </tr>
+</table>
 
 <div class="top_row">
     <!-- Temperature -->
