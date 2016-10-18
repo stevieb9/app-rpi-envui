@@ -191,8 +191,6 @@ sub aux_override {
 sub aux_pin {
     my $self = shift;
     # returns the auxillary's GPIO pin number
-    print join ", ", caller();
-    print "\n";
     my ($aux_id, $pin) = @_;
 
     if ($aux_id !~ /^aux/){
@@ -215,6 +213,9 @@ sub aux_state {
     if ($aux_id !~ /^aux/){
         confess "aux_state() requires an aux ID as its first param\n";
     }
+
+    print join ", ", caller();
+    print "\n";
 
     if (defined $state){
         $log->_5("setting state to $state for $aux_id");
@@ -673,10 +674,6 @@ sub _log {
 sub _parse_config {
     my ($self, $config) = @_;
 
-    print "\n*****\n";
-    print "$_\n" for caller();
-    print "\n*****\n";
-
     $config = $self->config if ! defined $config;
 
     if (! -e $config){
@@ -741,12 +738,15 @@ sub _reset {
     my $self = shift;
     # reset dynamic db attributes
 
-    for (1..8){
-        my $aux_id = "aux$_";
-        $self->aux_time($aux_id, 0);
-        $self->aux_state($aux_id, 0);
-        $self->aux_override($aux_id, 0);
-    }
+    $self->db()->update_bulk_all(
+        'aux', 'state', [0]
+    );
+    $self->db()->update_bulk_all(
+        'aux', 'override', [0]
+    );
+    $self->db()->update_bulk_all(
+        'aux', 'on_time', [0]
+    );
 }
 sub _ui_test_mode {
     return -e 't/testing.lck';

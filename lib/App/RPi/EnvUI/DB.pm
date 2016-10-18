@@ -142,14 +142,14 @@ sub last_id {
 }
 sub update {
     my ($self, $table, $col, $value, $where_col, $where_val) = @_;
-
+#    print join ", ", caller();
+#    print "\n";
     if (! defined $where_col) {
         my $sth = $self->{db}->prepare( "UPDATE $table SET $col=?" );
         $sth->execute( $value );
     }
     else {
-#        print join ", ", caller();
-#        print "\n";
+
         my $sth = $self->{db}->prepare(
             "UPDATE $table SET $col=? WHERE $where_col=?"
         );
@@ -161,6 +161,21 @@ sub update_bulk {
 
     my $sth = $self->{db}->prepare(
         "UPDATE $table SET $col=? WHERE $where_col=?"
+    );
+
+    $self->{db}->begin_work;
+
+    for (@$data){
+        $sth->execute(@$_);
+    }
+
+    $self->{db}->commit;
+}
+sub update_bulk_all {
+    my ($self, $table, $col, $data) = @_;
+
+    my $sth = $self->{db}->prepare(
+        "UPDATE $table SET $col=?;"
     );
 
     $self->{db}->begin_work;
