@@ -21,7 +21,6 @@ my $api = App::RPi::EnvUI::API->new(
     testing => 1,
     config_file => 't/envui.json'
 );
-#$api->_parse_config;
 
 { # auxs()
 
@@ -208,10 +207,12 @@ my $api = App::RPi::EnvUI::API->new(
 
 }
 
-{ # update() with where_col
+{
+    # update() with where_col
 
-    $db->update('control', 'value', 'aux9', 'id', 'temp_aux');
+    $db->update( 'control', 'value', 'aux9', 'id', 'temp_aux' );
     is $api->env_temp_aux, 'aux9', "setting the value works ok";
+
     $db->update('control', 'value', 'aux1', 'id', 'temp_aux');
     is $api->env_temp_aux, 'aux1', "...and works ok going back too";
 }
@@ -278,5 +279,5 @@ my $api = App::RPi::EnvUI::API->new(
 }
 
 unconfig();
-db_remove();
+#db_remove();
 done_testing();

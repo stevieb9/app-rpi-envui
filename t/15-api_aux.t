@@ -176,6 +176,6 @@ is $api->{testing}, 1, "testing param to new() ok";
 }
 
 unconfig();
-db_remove();
+#db_remove();
 done_testing();
 

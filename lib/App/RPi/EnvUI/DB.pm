@@ -39,7 +39,9 @@ sub new {
         "",
         "",
         {
-            RaiseError => $self->{db_err}
+            #sqlite_use_immediate_transaction => 1,
+            RaiseError => $self->{db_err},
+            AutoCommit => 1
         }
     ) or die $DBI::errstr;
 
@@ -156,14 +158,12 @@ sub last_id {
 }
 sub update {
     my ($self, $table, $col, $value, $where_col, $where_val) = @_;
-#    print join ", ", caller();
-#    print "\n";
+
     if (! defined $where_col) {
         my $sth = $self->{db}->prepare( "UPDATE $table SET $col=?" );
         $sth->execute( $value );
     }
     else {
-
         my $sth = $self->{db}->prepare(
             "UPDATE $table SET $col=? WHERE $where_col=?"
         );
@@ -177,13 +177,9 @@ sub update_bulk {
         "UPDATE $table SET $col=? WHERE $where_col=?"
     );
 
-    $self->{db}->begin_work;
-
     for (@$data){
         $sth->execute(@$_);
     }
-
-    $self->{db}->commit;
 }
 sub update_bulk_all {
     my ($self, $table, $col, $data) = @_;
@@ -192,15 +188,14 @@ sub update_bulk_all {
         "UPDATE $table SET $col=?;"
     );
 
-    $self->{db}->begin_work;
-
-    for (@$data){
-        $sth->execute(@$_);
-    }
-
-    $self->{db}->commit;
+    $sth->execute(@$data);
 }
-
+sub config {
+    $_[0]->{db}->begin_work;
+}
+sub commit {
+    $_[0]->{db}->commit;
+}
 true;
 __END__
 

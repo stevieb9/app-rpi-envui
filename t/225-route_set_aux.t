@@ -8,6 +8,7 @@ use Test::More;
 BEGIN {
     use lib 't/';
     use TestBase;
+    config();
     set_testing();
     db_create();
 }
@@ -28,7 +29,6 @@ use App::RPi::EnvUI;
 my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
 
 { # /set_aux route
-
     my $p;
 
     # no params
@@ -38,6 +38,7 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     # one param
     $res = $test->request( GET "/set_aux/aux1" );
     like $res->content, qr/Not Found/, "/set_aux 404s if only one param sent";
+
 
     # good call
     $res = $test->request( GET "/set_aux/aux1/0" );
@@ -77,6 +78,7 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
 sub aux {
     my $res = $test->request(GET "/get_aux/$_[0]");
     my $perl = decode_json $res->content;
+
     return {
         aux => $perl->{id},
         state => $perl->{state},
@@ -85,5 +87,6 @@ sub aux {
 
 unset_testing();
 db_remove();
+unconfig();
 done_testing();
 

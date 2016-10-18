@@ -13,8 +13,6 @@ use App::RPi::EnvUI::DB;
 use Data::Dumper;
 use Test::More;
 
-#FIXME: add tests to test overrides for hum and temp
-
 my $api = App::RPi::EnvUI::API->new(
     testing => 1,
     config_file => 't/envui.json'

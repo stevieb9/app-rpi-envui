@@ -214,9 +214,6 @@ sub aux_state {
         confess "aux_state() requires an aux ID as its first param\n";
     }
 
-    print join ", ", caller();
-    print "\n";
-
     if (defined $state){
         $log->_5("setting state to $state for $aux_id");
         $self->db()->update('aux', 'state', $state, 'id', $aux_id);
@@ -674,6 +671,8 @@ sub _log {
 sub _parse_config {
     my ($self, $config) = @_;
 
+    $self->db()->config;
+
     $config = $self->config if ! defined $config;
 
     if (! -e $config){
@@ -733,10 +732,14 @@ sub _parse_config {
 
         $self->db()->update_bulk(@$db_struct, \@data);
     }
+
+    $self->db()->commit;
 }
 sub _reset {
     my $self = shift;
     # reset dynamic db attributes
+
+    $self->db()->config;
 
     $self->db()->update_bulk_all(
         'aux', 'state', [0]
@@ -747,6 +750,8 @@ sub _reset {
     $self->db()->update_bulk_all(
         'aux', 'on_time', [0]
     );
+
+    $self->db()->commit;
 }
 sub _ui_test_mode {
     return -e 't/testing.lck';
