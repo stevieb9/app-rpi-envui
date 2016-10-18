@@ -6,16 +6,19 @@ use Dancer2;
 use Dancer2::Plugin::Auth::Extensible;
 #use Dancer2::Session::JSON;
 use Mock::Sub no_warnings => 1;
+use POSIX qw(tzset);
 
 our $VERSION = '0.26';
 
 my $db = App::RPi::EnvUI::DB->new;
 my $api = App::RPi::EnvUI::API->new(db => $db);
 
+$ENV{TZ} = $api->_config_core('time_zone');
+tzset();
+
 my $log = $api->log()->child('webapp');
 
 $api->_config_light();
-# $api->env($api->read_sensor);
 
 #
 # fetch routes
@@ -37,6 +40,10 @@ post '/login' => sub {
 
 any '/logout' => sub {
         app->destroy_session;
+    };
+
+get '/time' => sub {
+        return join ':', (localtime)[2, 1];
     };
 
 get '/light' => sub {

@@ -33,8 +33,9 @@ $(document).ready(function(){
 
     function aux_update(){
 
-       display_light();
-       display_water();
+        display_time();
+        display_light();
+        display_water();
 
         for(i = 1; i < 9; i++){
             var aux = 'aux'+ i;
@@ -73,6 +74,12 @@ $(document).ready(function(){
                     });
                 }
             });
+        });
+    }
+
+    function display_time(){
+         $.get('/time', function(data){
+            $('#time').text(data);
         });
     }
 

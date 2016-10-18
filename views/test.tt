@@ -55,7 +55,7 @@
 	</div>
     </div>
         </td>
-        <td><div id="time">blah</div></td>
+        <td><div id="time"></div></td>
     </tr>
 </table>
 
