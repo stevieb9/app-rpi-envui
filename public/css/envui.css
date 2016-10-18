@@ -1,3 +1,66 @@
+/* main menu */
+
+.menuBackground {
+	background: #c0c0c0;
+	text-align: center;
+}
+.dropDownMenu a {
+	color: #FFF;
+}
+.dropDownMenu,
+.dropDownMenu ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.dropDownMenu li {
+	position: relative;
+}
+.dropDownMenu a {
+	padding: 10px 20px;
+	display: block;
+	text-decoration: none;
+}
+.dropDownMenu a:hover {
+	background: #c0c0c0;
+}
+
+/* Level 1 Drop Down */
+.dropDownMenu > li {
+	display: inline-block;
+	vertical-align: top;
+	margin-left: -4px; /* solve the 4 pixels spacing between list-items */
+}
+.dropDownMenu > li:first-child {
+	margin-left: 0;
+}
+
+/* Level 2 */
+.dropDownMenu ul {
+	box-shadow: 2px 2px 15px 0 rgba(0,0,0, 0.5);
+}
+.dropDownMenu > li > ul {
+	text-align: left;
+	display: none;
+	background: #c0c0c0;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 240px;
+	z-index: 999999; /* if you have YouTube iframes, is good to have a bigger z-index so the video can appear above the video */
+}
+
+/* Level 3 */
+.dropDownMenu > li > ul > li > ul {
+	text-align: left;
+	display: none;
+	background: darkcyan;
+	position: absolute;
+	left: 100%;
+	top: 0;
+	z-index: 9999999;
+}
+
 th {
     align: center;
     text-align: center;
@@ -13,4 +76,3 @@ td {
     valign: center;
     align: center;
 }
-

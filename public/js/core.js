@@ -1,5 +1,11 @@
 $(document).ready(function(){
 
+    // main menu
+
+    $('.myMenu ul li').hover(function() {
+        $(this).children('ul').stop(true, false, true).slideToggle(300);
+    });
+
     event_interval();
     display_env();
     temp_graph();

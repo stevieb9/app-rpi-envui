@@ -26,7 +26,8 @@ get '/' => sub {
         my $log = $log->child('/');
         $log->_7("entered");
         # return template 'main';
-        return template 'test';
+        # return template 'test';
+        return template 'menu';
     };
 
 post '/login' => sub {

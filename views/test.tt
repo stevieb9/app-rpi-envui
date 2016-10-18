@@ -16,6 +16,21 @@
 
 </head>
 <body>
+<nav>
+    <div class="container">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li> <a href="#">Categories </a>
+                <ul>
+                    <li><a href="#">Category One</a></li>
+                    <li><a href="#">Category Two</a></li>
+                    <li><a href="#">Category Three</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </div>
+</nav>
 
 <div class="top_row">
     <!-- Temperature -->
