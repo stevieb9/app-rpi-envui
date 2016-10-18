@@ -1,9 +1,23 @@
 package App::RPi::EnvUI::DB;
 
-use Data::Dumper;
-use DateTime;
-use DBI;
-use RPi::WiringPi::Constant qw(:all);
+BEGIN {
+    if (! exists $INC{'DateTime.pm'}){
+        require DateTime;
+        DateTime->import;
+    }
+    if (! exists $INC{'DBI.pm'}){
+        require DBI;
+        DBI->import;
+    }
+    if (! exists $INC{'Data/Dumper.pm'}){
+        require Data::Dumper;
+        Data::Dumper->import;
+    }
+    if (! exists $INC{'RPi/WiringPi/Constant.pm'}){
+        require RPi::WiringPi::Constant;
+        DateTime->import(qw(:all));
+    }
+}
 
 our $VERSION = '0.26';
 
