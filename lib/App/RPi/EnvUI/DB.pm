@@ -24,7 +24,9 @@ sub new {
         "dbi:SQLite:dbname=$db_file",
         "",
         "",
-        {RaiseError => $self->{db_err}}
+        {
+            RaiseError => $self->{db_err}
+        }
     ) or die $DBI::errstr;
 
     return $self;
@@ -141,16 +143,31 @@ sub last_id {
 sub update {
     my ($self, $table, $col, $value, $where_col, $where_val) = @_;
 
-    if (! defined $where_col){
-        my $sth = $self->{db}->prepare("UPDATE $table SET $col=?");
-        $sth->execute($value);
+    if (! defined $where_col) {
+        my $sth = $self->{db}->prepare( "UPDATE $table SET $col=?" );
+        $sth->execute( $value );
     }
     else {
         my $sth = $self->{db}->prepare(
             "UPDATE $table SET $col=? WHERE $where_col=?"
         );
-        $sth->execute($value, $where_val);
+        $sth->execute( $value, $where_val );
     }
+}
+sub update_bulk {
+    my ($self, $table, $col, $where_col, $data) = @_;
+
+    my $sth = $self->{db}->prepare(
+        "UPDATE $table SET $col=? WHERE $where_col=?"
+    );
+
+    $self->{db}->begin_work;
+
+    for (@$data){
+        $sth->execute(@$_);
+    }
+
+    $self->{db}->commit;
 }
 
 true;

@@ -672,6 +672,10 @@ sub _log {
 sub _parse_config {
     my ($self, $config) = @_;
 
+    print "\n*****\n";
+    print "$_\n" for caller();
+    print "\n*****\n";
+
     $config = $self->config if ! defined $config;
 
     if (! -e $config){
@@ -695,14 +699,18 @@ sub _parse_config {
     }
 
     for my $conf_section (qw(control core light water)){
+        my $db_struct = [
+            $conf_section,
+            'value',
+            'id'
+        ];
+        my @data;
+
         for my $directive (keys %{ $conf->{$conf_section} }){
-            $self->db()->update(
-                $conf_section,
-                'value',
+            push @data, [
                 $conf->{$conf_section}{$directive},
-                'id',
                 $directive
-            );
+            ];
 
             # populate some internal variables from the 'core'
             # config section
@@ -712,6 +720,8 @@ sub _parse_config {
                 $self->{$directive} = $conf->{$conf_section}{$directive};
             }
         }
+
+        $self->db()->update_bulk(@$db_struct, \@data);
     }
 }
 sub _reset {
