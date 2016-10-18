@@ -672,7 +672,7 @@ sub _parse_config {
     my ($self, $config) = @_;
 
 
-    $self->db()->config;
+    $self->db()->begin;
 
     $self->_reset;
     $config = $self->config if ! defined $config;
@@ -740,8 +740,6 @@ sub _parse_config {
 sub _reset {
     my $self = shift;
     # reset dynamic db attributes
-
-    #$self->db()->config;
 
     $self->db()->update_bulk_all(
         'aux', 'state', [0]

@@ -190,12 +190,13 @@ sub update_bulk_all {
 
     $sth->execute(@$data);
 }
-sub config {
+sub begin {
     $_[0]->{db}->begin_work;
 }
 sub commit {
     $_[0]->{db}->commit;
 }
+
 true;
 __END__
 
@@ -262,6 +263,16 @@ Fetches and returns a hash reference of hash references. The keys of the
 top-level hash is a list of all the auxillary channel names, and each key has
 a value of another hash reference, containing the details of that specific
 aux channel. Takes no parameters.
+
+=head2 begin
+
+Start a transaction for bulk database writes. Used only in scopes that use
+C<update_bulk()> and C<update_bulk_all()>.
+
+=head2 commit
+
+Commit a transaction for bulk database writes. Used only in scopes that use
+C<update_bulk()> and C<update_bulk_all()>.
 
 =head2 config_control($want)
 
@@ -367,6 +378,25 @@ clause. This value is ignored if C<$where_col> is not specified.
 NOTE: If C<$where_col> is not sent in, we will operate on all rows in the
 specified table.
 
+=head2 update_bulk($table, $col, $where_col, $data)
+
+Bulk updates to the database consolidating statements for efficiency. Used
+primarily in the initialization phases.
+
+Before you set this call up, you must make a call to C<config()>, and after
+you're done, make a call to C<commit>.
+
+The parameters are the same as C<update()>, less:
+
+    $data
+
+Mandatory, array ref of array refs. Each inner array reference that contains
+the value to update to, and the where clause value.
+
+=head2 update_bulk_all($table, $col, $data)
+
+Same as C<update_bulk()> except operates on all table rows (there's no where
+clause).
 
 =head1 AUTHOR
 

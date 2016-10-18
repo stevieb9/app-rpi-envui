@@ -3,7 +3,6 @@ Changes
 config.yml
 config/envui.json
 db/envui.db
-db/envui.db-journal
 lib/App/RPi/EnvUI.pm
 lib/App/RPi/EnvUI/API.pm
 lib/App/RPi/EnvUI/Auth.pm
@@ -35,6 +34,7 @@ t/220-route_fetch_env.t
 t/225-route_set_aux.t
 t/25-api_env_temp_hum.t
 t/30-api_config.t
+t/300-login_route.t
 t/35-api_config_accessors.t
 t/40-api_action.t
 t/45-api_logging.t
