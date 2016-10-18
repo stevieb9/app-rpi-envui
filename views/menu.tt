@@ -46,7 +46,7 @@
 </div>
 </td>
     <td>
-    <a href="">blah</a>
+    <div id="time">blah</div>
    </td>
     </tr>
     </table>
