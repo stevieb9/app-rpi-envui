@@ -63,9 +63,9 @@
     <!-- Temperature -->
 
     <table class="side_by_side_1">
-        <th colspan="2" align="center"><font size="10">Temperature</font></th>
+        <th colspan="2" align="center"><font size="5">Temperature</font></th>
         <tr>
-            <td style="text-align: center;"><font size="10"><div class="data" id="temp"></div></font></td>
+            <td style="text-align: center;"><font size="5"><div class="data" id="temp"></div></font></td>
         </tr>
         <tr>
             <td style="text-align: center;"><input id="aux1" class="button" style="width:120px;height:30px"></td>
@@ -78,9 +78,9 @@
      <!-- Humidity -->
 
     <table class="side_by_side_1">
-        <th colspan="2" align="center"><font size="15">Humidity</font></th>
+        <th colspan="2" align="center"><font size="5">Humidity</font></th>
         <tr>
-            <td style="text-align: center;"><font size="15"><div class="data" id="humidity"></div></font></td>
+            <td style="text-align: center;"><font size="5"><div class="data" id="humidity"></div></font></td>
         </tr>
         <tr>
             <td style="text-align: center;"><input id="aux2" class="button" style="width:120px;height:30px"></td>
@@ -95,7 +95,7 @@
 
 <!-- Light -->
 
-<div class="light" style="width:1200px" align="center"><font size="15"><b>Light</b></font></div>
+<div class="light" style="width:1200px" align="center"><font size="5"><b>Light</b></font></div>
 
 <br><br>
 
@@ -117,8 +117,8 @@
 <!-- Water tanks -->
 
 <table class="water">
-    <th class="opt_aux3"><font size="15">Water #1</font></th>
-    <th class="opt_aux4"><font size="15">Water #2</font></th>
+    <th class="opt_aux3"><font size="5">Water #1</font></th>
+    <th class="opt_aux4"><font size="5">Water #2</font></th>
     <tr>
         <td class="opt_aux3" width="600"><input id="aux3" class="button" style="width:120px;height:30px"></td>
         <td class="opt_aux4" width="600"><input id="aux4" class="button" style="width:120px;height:30px"></td>
