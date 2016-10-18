@@ -168,9 +168,9 @@ sub action_light {
     my $light_on  = $self->light_on;
     my $light_off = $self->light_off;
 
-    # print "now: " . $now->ymd . " " . $now->hms . "\n";
-    # print "on: " . $light_on->ymd . " " . $light_on->hms . "\n";
-    # print "off: " . $light_off->ymd . " " . $light_off->hms . "\n";
+    #print "now: " . $now->ymd . " " . $now->hms . "\n";
+    #print "on: " . $light_on->ymd . " " . $light_on->hms . "\n";
+    #print "off: " . $light_off->ymd . " " . $light_off->hms . "\n";
 
     if (! $on_since  && $now > $light_on){
         $self->db()->update('light', 'value', time(), 'id', 'on_since');
