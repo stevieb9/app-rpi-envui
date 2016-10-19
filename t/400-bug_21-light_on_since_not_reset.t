@@ -18,7 +18,7 @@ my $api = App::RPi::EnvUI::API->new(
     config_file => 't/envui.json'
 );
 
-{ # _reset()
+{ # _reset_light()
 
     $api->db()->update('light', 'value', 55, 'id', 'on_since');
     is $api->_config_light('on_since'), 55, "light on_since is set for testing";
