@@ -1,25 +1,26 @@
 $(document).ready(function(){
 
-    $('head').append(
-        '<link rel="stylesheet" type="text/css" href="css/envui.css">',
-        '<link rel="stylesheet" type="text/css" href="css/button.css">'
-    );
-
-    // main menu
-
-    $(function(){
-      $("#menu_header").load("inc/menu_header.html");
-    });
-
     $('.myMenu ul li').hover(function() {
         $(this).children('ul').stop(true, false, true).slideToggle(300);
     });
 
     // draggable widgets
 
-    $( function() {
-        $( ".drag" ).draggable();
-    } );
+    $(function(){
+        $('.drag').draggable()
+    });
+
+    $('#temp_widget').draggable({
+        start: function(event, ui){
+            var startpos = $(this).position();
+            console.write(startpos);
+            alert(startpos.left + " " + startpos.top);
+        },
+        stop: function(event, ui){
+            var stoppos = $(this).position();
+            alert(stoppos.left + " " + stoppos.top);
+        },
+    });
 
     event_interval();
     display_env();

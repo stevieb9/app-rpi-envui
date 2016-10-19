@@ -1,3 +1,33 @@
+
+/* base */
+
+th {
+    align: center;
+    text-align: center;
+}
+td {
+    align: center;
+    text-align: center;
+}
+.top_row {
+    valign: center;
+    align: center;
+}
+
+/* widgets */
+
+.drag {
+    layout: fixed;
+    width: 50%;
+}
+
+#temp_widget {
+    float:left;
+}
+#humidity_widget {
+}
+
+
 /* main menu */
 
 #time {
@@ -77,20 +107,4 @@
 	left: 100%;
 	top: 0;
 	z-index: 9999999;
-}
-
-th {
-    align: center;
-    text-align: center;
-}
-td {
-    align: center;
-    text-align: center;
-}
-.side_by_side_1 {
-    display: inline-block;
-}
-.top_row {
-    valign: center;
-    align: center;
 }
