@@ -1,0 +1,41 @@
+<html>
+<head>
+
+    <link rel="stylesheet" type="text/css" href="css/button.css">
+    <link rel="stylesheet" type="text/css" href="css/envui.css">
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.js"></script>
+
+    <!--<script type="text/javascript" src="ext/easyui/query.min.js"></script>-->
+    <!--<script type="text/javascript" src="Chart.js"></script>-->
+
+    <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="js/core.js"></script>
+
+
+</head>
+<body>
+
+<div class="top_row">
+    <!-- Temperature -->
+
+    <table class="side_by_side_1">
+        <th colspan="2" align="center"><font size="5">Temperature</font></th>
+        <tr>
+            <td colspan="2"><canvas id="temp_chart" width="600" height="200"></canvas></td>
+        </tr>
+    </table>
+
+     <!-- Humidity -->
+
+    <table class="side_by_side_1">
+        <th colspan="2" align="center"><font size="5">Humidity</font></th>
+        <tr>
+            <td colspan="2"><canvas id="humidity_chart" width="600" height="200"></canvas></td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

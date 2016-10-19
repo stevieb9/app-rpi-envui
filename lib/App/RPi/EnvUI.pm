@@ -46,6 +46,10 @@ get '/time' => sub {
         return join ':', (localtime)[2, 1];
     };
 
+get '/stats' => sub {
+        return template 'stats';
+    };
+
 get '/light' => sub {
         my $log = $log->child('/light');
         $log->_7("entered");
