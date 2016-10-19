@@ -1,20 +1,25 @@
 <html>
-<head>
 
+<head>
     <link rel="stylesheet" type="text/css" href="css/button.css">
     <link rel="stylesheet" type="text/css" href="css/envui.css">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.js"></script>
-
-    <!--<script type="text/javascript" src="ext/easyui/query.min.js"></script>-->
-    <!--<script type="text/javascript" src="Chart.js"></script>-->
-
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/Chart.bundle.js"></script>
     <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="js/core.js"></script>
 
-
+    <script>
+        if (!window.jQuery) document.write(
+            '<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"><\/script>',
+            '<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"><\/script>',
+            '<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.bundle.js"><\/script>'
+        );
+    </script>
 </head>
+
+<link rel="import" href="inc/head.html">
 <body>
 <table width="100%">
     <tr><td width="90%" style="white-space: nowrap;" >
