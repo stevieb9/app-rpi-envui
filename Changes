@@ -11,6 +11,9 @@ Changes history for App::RPi::EnvUI
         - added numerous new tests for new internal functionality and existing
         - cleanup after profiling, shaved startup from 10.7 seconds to ~700ms
           (closes #20)
+        - added new drop-down menu system
+        - added time to top-right of UI, beside menu, with the same style as the
+          menu
 
 0.25    2016-10-16
         - separated out API::new() initialization code into _init(), which loads
