@@ -74,7 +74,6 @@ my $db = App::RPi::EnvUI::DB->new(testing => 1);
     $on_dt = $now->clone()->set_minute($now->minute);
     $on_dt->subtract(minutes => 2);
     $on_dt = light_on($on_dt);
-    $off_dt = $api->light_off($on_dt);
 
     $api->action_light;
 
@@ -91,7 +90,7 @@ my $db = App::RPi::EnvUI::DB->new(testing => 1);
     $on_dt->subtract(hours => 12);
     $on_dt = light_on($on_dt);
 
-     $api->action_light($on_dt->add(hours => 12, minutes => 1));
+     $api->action_light($on_dt->add(hours => 24, minutes => 5));
 
     # light should be off
 
