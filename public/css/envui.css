@@ -5,6 +5,16 @@
 	background: #c0c0c0;
 	color: #FFF;
 }
+
+.menuHeader {
+	padding: 10px 20px;
+	display: block;
+	text-decoration: none;
+	color: #FFF;
+}
+.menuHeader:hover {
+	background: green;
+}
 .menuBackground {
 	background: #c0c0c0;
 	text-align: left;

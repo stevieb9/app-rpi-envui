@@ -30,13 +30,13 @@
 					<li><a href="http://html-tuts.com/?p=9961">JS</a></li>
 				</ul>
 			</li>
-			<li><a href="/about">About</a>
+			<li class="menuHeader">About
 				<ul>
 			        <li><a href="https://github.com/stevieb9" target="_blank">Author Github</a></li>
 			        <li><a href="https://metacpan.org/author/STEVEB" target="_blank">Author CPAN</a></li>
 			        <li><a href="https://github.com/stevieb9/app-rpi-envui/issues" target="_blank">Issues</a></li>
 			        <li><a href="http://matrix.cpantesters.org/?dist=App-RPi-EnvUI+0.25" target="_blank">CPAN Testers</a></li>
-					<li><a href="http://dev.perl.org/licenses/artistic.htm" target="_blank">License</a></li>
+					<li><a href="http://perldoc.perl.org/perlartistic.html" target="_blank">License</a></li>
 				</ul>
             </li>
 		</ul>
