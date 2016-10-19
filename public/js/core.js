@@ -1,10 +1,25 @@
 $(document).ready(function(){
 
+    $('head').append(
+        '<link rel="stylesheet" type="text/css" href="css/envui.css">',
+        '<link rel="stylesheet" type="text/css" href="css/button.css">'
+    );
+
     // main menu
+
+    $(function(){
+      $("#menu_header").load("inc/menu_header.html");
+    });
 
     $('.myMenu ul li').hover(function() {
         $(this).children('ul').stop(true, false, true).slideToggle(300);
     });
+
+    // draggable widgets
+
+    $( function() {
+        $( ".drag" ).draggable();
+    } );
 
     event_interval();
     display_env();

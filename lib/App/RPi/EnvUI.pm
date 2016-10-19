@@ -30,6 +30,7 @@ get '/' => sub {
         # return template 'main';
         return template 'test';
         # return template 'menu';
+        #return template 'drag';
     };
 
 post '/login' => sub {
