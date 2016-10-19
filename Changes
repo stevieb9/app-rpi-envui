@@ -17,6 +17,10 @@ Changes history for App::RPi::EnvUI
         - UI now has "draggable" widgets
         - reworked light_off(), it now uses the set 'on_since' flag as it's base
           time, which we simply add 'on_hours' to it
+        - added _reset_light() called by _parse_config() after _reset(), resets
+          the light 'on_since' flag. If the Pi crashed, the light would be
+          deemed already on no matter what, and if it was lights-on time, the
+          light would not be re-enabled (fixes #21)
 
 0.25    2016-10-16
         - separated out API::new() initialization code into _init(), which loads

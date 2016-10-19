@@ -685,6 +685,8 @@ sub _parse_config {
     $self->db()->begin;
 
     $self->_reset;
+    $self->_reset_light;
+
     $config = $self->config if ! defined $config;
 
     if (! -e $config){
@@ -762,6 +764,9 @@ sub _reset {
     );
 
     #$self->db()->commit;
+}
+sub _reset_light {
+    $_[0]->db()->update('light', 'value', 0, 'id', 'on_since');
 }
 sub _ui_test_mode {
     return -e 't/testing.lck';
