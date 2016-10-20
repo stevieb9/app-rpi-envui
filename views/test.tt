@@ -45,7 +45,7 @@
 <!--<div id="menu_header"></div>-->
 
 <!-- Temperature -->
-
+<div>
 <div class="drag" id="temp_widget">
     <table width="50%">
         <th colspan="2" align="center"><font size="5">Temperature</font></th>
@@ -82,21 +82,22 @@
 
 <!-- Light -->
 
-<div class="drag" id="humidity_widget">
-<table width="50%">
-    <th colspan="3"><font size="5">Light</font></th>
-    <tr>
-        <th><font size="3">Status</font></th>
-        <th><font size="3">Lights On</font></th>
-        <th><font size="3">Hours Per Day</font></th>
-    </tr>
-    <tr>
-        <td><input id="aux3" class="button" style="width:120px;height:30px"></td>
-        <td><div id="light_on_at"></div></td>
-        <td><div id="light_on_hours"></div></td>
-    </tr>
-</table>
-
+<div class="drag" id="light_widget">
+    <table width="50%">
+        <th colspan="3"><font size="5">Light</font></th>
+        <tr>
+            <th><font size="3">Status</font></th>
+            <th><font size="3">Lights On</font></th>
+            <th><font size="3">Hours Per Day</font></th>
+        </tr>
+        <tr>
+            <td><input id="aux3" class="button" style="width:120px;height:30px"></td>
+            <td><div id="light_on_at"></div></td>
+            <td><div id="light_on_hours"></div></td>
+        </tr>
+    </table>
+</div>
+</div>
 <br><br>
 
 <!-- Water tanks -->
