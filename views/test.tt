@@ -1,10 +1,8 @@
 <html>
 
 <head>
-    <!--<script type="text/javascript" src="js/jquery.easyui.min.js"></script>-->
-
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="stylesheet" type="text/css" href="css/envui.css">
     <link rel="stylesheet" type="text/css" href="css/button.css">
 
@@ -12,7 +10,6 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="js/switchbutton.js"></script>
     <script type="text/javascript" src="js/core.js"></script>
-
     <script src="js/Chart.bundle.js"></script>
 </head>
 
@@ -55,7 +52,7 @@
         <td>
             <div class="drag" id="temp_widget">
             <table class="inner">
-                <th colspan="2" align="center"><font size="5">Temperature</font></th>
+                <th colspan="2" align="center"><font size="5"><p class="widget_handle">Temperature</p></font></th>
                 <tr>
                     <td style="text-align: center;"><font size="5"><div class="data" id="temp"></div></font></td>
                 </tr>
@@ -71,7 +68,7 @@
         <td>
             <div class="drag" id="humidity_widget">
             <table class="inner">
-                <th colspan="2" align="center"><font size="5">Humidity</font></th>
+                <th colspan="2" align="center"><font size="5"><p class="widget_handle">Humidity</p></font></th>
                 <tr>
                     <td style="text-align: center;"><font size="5"><div class="data" id="humidity"></div></font></td>
                 </tr>
@@ -91,7 +88,7 @@
 
 <div class="drag" id="light_widget">
     <table width="50%">
-        <th colspan="3"><font size="5">Light</font></th>
+        <th colspan="3"><font size="5"><p class="widget_handle">Light</p></font></th>
         <tr>
             <th><font size="3">Status</font></th>
             <th><font size="3">Lights On</font></th>

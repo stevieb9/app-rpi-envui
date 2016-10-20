@@ -7,7 +7,6 @@ $(document).ready(function(){
     // draggable widgets
 
     $(function(){
-    /*)
         $('.drag').each(function(i, table){
             console.log(
                 $(table).attr('id') + " " +
@@ -16,14 +15,21 @@ $(document).ready(function(){
             );
 
         });
-    */
+
         $('.drag').draggable({
+            handle: 'p.widget_handle',
             grid: [10, 1],
             scroll: false,
+            opacity: 0.5,
+            //helper: 'clone',
+            cursor: "move",
+            drag: function(){
+                console.log($(this).position().top);
+            },
             stop: function(){
                 var top = $(this).position().top;
                 var left = $(this).position().left;
-                console.log($(this) + " t: " + top + " l: " + left);
+                console.log($(this).attr('id') + " t: " + top + " l: " + left);
             }
         });
     });
