@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="/resources/demos/style.css">
     <style>
         #t1, #t2, #t3, #t4 { width: 100%; }
     </style>
@@ -31,41 +30,33 @@
                 }
             })
         });
-</script>
+    </script>
 </head>
 <body>
 
-<div id="t1" class="table">
     <table>
         <tr>
             <td><div class="td">Temperature</div></td>
             <td><div class="td">Humidity</div></td>
         </tr>
     </table>
-</div>
-<div id="t2" class="table">
     <table>
         <tr>
             <td><div class="td">test #3</div></td>
             <td><div class="td">test #4</div></td>
         </tr>
     </table>
-</div>
-<div id="t3" class="table">
     <table>
         <tr>
             <td><div class="td">test #5</div></td>
             <td><div class="td">test #6</div></td>
         </tr>
     </table>
-</div>
-<div id="t4" class="table">
     <table>
         <tr>
             <td><div class="td">test #7</div></td>
             <td><div class="td">test #8</div></td>
         </tr>
     </table>
-</div>
 </body>
 </html>

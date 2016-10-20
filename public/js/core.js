@@ -1,4 +1,5 @@
 $(document).ready(function(){
+
     $('.myMenu ul li').hover(function() {
         $(this).children('ul').stop(true, false, true).slideToggle(300);
     });
@@ -6,19 +7,25 @@ $(document).ready(function(){
     // draggable widgets
 
     $(function(){
-        $('.drag').draggable()
-    });
+    /*)
+        $('.drag').each(function(i, table){
+            console.log(
+                $(table).attr('id') + " " +
+                $(table).position().top + " " +
+                $(table).position().left
+            );
 
-    $('#temp_widget').draggable({
-        start: function(event, ui){
-            var startpos = $(this).position();
-            console.write(startpos);
-            alert(startpos.left + " " + startpos.top);
-        },
-        stop: function(event, ui){
-            var stoppos = $(this).position();
-            alert(stoppos.left + " " + stoppos.top);
-        },
+        });
+    */
+        $('.drag').draggable({
+            grid: [10, 1],
+            scroll: false,
+            stop: function(){
+                var top = $(this).position().top;
+                var left = $(this).position().left;
+                console.log($(this) + " t: " + top + " l: " + left);
+            }
+        });
     });
 
     event_interval();

@@ -1,12 +1,18 @@
 <html>
 
 <head>
+    <!--<script type="text/javascript" src="js/jquery.easyui.min.js"></script>-->
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="css/envui.css">
     <link rel="stylesheet" type="text/css" href="css/button.css">
-    <script src="js/jquery-1.12.4.js"></script>
-    <script src="js/jquery-ui.1.12.1.js"></script>
-    <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/switchbutton.js"></script>
     <script type="text/javascript" src="js/core.js"></script>
+
     <script src="js/Chart.bundle.js"></script>
 </head>
 
@@ -44,41 +50,42 @@
 </table>
 <!--<div id="menu_header"></div>-->
 
-<!-- Temperature -->
-<div>
-<div class="drag" id="temp_widget">
-    <table width="50%">
-        <th colspan="2" align="center"><font size="5">Temperature</font></th>
-        <tr>
-            <td style="text-align: center;"><font size="5"><div class="data" id="temp"></div></font></td>
-        </tr>
-        <tr>
-            <td style="text-align: center;"><input id="aux1" class="button" style="width:120px;height:30px"></td>
-        </tr>
-        <tr>
-            <td colspan="2"><canvas id="temp_chart" width="600" height="200"></canvas></td>
-        </tr>
-    </table>
-</div>
-
-<!-- Humidity -->
-
-<div class="drag" id="humidity_widget">
-    <table width="50%">
-        <th colspan="2" align="center"><font size="5">Humidity</font></th>
-        <tr>
-            <td style="text-align: center;"><font size="5"><div class="data" id="humidity"></div></font></td>
-        </tr>
-        <tr>
-            <td style="text-align: center;"><input id="aux2" class="button" style="width:120px;height:30px"></td>
-        </tr>
-        <tr>
-            <td colspan="2"><canvas id="humidity_chart" width="600" height="200"></canvas></td>
-        </tr>
-    </table>
-</div>
-
-<br><br>
+<table class="top">
+    <tr>
+        <td>
+            <div class="drag" id="temp_widget">
+            <table class="inner">
+                <th colspan="2" align="center"><font size="5">Temperature</font></th>
+                <tr>
+                    <td style="text-align: center;"><font size="5"><div class="data" id="temp"></div></font></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;"><input id="aux1" class="button" style="width:120px;height:30px"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><canvas id="temp_chart" width="600" height="200"></canvas></td>
+                </tr>
+            </table>
+        </div>
+        </td>
+        <td>
+            <div class="drag" id="humidity_widget">
+            <table class="inner">
+                <th colspan="2" align="center"><font size="5">Humidity</font></th>
+                <tr>
+                    <td style="text-align: center;"><font size="5"><div class="data" id="humidity"></div></font></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;"><input id="aux2" class="button" style="width:120px;height:30px"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><canvas id="humidity_chart" width="600" height="200"></canvas></td>
+                </tr>
+            </table>
+            </div>
+        </td>
+    </tr>
+</table>
 
 <!-- Light -->
 
@@ -96,7 +103,6 @@
             <td><div id="light_on_hours"></div></td>
         </tr>
     </table>
-</div>
 </div>
 <br><br>
 

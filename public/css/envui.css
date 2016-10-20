@@ -9,25 +9,19 @@ td {
     align: center;
     text-align: center;
 }
+
 .top_row {
     valign: center;
     align: center;
 }
 
-/* widgets */
+.top {
+    width: 100%;
+}
 
-.drag {
-    layout: fixed;
+.inner {
     width: 50%;
 }
-
-#temp_widget {
-    float:left;
-}
-#humidity_widget {
-    float:left;
-}
-
 
 /* main menu */
 
