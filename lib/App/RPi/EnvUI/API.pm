@@ -44,11 +44,7 @@ sub new {
     return $self;
 }
 sub action_humidity {
-    #FIXME: this, and action_temp() should retrieve their own aux id
-    # from the db directly, instead of having it passed in?
-
-    my $self = shift;
-    my ($aux_id, $humidity) = @_;
+    my ($self, $aux_id, $humidity) = @_;
 
     my $log = $log->child('action_humidity');
     $log->_5("aux: $aux_id, humidity: $humidity");
@@ -73,8 +69,7 @@ sub action_humidity {
     }
 }
 sub action_temp {
-    my $self = shift;
-    my ($aux_id, $temp) = @_;
+    my ($self, $aux_id, $temp) = @_;
 
     my $log = $log->child('action_temp');
 

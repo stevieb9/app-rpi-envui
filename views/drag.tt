@@ -1,31 +1,59 @@
+<!doctype html>
 <html lang="en">
 <head>
-    <!--
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>jQuery UI Draggable - Default functionality</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="/resources/demos/style.css">
-    -->
-<style>
-//#draggable { width: 150px; height: 150px; padding: 0.5em; }
-</style>
+    <style>
+        #t1, #t2, #t3, #t4 { width: 100%; float: left; }
+    </style>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
-$( function() {
-$( "#draggable" ).draggable();
-} );
+        $(function() {
+            $(".td").draggable({
+                scroll: false,
+                stop: function(){
+                    var top = $(this).position().top;
+                    var left = $(this).position().left;
+                    console.log($(this) + " t: " + top + " l: " + left);
+                }
+            })
+        });
 </script>
 </head>
 <body>
-<div id="draggable" class="ui-widget-content">
+
+<div id="t1">
     <table>
-        <th>One</th>
-        <th>Two</th>
         <tr>
-            <td>data one</td>
-            <td>data two</td>
+            <td><div class="td">Temperature</div></td>
+            <td><div class="td">Humidity</div></td>
+        </tr>
+    </table>
+</div>
+<div id="t2">
+    <table>
+        <tr>
+            <td><div class="td">test #3</div></td>
+            <td><div class="td">test #4</div></td>
+        </tr>
+    </table>
+</div>
+<div id="t3">
+    <table>
+        <tr>
+            <td><div class="td">test #5</div></td>
+            <td><div class="td">test #6</div></td>
+        </tr>
+    </table>
+</div>
+<div id="t4">
+    <table>
+        <tr>
+            <td><div class="td">test #7</div></td>
+            <td><div class="td">test #8</div></td>
         </tr>
     </table>
 </div>
