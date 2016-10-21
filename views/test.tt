@@ -2,15 +2,19 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <!--<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">-->
     <link rel="stylesheet" type="text/css" href="css/envui.css">
-    <link rel="stylesheet" type="text/css" href="css/button.css">
+    <link rel="stylesheet" type="text/css" href="css/flipswitch.css">
+    <link rel="stylesheet" type="text/css" href="css/flipswitch.struct.css">
+    <!--<link rel="stylesheet" type="text/css" href="css/button.css">-->
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script type="text/javascript" src="js/switchbutton.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js">
+    <script type="text/javascript" src="js/Chart.bundle.js"></script>
+    <!--<script type="text/javascript" src="js/switchbutton.js"></script>-->
+    <!--<script type="text/javascript" src="js/switchbutton.min.js"></script>-->
     <script type="text/javascript" src="js/core.js"></script>
-    <script src="js/Chart.bundle.js"></script>
 </head>
 
 <body>
@@ -57,7 +61,7 @@
                     <td style="text-align: center;"><font size="5"><div class="data" id="temp"></div></font></td>
                 </tr>
                 <tr>
-                    <td style="text-align: center;"><input id="aux1" class="button" style="width:120px;height:30px"></td>
+                    <td style="text-align: center;"><input id="aux1" class="button" style="width:120px;height:30px" type="checkbox"></td>
                 </tr>
                 <tr>
                     <td colspan="2"><canvas id="temp_chart" width="600" height="200"></canvas></td>

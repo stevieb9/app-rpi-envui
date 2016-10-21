@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+
     $('.myMenu ul li').hover(function() {
         $(this).children('ul').stop(true, false, true).slideToggle(300);
     });
@@ -36,8 +37,8 @@ $(document).ready(function(){
 
     event_interval();
     display_env();
-    temp_graph();
-    humidity_graph();
+//    temp_graph();
+//    humidity_graph();
     aux_update();
     display_water();
     display_light();
@@ -91,7 +92,7 @@ $(document).ready(function(){
                 offtxt = 'OFF';
             }
 
-            $('#'+ aux).switchbutton({
+            $('#'+ aux).flipswitch().flipswitch({
                 onText: ontxt,
                 offText: offtxt,
                 checked: parseInt(json.state),
@@ -119,10 +120,10 @@ $(document).ready(function(){
                 return;
             }
             if (light.toggle == 'disabled'){
-                $('#aux3').switchbutton('disable');
+                $('#aux3').flipswitch().flipswitch('disable');
             }
             else {
-                $('#aux3').switchbutton('enable');
+                $('#aux3').flipswitch().flipswitch('enable');
             }
             $('#light_on_hours').text(light.on_hours);
             $('#light_on_at').text(light.on_at);
