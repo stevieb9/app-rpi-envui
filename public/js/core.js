@@ -1,13 +1,20 @@
 $(document).ready(function(){
+        for(i = 1; i < 9; i++){
+            var aux = '#aux'+ i;
+            $(aux).flipswitch();
+    //        $(aux).on('change', function(){
+    //            alert($(aux).prop('checked'));
+    //        });
+        }
 
 
     $('.myMenu ul li').hover(function() {
         $(this).children('ul').stop(true, false, true).slideToggle(300);
     });
-
     // draggable widgets
 
     $(function(){
+
         $('.drag').each(function(i, table){
             console.log(
                 $(table).attr('id') + " " +
@@ -35,6 +42,7 @@ $(document).ready(function(){
         });
     });
 
+    console.log('after for');
     event_interval();
     display_env();
 //    temp_graph();
@@ -92,16 +100,12 @@ $(document).ready(function(){
                 offtxt = 'OFF';
             }
 
-            $('#'+ aux).flipswitch().flipswitch({
-                onText: ontxt,
-                offText: offtxt,
-                checked: parseInt(json.state),
-                onChange: function(checked){
-                    $.get('/set_aux/'+ aux +'/'+ checked, function(data){
-
+            var checked = parseInt(json.state);
+            $('#'+ aux).on('change', function(){
+                    console.log($('#'+aux).prop('checked'));
+                    //$.get('/set_aux/'+ aux +'/'+ checked, function(data){
                         // ...
-                    });
-                }
+                    //});
             });
         });
     }
@@ -120,10 +124,10 @@ $(document).ready(function(){
                 return;
             }
             if (light.toggle == 'disabled'){
-                $('#aux3').flipswitch().flipswitch('disable');
+                $('#aux3').flipswitch('disable');
             }
             else {
-                $('#aux3').flipswitch().flipswitch('enable');
+                $('#aux3').flipswitch('enable');
             }
             $('#light_on_hours').text(light.on_hours);
             $('#light_on_at').text(light.on_at);
@@ -170,6 +174,7 @@ $(document).ready(function(){
         $('#humidity').text(humidity +' %');
     }
 
+/*
     // temperature graph
 
     function temp_graph(){
@@ -191,7 +196,6 @@ $(document).ready(function(){
                     label: 'Temperature (F)',
                     data: [12, 19, 3, 5, 2, 3, 9],
                     fill: false,
-                    /*
                     backgroundColor: [
                         'rgba(255, 0, 0, 1)',
                         'rgba(54, 162, 235, 0.2)',
@@ -210,7 +214,6 @@ $(document).ready(function(){
                         'rgba(255, 159, 64, 1)',
                         'rgba(153, 102, 255, 1)'
                     ],
-                    */
                     borderWidth: 1
                 }]
             },
@@ -260,4 +263,5 @@ $(document).ready(function(){
             }
         });
     }
+    */
 });
