@@ -79,7 +79,6 @@ sub action_temp {
 
     $log->_5("limit: $limit, minimum runtime: $min_run");
 
-    print "$temp: $limit\n";
     if (! $self->aux_override($aux_id)){
         if ($temp > $limit && $self->aux_time($aux_id) == 0){
             $log->_5("temp limit reached turning $aux_id to HIGH");
