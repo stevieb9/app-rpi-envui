@@ -1,6 +1,7 @@
 package App::RPi::EnvUI;
 
 use App::RPi::EnvUI::API;
+use App::RPi::EnvUI::Auth;
 use Data::Dumper;
 use Dancer2;
 use Dancer2::Plugin::Auth::Extensible;
@@ -39,13 +40,27 @@ get '/' => sub {
     };
 
 post '/login' => sub {
-        session user => params->{username};
-        session pass => $api->user(params->{username})->{pass};
-        redirect '/';
+        my $user = params->{username};
+        my $pass = params->{password};
+
+        my ($success, $realm) = authenticate_user($user, $pass);
+
+        if ($success){
+            session logged_in_user => $user;
+            session logged_in_user_realm => $realm;
+            redirect '/';
+        }
     };
 
 any '/logout' => sub {
         app->destroy_session;
+    };
+
+get '/logged_in' => sub {
+        if (session 'logged_in_user'){
+            return to_json { status => 1 };
+        }
+        return to_json {status => 0};
     };
 
 get '/time' => sub {
@@ -116,8 +131,10 @@ get '/fetch_env' => sub {
 
 get '/set_aux/:aux/:state' => sub {
 
-        if (request->address ne '127.0.0.2'){
-            return to_json {error => 'unauthorized request. You must be logged in'};
+        if (request->address ne '127.0.0.2' || ! session 'logged_in_user'){
+            return to_json {
+                    error => 'unauthorized request. You must be logged in'
+            };
         }
 
         my $aux_id = params->{aux};

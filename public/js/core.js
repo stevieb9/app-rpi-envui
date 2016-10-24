@@ -1,7 +1,21 @@
 $(document).ready(function(){
+
+        var logged_in;
+
         for(i = 1; i < 9; i++){
             var aux = '#aux'+ i;
-            $(aux).flipswitch();
+            $.get('/logged_in', function(data){
+                var json = $.parseJSON(data);
+                logged_in = json.status;
+            });
+
+            if (! logged_in){
+                $(aux).flipswitch("option", "disabled", true);
+            }
+            else {
+                $(aux).flipswitch();
+            }
+
     //        $(aux).on('change', function(){
     //            alert($(aux).prop('checked'));
     //        });
@@ -42,7 +56,6 @@ $(document).ready(function(){
         });
     });
 
-    console.log('after for');
     event_interval();
     display_env();
 //    temp_graph();
@@ -102,7 +115,7 @@ $(document).ready(function(){
 
             var checked = parseInt(json.state);
             $('#'+ aux).on('change', function(){
-                    console.log($('#'+aux).prop('checked'));
+                    // console.log($('#'+aux).prop('checked'));
                     $.get('/set_aux/'+ aux +'/'+ checked, function(data){
                         var json = $.parseJSON(data);
                         if (json.error){
