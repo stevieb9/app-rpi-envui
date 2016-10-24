@@ -103,9 +103,12 @@ $(document).ready(function(){
             var checked = parseInt(json.state);
             $('#'+ aux).on('change', function(){
                     console.log($('#'+aux).prop('checked'));
-                    //$.get('/set_aux/'+ aux +'/'+ checked, function(data){
-                        // ...
-                    //});
+                    $.get('/set_aux/'+ aux +'/'+ checked, function(data){
+                        var json = $.parseJSON(data);
+                        if (json.error){
+                            console.log(json.error);
+                        }
+                    });
             });
         });
     }

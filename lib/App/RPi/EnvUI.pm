@@ -4,6 +4,7 @@ use App::RPi::EnvUI::API;
 use Data::Dumper;
 use Dancer2;
 use Dancer2::Plugin::Auth::Extensible;
+use Dancer2::Core::Request;
 #use Dancer2::Session::JSON;
 use Mock::Sub no_warnings => 1;
 use POSIX qw(tzset);
@@ -27,10 +28,11 @@ $api->_config_light();
 get '/' => sub {
         my $log = $log->child('/');
         $log->_7("entered");
+
         # return template 'main';
-        # return template 'test';
+        return template 'test', {requester => request->address};
         # return template 'switch';
-        return template 'switch2';
+        # return template 'switch2';
         # return template 'menu';
         # return template 'drag';
         # return template 'flip';
@@ -113,6 +115,11 @@ get '/fetch_env' => sub {
 #
 
 get '/set_aux/:aux/:state' => sub {
+
+        if (request->address ne '127.0.0.2'){
+            return to_json {error => 'unauthorized request. You must be logged in'};
+        }
+
         my $aux_id = params->{aux};
         my $state = $api->_bool(params->{state});
 

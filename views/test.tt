@@ -2,9 +2,8 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--<link rel="stylesheet" type="text/css" href="css/flipswitch.css">
-    <link rel="stylesheet" type="text/css" href="css/flipswitch.struct.css">-->
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/flipswitch.css">
+    <link rel="stylesheet" type="text/css" href="css/flipswitch.struct.css">
     <link rel="stylesheet" type="text/css" href="css/envui.css">
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -17,7 +16,6 @@
 
 
 <body>
-
 <table width="100%">
     <tr><td width="90%" style="white-space: nowrap;" >
 
