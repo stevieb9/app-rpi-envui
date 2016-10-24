@@ -1,10 +1,15 @@
 
 /* base */
 
+a {
+    text-decoration: none;
+}
+
 th {
     align: center;
     text-align: center;
 }
+
 td {
     align: center;
     text-align: center;
@@ -102,4 +107,8 @@ td {
 	left: 100%;
 	top: 0;
 	z-index: 9999999;
+}
+
+.button {
+    width: 200px;
 }
