@@ -1,27 +1,27 @@
 $(document).ready(function(){
 
-        var logged_in;
+    var logged_in;
 
-        $.ajax({
-            async: false,
-            type: 'GET',
-            url: '/logged_in',
-            success: function(data){
-                var json = $.parseJSON(data);
-                logged_in = json.status;
-                console.log("auth: " + logged_in);
-            }
-        });
-
-        for(i = 1; i < 9; i++){
-            var aux = '#aux'+ i;
-            if (! logged_in){
-                $(aux).flipswitch("option", "disabled", true);
-            }
-            else {
-                $(aux).flipswitch();
-            }
+    $.ajax({
+        async: false,
+        type: 'GET',
+        url: '/logged_in',
+        success: function(data){
+            var json = $.parseJSON(data);
+            logged_in = json.status;
+            console.log("auth: " + logged_in);
         }
+    });
+
+    for(i = 1; i < 9; i++){
+        var aux = '#aux'+ i;
+        if (! logged_in){
+            $(aux).flipswitch("option", "disabled", true);
+        }
+        else {
+            $(aux).flipswitch();
+        }
+    }
 
     $('.myMenu ul li').hover(function() {
         $(this).children('ul').stop(true, false, true).slideToggle(300);
@@ -45,7 +45,6 @@ $(document).ready(function(){
             grid: [10, 1],
             scroll: false,
             opacity: 0.5,
-            //helper: 'clone',
             cursor: "move",
             drag: function(){
                 console.log($(this).position().top);
@@ -114,7 +113,7 @@ $(document).ready(function(){
             }
 
             //var checked = parseInt(json.state);
-            $('#'+ aux).on('change', function(){
+            $('#'+ aux).unbind().on('change', function(){
                 var checked = $('#'+aux).prop('checked');
                 $.get('/set_aux/'+ aux +'/'+ checked, function(data){
                     var json = $.parseJSON(data);
