@@ -3,15 +3,13 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Flot Examples: Thresholds</title>
-	<link href="../examples.css" rel="stylesheet" type="text/css">
-	<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="../../excanvas.min.js"></script><![endif]-->
-
+	<link href="css/graph.css" rel="stylesheet" type="text/css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
-	<script language="javascript" type="text/javascript" src="flot.js"></script>
-	<script language="javascript" type="text/javascript" src="flot.threshold.js"></script>
+	<script language="javascript" type="text/javascript" src="js/flot.js"></script>
+	<script language="javascript" type="text/javascript" src="js/flot.threshold.js"></script>
 	<script type="text/javascript">
 
 	$(function() {
@@ -43,9 +41,6 @@
 			plotWithOptions(t);
 		});
 
-		// Add the Flot version string to the footer
-
-		$("#footer").prepend("Flot " + $.plot.version + " &ndash; ");
 	});
 
 	</script>

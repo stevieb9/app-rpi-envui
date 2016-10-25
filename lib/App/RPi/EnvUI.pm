@@ -31,12 +31,14 @@ get '/' => sub {
         $log->_7("entered");
 
         # return template 'main';
-        return template 'test', {requester => request->address};
+        # return template 'test', {requester => request->address};
         # return template 'switch';
         # return template 'switch2';
         # return template 'menu';
         # return template 'drag';
         # return template 'flip';
+        return template 'graph';
+        # return template 'graph_live';
     };
 
 post '/login' => sub {
@@ -131,7 +133,7 @@ get '/fetch_env' => sub {
 
 get '/set_aux/:aux/:state' => sub {
 
-        if (request->address ne '127.0.0.2' || ! session 'logged_in_user'){
+        if (request->address ne '127.0.0.1' || ! session 'logged_in_user'){
             return to_json {
                     error => 'unauthorized request. You must be logged in'
             };
