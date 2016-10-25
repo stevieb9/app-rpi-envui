@@ -279,12 +279,17 @@ sub graph_data {
 
         # we need to pad out to get to 24 hours worth of data
 
-        while($need){
-            push @{ $data{temp} }, [ $count, 0 ];
-            push @{ $data{humidity} }, [ $count, 0 ];
-            $need--;
-            $count++;
+        if ($need){
+            my $last_t = $_->[2];
+            my $last_h = $_->[3];
+            while($need){
+                push @{ $data{temp} }, [ $count, $last_t ];
+                push @{ $data{humidity} }, [ $count, $last_h ];
+                $need--;
+                $count++;
+            }
         }
+
 
         # every 4 entries; typically we have 4 polls per minute
         if ($check % 4 == 1) {

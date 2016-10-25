@@ -9,3 +9,5 @@ my $api = App::RPi::EnvUI::API->new(testing => 1);
 my $aref = $api->graph_data;
 
 print Dumper $aref;
+
+print $aref->

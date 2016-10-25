@@ -197,7 +197,6 @@ $(document).ready(function(){
     // temperature graph
 
     function temp_graph(data){
-        console.log(data);
         $.plot($("#temp_chart"), [{
             data: data,
             threshold: {
@@ -209,6 +208,9 @@ $(document).ready(function(){
             grid: {
                 hoverable: true,
                 borderWidth: 1,
+            },
+            xaxis: {
+                ticks: []
             },
             colors: ["red"]
         });
@@ -228,6 +230,9 @@ $(document).ready(function(){
             grid: {
                 hoverable: true,
                 borderWidth: 1,
+            },
+            xaxis: {
+                ticks: []
             },
             colors: ["green"]
         });
