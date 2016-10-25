@@ -18,20 +18,23 @@
 
         function graph(){
             interval = 1 * 1000;
-            setInterval(display_graph, interval);
+            setInterval(display_graphs, interval);
         };
 
-        function display_graph(){
+        function display_graphs(){
+
+            // temp graph
+
             var d1 = [];
             for (var i = 0; i <= 60; i += 1){
-                d1.push([i, parseInt(Math.random() * 30 - 10)]);
+                d1.push([i, parseInt(Math.random() * 100 - 10)]);
             }
 
-            $.plot($("#placeholder"), [{
+            $.plot($("#temp"), [{
                 data: d1,
                 threshold: {
-                    below: 5,
-                    color: "rgb(200, 20, 30)"
+                    below: 80,
+                    color: "green"
                 }
                 }],
                 {
@@ -39,7 +42,29 @@
                     hoverable: true,
                     borderWidth: 1,
                 },
-                colors: ["rgb(44,55,66)", "rgb(90,2,100)"]
+                colors: ["red"]
+            });
+
+             // humidity graph
+
+            var d1 = [];
+            for (var i = 0; i <= 60; i += 1){
+                d1.push([i, parseInt(Math.random() * 100 - 10)]);
+            }
+
+            $.plot($("#humidity"), [{
+                data: d1,
+                threshold: {
+                    below: 20,
+                    color: "red"
+                }
+                }],
+                {
+                grid: {
+                    hoverable: true,
+                    borderWidth: 1,
+                },
+                colors: ["green"]
             });
         };
     });
@@ -55,12 +80,10 @@
 <div id="content">
 
     <div class="demo-container">
-        <div id="placeholder" class="demo-placeholder"></div>
+        <div id="temp" class="demo-placeholder"></div>
+        <div id="humidity" class="demo-placeholder"></div>
     </div>
 
-    <p>You can update a chart periodically to get a real-time effect by using a timer to insert the new data in the plot and redraw it.</p>
-
-    <p>Time between updates: <input id="updateInterval" type="text" value="" style="text-align: right; width:5em"> milliseconds</p>
 
 </div>
 
