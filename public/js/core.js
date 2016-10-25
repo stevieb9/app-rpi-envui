@@ -156,13 +156,10 @@ $(document).ready(function(){
     }
 
     function display_graphs(){
-        // remove these two calls after /fetch_graph is implemented
-        temp_graph();
-        humidity_graph();
-        $.get('/fetch_graph', function(data){
+        $.get('/graph_data', function(data){
             var graph_data = $.parseJSON(data);
-            //temp_graph(graph_data.temp);
-            //humidity_graph(graph_data.humidity);
+            temp_graph(graph_data.temp);
+            humidity_graph(graph_data.humidity);
         });
     }
 
@@ -200,6 +197,7 @@ $(document).ready(function(){
     // temperature graph
 
     function temp_graph(data){
+        console.log(data);
         $.plot($("#temp_chart"), [{
             data: data,
             threshold: {

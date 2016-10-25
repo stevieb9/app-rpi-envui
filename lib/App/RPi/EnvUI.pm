@@ -43,6 +43,10 @@ get '/' => sub {
 
 # fetch graph code
 
+get '/graph_data' => sub {
+        return to_json $api->graph_data;
+    };
+
 post '/login' => sub {
         my $user = params->{username};
         my $pass = params->{password};
