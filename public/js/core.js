@@ -113,7 +113,8 @@ $(document).ready(function(){
             }
 
             var checked = parseInt(json.state);
-            $('#'+ aux).prop('checked', checked).flipswitch('refresh');
+
+            $('#'+ aux).unbind().prop('checked', checked).flipswitch('refresh');
 
             $('#'+ aux).unbind().on('change', function(){
                 var checked = $('#'+aux).prop('checked');
