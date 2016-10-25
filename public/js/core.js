@@ -112,7 +112,9 @@ $(document).ready(function(){
                 offtxt = 'OFF';
             }
 
-            //var checked = parseInt(json.state);
+            var checked = parseInt(json.state);
+            $('#'+ aux).prop('checked', checked).flipswitch('refresh');
+
             $('#'+ aux).unbind().on('change', function(){
                 var checked = $('#'+aux).prop('checked');
                 $.get('/set_aux/'+ aux +'/'+ checked, function(data){
