@@ -289,14 +289,13 @@ sub graph_data {
                 $count++;
             }
         }
+        
+        next if $_->[2] > 120;
+        last if $count == 300;
+        push @{ $data{temp} }, [ $count, $_->[2] ];
+        push @{ $data{humidity} }, [ $count, $_->[3] ];
 
-
-        # every 4 entries; typically we have 4 polls per minute
-        if ($check % 4 == 1) {
-            push @{ $data{temp} }, [ $count, $_->[2] ];
-            push @{ $data{humidity} }, [ $count, $_->[3] ];
-            $count++;
-        }
+        $count++;
         $check++;
     }
 

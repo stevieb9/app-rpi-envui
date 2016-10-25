@@ -31,7 +31,7 @@ get '/' => sub {
         $log->_7("entered");
 
         # return template 'main';
-        return template 'test', {requester => request->address};
+        return template 'test';
         # return template 'switch';
         # return template 'switch2';
         # return template 'menu';
@@ -65,7 +65,7 @@ any '/logout' => sub {
     };
 
 get '/logged_in' => sub {
-        if (session 'logged_in_user'){
+        if (session 'logged_in_user' || request->address eq '127.0.0.1'){
             return to_json { status => 1 };
         }
         return to_json {status => 0};

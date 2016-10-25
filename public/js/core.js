@@ -2,13 +2,19 @@ $(document).ready(function(){
 
         var logged_in;
 
-        for(i = 1; i < 9; i++){
-            var aux = '#aux'+ i;
-            $.get('/logged_in', function(data){
+        $.ajax({
+            async: false,
+            type: 'GET',
+            url: '/logged_in',
+            success: function(data){
                 var json = $.parseJSON(data);
                 logged_in = json.status;
-            });
+                console.log("auth: " + logged_in);
+            }
+        });
 
+        for(i = 1; i < 9; i++){
+            var aux = '#aux'+ i;
             if (! logged_in){
                 $(aux).flipswitch("option", "disabled", true);
             }
@@ -16,7 +22,6 @@ $(document).ready(function(){
                 $(aux).flipswitch();
             }
         }
-
 
     $('.myMenu ul li').hover(function() {
         $(this).children('ul').stop(true, false, true).slideToggle(300);
@@ -108,15 +113,15 @@ $(document).ready(function(){
                 offtxt = 'OFF';
             }
 
-            var checked = parseInt(json.state);
+            //var checked = parseInt(json.state);
             $('#'+ aux).on('change', function(){
-                    // console.log($('#'+aux).prop('checked'));
-                    $.get('/set_aux/'+ aux +'/'+ checked, function(data){
-                        var json = $.parseJSON(data);
-                        if (json.error){
-                            console.log(json.error);
-                        }
-                    });
+                var checked = $('#'+aux).prop('checked');
+                $.get('/set_aux/'+ aux +'/'+ checked, function(data){
+                    var json = $.parseJSON(data);
+                    if (json.error){
+                        console.log(json.error);
+                    }
+                });
             });
         });
     }
@@ -135,10 +140,10 @@ $(document).ready(function(){
                 return;
             }
             if (light.toggle == 'disabled'){
-                $('#aux3').flipswitch('disable');
+                $('#aux3').flipswitch('option', 'disable', true);
             }
             else {
-                $('#aux3').flipswitch('enable');
+                $('#aux3').flipswitch();
             }
             $('#light_on_hours').text(light.on_hours);
             $('#light_on_at').text(light.on_at);
