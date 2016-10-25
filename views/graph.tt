@@ -14,6 +14,8 @@
 
 	$(function() {
 
+	for (var x=0; x < 500; x += 1){
+
 		var d1 = [];
 		for (var i = 0; i <= 60; i += 1) {
 			d1.push([i, parseInt(Math.random() * 30 - 10)]);
@@ -35,7 +37,10 @@
 
 		plotWithOptions(0);
 
-		$(".controls button").click(function (e) {
+
+	}
+
+        $(".controls button").click(function (e) {
 			e.preventDefault();
 			var t = parseFloat($(this).text().replace("Threshold at ", ""));
 			plotWithOptions(t);

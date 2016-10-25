@@ -37,8 +37,8 @@ get '/' => sub {
         # return template 'menu';
         # return template 'drag';
         # return template 'flip';
-        return template 'graph';
-        # return template 'graph_live';
+        # return template 'graph';
+        return template 'graph_live';
     };
 
 post '/login' => sub {
