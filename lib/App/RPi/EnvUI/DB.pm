@@ -45,6 +45,15 @@ sub new {
         }
     ) or die $DBI::errstr;
 
+    # commonly used statement handles
+
+    $self->{graph_sth} = $self->{db}->prepare(
+        "select * from (
+            select * from stats order by id DESC limit 5760
+        ) sub
+            order by id asc;"
+    );
+
     return $self;
 }
 sub user {
@@ -139,6 +148,11 @@ sub env {
 
     $sth->execute($id);
     return $sth->fetchrow_hashref;
+}
+sub graph_data {
+    my ($self) = @_;
+    $self->{graph_sth}->execute;
+    return $self->{graph_sth}->fetchall_arrayref;
 }
 sub insert_env {
     my ($self, $temp, $hum) = @_;
@@ -327,6 +341,13 @@ Fetches and returns as a hash reference the last database entry of the C<stats>
 (environment) database table. This hash contains the latest
 temperature/humidity update, along with a timestamp and row ID. Takes no
 parameters.
+
+=head2 graph_data
+
+Fetches and approximately 24 hours worth of rows starting from the last insert
+and going backwards.
+
+Returns an array reference that contain an array reference for each row found.
 
 =head2 insert_env($temp, $humidity)
 

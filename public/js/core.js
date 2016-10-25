@@ -199,16 +199,11 @@ $(document).ready(function(){
 
     // temperature graph
 
-    function temp_graph(){
-        var d1 = [];
-        for (var i = 0; i <= 60; i += 1){
-            d1.push([i, parseInt(Math.random() * 100 - 10)]);
-        }
-
+    function temp_graph(data){
         $.plot($("#temp_chart"), [{
-            data: d1,
+            data: data,
             threshold: {
-                below: 80,
+                below: temp_limit,
                 color: "green"
             }
             }],
@@ -223,16 +218,11 @@ $(document).ready(function(){
 
     // humidity graph
 
-    function humidity_graph(){
-        var d1 = [];
-        for (var i = 0; i <= 60; i += 1){
-            d1.push([i, parseInt(Math.random() * 100 - 10)]);
-        }
-
+    function humidity_graph(data){
         $.plot($("#humidity_chart"), [{
-            data: d1,
+            data: data,
             threshold: {
-                below: 20,
+                below: humidity_limit,
                 color: "red"
             }
             }],

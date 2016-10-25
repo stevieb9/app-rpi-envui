@@ -41,6 +41,8 @@ get '/' => sub {
         # return template 'graph_live';
     };
 
+# fetch graph code
+
 post '/login' => sub {
         my $user = params->{username};
         my $pass = params->{password};

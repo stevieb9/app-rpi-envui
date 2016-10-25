@@ -264,6 +264,39 @@ sub env {
     return {temp => -1, humidity => -1} if ! defined $ret;
     return $self->db()->env;
 }
+sub graph_data {
+    my ($self) = @_;
+
+    my $graph_data = $self->db()->graph_data;
+
+    my $check = 1;
+    my $count = 0;
+    my %data;
+
+    my $need = 5760 - @$graph_data;
+
+    for (@$graph_data) {
+
+        # we need to pad out to get to 24 hours worth of data
+
+        while($need){
+            push @{ $data{temp} }, [ $count, 0 ];
+            push @{ $data{humidity} }, [ $count, 0 ];
+            $need--;
+            $count++;
+        }
+
+        # every 4 entries; typically we have 4 polls per minute
+        if ($check % 4 == 1) {
+            push @{ $data{temp} }, [ $count, $_->[2] ];
+            push @{ $data{humidity} }, [ $count, $_->[3] ];
+            $count++;
+        }
+        $check++;
+    }
+
+    return \%data;
+}
 sub humidity {
     my $self = shift;
     return $self->env()->{humidity};
@@ -1091,6 +1124,15 @@ Initializes and starts the asynchronous timed events that operate in their own
 processes, performing actions outside of the main thread.
 
 Takes no parameters, has no return.
+
+=head2 graph_data
+
+Returns a hash reference with keys C<temp> and C<humidity>, where the values of
+each are an array reference of array references with the inner arefs containing
+the element number and the temp/humidity value.
+
+It attempts to fetch data for 24 hours, sampling approximately every minute. If
+no data is found far enough back, the temp/humidity will be set to C<0>.
 
 =head2 humidity
 
