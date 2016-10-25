@@ -72,7 +72,9 @@ get '/logged_in' => sub {
     };
 
 get '/time' => sub {
-        return join ':', (localtime)[2, 1];
+        my ($h, $m) = (localtime)[2, 1];
+        $m = "0$m" if length $m < 2;
+        return join ':', ($h, $m);
     };
 
 get '/stats' => sub {
