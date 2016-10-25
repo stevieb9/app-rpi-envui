@@ -11,7 +11,7 @@ use Logging::Simple;
 use Mock::Sub no_warnings => 1;
 use RPi::WiringPi::Constant qw(:all);
 
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 # mocked sub handles for when we're in testing mode
 

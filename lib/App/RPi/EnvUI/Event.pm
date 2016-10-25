@@ -3,7 +3,7 @@ package App::RPi::EnvUI::Event;
 use Async::Event::Interval;
 use Data::Dumper;
 
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 sub new {
     my ($class, %args) = @_;

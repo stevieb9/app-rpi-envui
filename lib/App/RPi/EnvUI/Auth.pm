@@ -7,7 +7,7 @@ use App::RPi::EnvUI::DB;
 use Moo;
 with 'Dancer2::Plugin::Auth::Extensible::Role::Provider';
 
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 sub authenticate_user {
     my ($self, $user, $pass) = @_;
