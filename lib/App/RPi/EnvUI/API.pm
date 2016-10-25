@@ -273,11 +273,11 @@ sub graph_data {
     my $count = 0;
     my %data;
 
-    my $need = 5760 - @$graph_data;
+    my $need = 5760 - @$graph_data; # approx 4 per min, for 24 hours (4*60*24)
 
     for (@$graph_data) {
 
-        # we need to pad out to get to 24 hours worth of data
+        # we need to pad out to get to 24 hours worth of valid data
 
         if ($need){
             my $last_t = $_->[2];
