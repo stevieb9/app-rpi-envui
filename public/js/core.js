@@ -15,16 +15,13 @@ $(document).ready(function(){
             else {
                 $(aux).flipswitch();
             }
-
-    //        $(aux).on('change', function(){
-    //            alert($(aux).prop('checked'));
-    //        });
         }
 
 
     $('.myMenu ul li').hover(function() {
         $(this).children('ul').stop(true, false, true).slideToggle(300);
     });
+
     // draggable widgets
 
     $(function(){
@@ -58,8 +55,6 @@ $(document).ready(function(){
 
     event_interval();
     display_env();
-//    temp_graph();
-//    humidity_graph();
     aux_update();
     display_water();
     display_light();
@@ -160,6 +155,17 @@ $(document).ready(function(){
         });
     }
 
+    function display_graphs(){
+        // remove these two calls after /fetch_graph is implemented
+        temp_graph();
+        humidity_graph();
+        $.get('/fetch_graph', function(data){
+            var graph_data = $.parseJSON(data);
+            //temp_graph(graph_data.temp);
+            //humidity_graph(graph_data.humidity);
+        });
+    }
+
     function display_env(){
         $.get('/fetch_env', function(data){
             var json = $.parseJSON(data);
@@ -167,6 +173,7 @@ $(document).ready(function(){
             display_humidity(json.humidity);
         });
 
+        display_graphs();
         aux_update();
     };
 
@@ -190,94 +197,51 @@ $(document).ready(function(){
         $('#humidity').text(humidity +' %');
     }
 
-/*
     // temperature graph
 
     function temp_graph(){
-        var temp_ctx = $('#temp_chart')
-        var temp_chart = new Chart(temp_ctx, {
-            type: 'line',
-            data: {
-                labels: ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"],
-                datasets: [{
-                    pointBackgroundColor: [
-                        'rgba(255, 0, 0, 10)',
-                        'rgba(0, 128, 0, 2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(153, 102, 255, 0.2)'
-                    ],
-                    label: 'Temperature (F)',
-                    data: [12, 19, 3, 5, 2, 3, 9],
-                    fill: false,
-                    backgroundColor: [
-                        'rgba(255, 0, 0, 1)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(153, 102, 255, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(254, 0, 0, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(153, 102, 255, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    xAxes: [{
-                        display: false
-                    }],
-                    yAxes: [{
-                        ticks: {
-//                            max: 30,
-//                            min: 20,
-//                            stepSize 0.5,
-                            beginAtZero:true
-                        }
-                    }]
-                }
+        var d1 = [];
+        for (var i = 0; i <= 60; i += 1){
+            d1.push([i, parseInt(Math.random() * 100 - 10)]);
+        }
+
+        $.plot($("#temp_chart"), [{
+            data: d1,
+            threshold: {
+                below: 80,
+                color: "green"
             }
+            }],
+            {
+            grid: {
+                hoverable: true,
+                borderWidth: 1,
+            },
+            colors: ["red"]
         });
     }
 
     // humidity graph
 
     function humidity_graph(){
-        var humidity_ctx = $('#humidity_chart')
-        var humidity_chart = new Chart(humidity_ctx, {
-            type: 'line',
-            data: {
-                labels: ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"],
-                datasets: [{
-                    label: 'Humidity %',
-                    fill: false,
-                    data: [12, 19, 3, 5, 2, 3, 9]
-                }]
-            },
-            options: {
-                scales: {
-                    xAxes: [{
-                        display: false
-                    }],
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero:true
-                        }
-                    }]
-                }
+        var d1 = [];
+        for (var i = 0; i <= 60; i += 1){
+            d1.push([i, parseInt(Math.random() * 100 - 10)]);
+        }
+
+        $.plot($("#humidity_chart"), [{
+            data: d1,
+            threshold: {
+                below: 20,
+                color: "red"
             }
+            }],
+            {
+            grid: {
+                hoverable: true,
+                borderWidth: 1,
+            },
+            colors: ["green"]
         });
     }
-    */
 });
