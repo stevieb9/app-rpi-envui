@@ -10,4 +10,3 @@ my $aref = $api->graph_data;
 
 print Dumper $aref;
 
-print $aref->

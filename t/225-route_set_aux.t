@@ -75,6 +75,20 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     like $res->content, qr/Not Found/, "/set_aux 404s if only one param sent";
 }
 
+{ # not auth'd
+
+    $ENV{UNIT_TEST} = 1;
+
+    my $res = $test->request( GET "/set_aux/aux1/0" );
+    is $res->is_success, 1, "with two valid params, /set_aux ok";
+    my $p = decode_json $res->content;
+
+    is ref $p, 'HASH', "not-auth return ok";
+    like $p->{error}, qr/unauthorized request/, "...with sane error key/msg";
+
+    delete $ENV{UNIT_TEST};
+}
+
 sub aux {
     my $res = $test->request(GET "/get_aux/$_[0]");
     my $perl = decode_json $res->content;
