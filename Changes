@@ -1,6 +1,8 @@
 Changes history for App::RPi::EnvUI
 
-0.26 NOREL
+0.26    2016-10-25
+        - functionality adddition and bug fix beta release (next release will
+          have some proper documentation)
         - DB::auth() now returns a hashref of the username sent in with a blank
           password field if the user doesn't exist (added tests)
         - added light_on() and light_off(), each return a DateTime object with
@@ -21,6 +23,12 @@ Changes history for App::RPi::EnvUI
           the light 'on_since' flag. If the Pi crashed, the light would be
           deemed already on no matter what, and if it was lights-on time, the
           light would not be re-enabled (fixes #21)
+        - extensive work on the authentication mechanisms (the set route
+          requires a user to be logged in, or on localhost. Also, jquery
+          disables buttons if not logged in)
+        - major work on UI enhancements; objects are drag/droppable, and graph
+          functionality is well on its way (fixes #24)(new graph_data() methods
+          in DB and API, and new /graph_data route)
 
 0.25    2016-10-16
         - separated out API::new() initialization code into _init(), which loads

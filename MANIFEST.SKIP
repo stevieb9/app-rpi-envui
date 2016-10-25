@@ -1,7 +1,8 @@
+^devel/
 t/testing\.lck$
-envui/
+^envui/
 test\.db$
-cover_db/
+^cover_db/
 .gitignore
 envui$
 Makefile$
