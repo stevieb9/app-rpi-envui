@@ -22,11 +22,9 @@
         };
 
         function display_graph(){
-            var d1 = [],
-                d2 = [];
-            for (var i = 0; i <= 60; i += 1) {
+            var d1 = [];
+            for (var i = 0; i <= 60; i += 1){
                 d1.push([i, parseInt(Math.random() * 30 - 10)]);
-                d2.push([i, parseInt(Math.random() * 30 - 10)]);
             }
 
             $.plot($("#placeholder"), [{
@@ -34,13 +32,9 @@
                 threshold: {
                     below: 5,
                     color: "rgb(200, 20, 30)"
-                }},
-            {
-                data: d2,
-                threshold: {
-                    below: -5,
-                    color: "rgb(250, 0, 0)"
-                }}], {
+                }
+                }],
+                {
                 grid: {
                     hoverable: true,
                     borderWidth: 1,
