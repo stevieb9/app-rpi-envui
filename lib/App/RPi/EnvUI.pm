@@ -61,7 +61,9 @@ post '/login' => sub {
     };
 
 any '/logout' => sub {
+#        cookie session expires => '-1 day';
         app->destroy_session;
+#        redirect '/';
     };
 
 get '/logged_in' => sub {

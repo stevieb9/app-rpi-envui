@@ -41,6 +41,7 @@
                             <li><a href="http://perldoc.perl.org/perlartistic.html" target="_blank">License</a></li>
                         </ul>
                     </li>
+                    <li><a href="/login" id="auth" target="_self"></a></li>
                 </ul>
             </div>
         </div>

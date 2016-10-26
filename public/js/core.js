@@ -10,13 +10,23 @@ $(document).ready(function(){
         success: function(data){
             var json = $.parseJSON(data);
             logged_in = json.status;
-            console.log("auth: " + logged_in);
         }
     });
 
     $('.myMenu ul li').hover(function() {
         $(this).children('ul').stop(true, false, true).slideToggle(300);
     });
+
+    $('#auth').addClass('a');
+
+    if (logged_in){
+        $('#auth').text('Logout');
+        $('#auth').attr('href', '/logout');
+    }
+    else {
+        $('#auth').text('Login');
+        $('#auth').attr('href', '/login');
+    }
 
     // draggable widgets
 
@@ -31,17 +41,14 @@ $(document).ready(function(){
             else {
                 $('#'+aux).flipswitch();
             }
-            console.log(aux +": " + $('#'+aux).prop('checked'));
-
         }
 
         $('.button').on('change', function(){
             var checked = $(this).prop('checked');
             var aux = $(this).attr('id');
-            console.log(aux +": "+ checked);
+
             $.get('/set_aux/'+ aux +'/'+ checked, function(data){
                 var json = $.parseJSON(data);
-                console.log(json);
                 if (json.error){
                     console.log(json.error);
                 }
@@ -63,12 +70,12 @@ $(document).ready(function(){
             opacity: 0.5,
             cursor: "move",
             drag: function(){
-                console.log($(this).position().top);
+                //console.log($(this).position().top);
             },
             stop: function(){
                 var top = $(this).position().top;
                 var left = $(this).position().left;
-                console.log($(this).attr('id') + " t: " + top + " l: " + left);
+                // console.log($(this).attr('id') + " t: " + top + " l: " + left);
             }
         });
     });
@@ -134,8 +141,6 @@ $(document).ready(function(){
                 }
 
                 var checked = parseInt(json.state);
-
-                console.log(aux +": "+checked);
 
                 $('#'+ aux).prop('checked', checked);
                 $('#'+ aux).flipswitch('refresh');
