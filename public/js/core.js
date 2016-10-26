@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+    // authentication
 
     var logged_in;
 
@@ -13,10 +14,6 @@ $(document).ready(function(){
         }
     });
 
-    $('.myMenu ul li').hover(function() {
-        $(this).children('ul').stop(true, false, true).slideToggle(300);
-    });
-
     $('#auth').addClass('a');
 
     if (logged_in){
@@ -28,70 +25,64 @@ $(document).ready(function(){
         $('#auth').attr('href', '/login');
     }
 
-    // draggable widgets
+    // aux buttons
 
-    $(function(){
+    for (var i = 1; i < 9; i++){
+        var aux = 'aux' + i;
 
-        for (var i = 1; i < 9; i++){
-            var aux = 'aux' + i;
-            
-            if (! logged_in){
-                $('#'+aux).flipswitch("option", "disabled", true);
-            }
-            else {
-                $('#'+aux).flipswitch();
-            }
+        if (! logged_in){
+            $('#'+aux).flipswitch("option", "disabled", true);
         }
+        else {
+            $('#'+aux).flipswitch();
+        }
+    }
 
-        $('.button').on('change', function(){
-            var checked = $(this).prop('checked');
-            var aux = $(this).attr('id');
+    $('.button').on('change', function(){
+        var checked = $(this).prop('checked');
+        var aux = $(this).attr('id');
 
-            $.get('/set_aux/'+ aux +'/'+ checked, function(data){
-                var json = $.parseJSON(data);
-                if (json.error){
-                    console.log(json.error);
-                }
-            });
-        });
-
-        $('.drag').each(function(i, table){
-            console.log(
-                $(table).attr('id') + " " +
-                $(table).position().top + " " +
-                $(table).position().left
-            );
-        });
-
-        $('.drag').draggable({
-            handle: 'p.widget_handle',
-            grid: [10, 1],
-            scroll: false,
-            opacity: 0.5,
-            cursor: "move",
-            drag: function(){
-                //console.log($(this).position().top);
-            },
-            stop: function(){
-                var top = $(this).position().top;
-                var left = $(this).position().left;
-                // console.log($(this).attr('id') + " t: " + top + " l: " + left);
+        $.get('/set_aux/'+ aux +'/'+ checked, function(data){
+            var json = $.parseJSON(data);
+            if (json.error){
+                console.log(json.error);
             }
         });
     });
 
-    event_interval();
-    display_env();
-    aux_update();
-    display_water();
-    display_light();
+    // main menu
 
-    function event_interval(){
-        $.get('/get_config/event_display_timer', function(interval){
-            interval = interval * 1000;
-            setInterval(display_env, interval);
-        });
-    };
+    $('.myMenu ul li').hover(function() {
+        $(this).children('ul').stop(true, false, true).slideToggle(300);
+    });
+
+    // draggable widgets
+
+    $('.drag').each(function(i, table){
+        console.log(
+            $(table).attr('id') + " " +
+            $(table).position().top + " " +
+            $(table).position().left
+        );
+    });
+
+    $('.drag').draggable({
+        handle: 'p.widget_handle',
+        grid: [10, 1],
+        scroll: false,
+        opacity: 0.5,
+        cursor: "move",
+        drag: function(){
+            //console.log($(this).position().top);
+        },
+        stop: function(){
+            var top = $(this).position().top;
+            var left = $(this).position().left;
+            // console.log($(this).attr('id') + " t: " + top + " l: " + left);
+        }
+    });
+
+    // set variables
 
     var temp_limit = -1;
     var humidity_limit = -1;
@@ -102,6 +93,25 @@ $(document).ready(function(){
     $.get('/get_control/humidity_limit', function(data){
         humidity_limit = data;
     });
+
+    // initialization
+
+    event_interval();
+    display_env();
+    aux_update();
+    display_water();
+    display_light();
+
+    // events
+
+    function event_interval(){
+        $.get('/get_config/event_display_timer', function(interval){
+            interval = interval * 1000;
+            setInterval(display_env, interval);
+        });
+    };
+
+    // core functions
 
     function aux_update(){
 
@@ -148,6 +158,8 @@ $(document).ready(function(){
         });
 
     }
+
+    // display functions
 
     function display_time(){
          $.get('/time', function(data){
@@ -221,6 +233,8 @@ $(document).ready(function(){
         }
         $('#humidity').text(humidity +' %');
     }
+
+    //graphs
 
     // temperature graph
 
