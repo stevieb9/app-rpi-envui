@@ -140,7 +140,7 @@ get '/fetch_env' => sub {
 #
 
 get '/set_aux/:aux/:state' => sub {
-
+        
         if ((request->address ne '127.0.0.1' && ! session 'logged_in_user') || $ENV{UNIT_TEST}){
             return to_json {
                     error => 'unauthorized request. You must be logged in'

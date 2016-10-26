@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+
     var logged_in;
 
     $.ajax({
@@ -13,16 +14,6 @@ $(document).ready(function(){
         }
     });
 
-    for(i = 1; i < 9; i++){
-        var aux = '#aux'+ i;
-        if (! logged_in){
-            $(aux).flipswitch("option", "disabled", true);
-        }
-        else {
-            $(aux).flipswitch();
-        }
-    }
-
     $('.myMenu ul li').hover(function() {
         $(this).children('ul').stop(true, false, true).slideToggle(300);
     });
@@ -30,6 +21,32 @@ $(document).ready(function(){
     // draggable widgets
 
     $(function(){
+
+        for (var i = 1; i < 9; i++){
+            var aux = 'aux' + i;
+            
+            if (! logged_in){
+                $('#'+aux).flipswitch("option", "disabled", true);
+            }
+            else {
+                $('#'+aux).flipswitch();
+            }
+            console.log(aux +": " + $('#'+aux).prop('checked'));
+
+        }
+
+        $('.button').on('change', function(){
+            var checked = $(this).prop('checked');
+            var aux = $(this).attr('id');
+            console.log(aux +": "+ checked);
+            $.get('/set_aux/'+ aux +'/'+ checked, function(data){
+                var json = $.parseJSON(data);
+                console.log(json);
+                if (json.error){
+                    console.log(json.error);
+                }
+            });
+        });
 
         $('.drag').each(function(i, table){
             console.log(
@@ -100,31 +117,22 @@ $(document).ready(function(){
                 return;
             }
 
-            var ontxt;
-            var offtxt;
+            var onTxt;
+            var ofTtxt;
 
             if (parseInt(json.override) == 1 && (aux == 'aux1' || aux == 'aux2')){
-                ontxt = 'OVERRIDE';
-                offtxt = 'OVERRIDE';
+                onTxt = 'OVERRIDE';
+                offTxt = 'OVERRIDE';
             }
             else {
-                ontxt = 'ON';
-                offtxt = 'OFF';
+                onTxt = 'ON';
+                offTxt = 'OFF';
             }
 
             var checked = parseInt(json.state);
 
             $('#'+ aux).unbind().prop('checked', checked).flipswitch('refresh');
 
-            $('#'+ aux).unbind().on('change', function(){
-                var checked = $('#'+aux).prop('checked');
-                $.get('/set_aux/'+ aux +'/'+ checked, function(data){
-                    var json = $.parseJSON(data);
-                    if (json.error){
-                        console.log(json.error);
-                    }
-                });
-            });
         });
     }
 
