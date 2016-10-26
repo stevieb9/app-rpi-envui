@@ -98,7 +98,6 @@ $(document).ready(function(){
 
     event_interval();
     display_env();
-    aux_update();
     display_water();
     display_light();
 
@@ -156,7 +155,6 @@ $(document).ready(function(){
                 $('#'+ aux).flipswitch('refresh');
             }
         });
-
     }
 
     // display functions
