@@ -54,7 +54,6 @@ $(document).ready(function(){
                 $(table).position().top + " " +
                 $(table).position().left
             );
-
         });
 
         $('.drag').draggable({
@@ -110,30 +109,39 @@ $(document).ready(function(){
     }
 
     function aux_state(aux){
-        $.get('/get_aux/' + aux, function(data){
-            var json = $.parseJSON(data);
 
-            if (parseInt(json.pin) == '-1'){
-                return;
+        $.ajax({
+            async: false,
+            type: 'GET',
+            url: '/get_aux/' + aux,
+            success: function(data){
+                var json = $.parseJSON(data);
+
+                if (parseInt(json.pin) == '-1'){
+                    return;
+                }
+
+                var onTxt;
+                var ofTtxt;
+
+                if (parseInt(json.override) == 1 && (aux == 'aux1' || aux == 'aux2')){
+                    onTxt = 'OVERRIDE';
+                    offTxt = 'OVERRIDE';
+                }
+                else {
+                    onTxt = 'ON';
+                    offTxt = 'OFF';
+                }
+
+                var checked = parseInt(json.state);
+
+                console.log(aux +": "+checked);
+
+                $('#'+ aux).prop('checked', checked);
+                $('#'+ aux).flipswitch('refresh');
             }
-
-            var onTxt;
-            var ofTtxt;
-
-            if (parseInt(json.override) == 1 && (aux == 'aux1' || aux == 'aux2')){
-                onTxt = 'OVERRIDE';
-                offTxt = 'OVERRIDE';
-            }
-            else {
-                onTxt = 'ON';
-                offTxt = 'OFF';
-            }
-
-            var checked = parseInt(json.state);
-
-            $('#'+ aux).unbind().prop('checked', checked).flipswitch('refresh');
-
         });
+
     }
 
     function display_time(){
