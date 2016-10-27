@@ -1,9 +1,13 @@
 Changes history for App::RPi::EnvUI
 
 0.27 NOREL
+        - *stability, efficiency, cleanup and documentation release*
         - correct issue where the minute portion of the time was displaying
           only a single digit if minutes were less than 10 (fixes #23)
-        - clean up of all sample test files
+        - clean up of all sample test files and random test code snips
+        - consolodated the JS graph routines into a single function
+        - all SQL prepare statements are now only created once, where possible
+          (queries where structure elements can be hardcoded)
 
 0.26    2016-10-25
         - functionality adddition and bug fix beta release (next release will

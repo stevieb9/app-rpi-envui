@@ -1,8 +1,6 @@
 package App::RPi::EnvUI;
 
 use App::RPi::EnvUI::API;
-use App::RPi::EnvUI::Auth;
-use Data::Dumper;
 use Dancer2;
 use Dancer2::Plugin::Auth::Extensible;
 use Dancer2::Core::Request;

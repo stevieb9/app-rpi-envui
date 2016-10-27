@@ -9,10 +9,6 @@ BEGIN {
         require DBI;
         DBI->import;
     }
-    if (! exists $INC{'Data/Dumper.pm'}){
-        require Data::Dumper;
-        Data::Dumper->import;
-    }
     if (! exists $INC{'RPi/WiringPi/Constant.pm'}){
         require RPi::WiringPi::Constant;
         DateTime->import(qw(:all));
@@ -72,14 +68,17 @@ sub user {
         : $res;
 }
 sub aux {
+
     my ($self, $aux_id) = @_;
 
-    my $sth = $self->{db}->prepare(
-        'SELECT * from aux WHERE id=?'
-    );
-    $sth->execute($aux_id);
-    my $aux = $sth->fetchrow_hashref;
-    return $aux;
+    if (! $self->{aux_sth}) {
+        $self->{aux_sth} = $self->{db}->prepare(
+            'SELECT * from aux WHERE id=?'
+        );
+    }
+
+    $self->{aux_sth}->execute($aux_id);
+    return $self->{aux_sth}->fetchrow_hashref;
 }
 sub auxs {
     my ($self) = @_;
@@ -92,22 +91,25 @@ sub auxs {
 sub config_control {
     my ($self, $want) = @_;
 
-    my $sth = $self->{db}->prepare(
-        'SELECT value FROM control WHERE id=?'
-    );
+    if (! $self->{config_control_sth}){
+        $self->{config_control_sth} = $self->{db}->prepare(
+            'SELECT value FROM control WHERE id=?'
+        );
+    }
 
-    $sth->execute($want);
-    return $sth->fetchrow_hashref->{value};
+    $self->{config_control_sth}->execute($want);
+    return $self->{config_control_sth}->fetchrow_hashref->{value};
 }
 sub config_core {
     my ($self, $want) = @_;
 
-    my $sth = $self->{db}->prepare(
-        'SELECT * FROM core WHERE id = ?'
-    );
-
-    $sth->execute($want);
-    return $sth->fetchrow_hashref->{value};
+    if (! $self->{config_core_sth}) {
+        $self->{config_core_sth} = $self->{db}->prepare(
+            'SELECT * FROM core WHERE id = ?'
+        );
+    }
+    $self->{config_core_sth}->execute($want);
+    return $self->{config_core_sth}->fetchrow_hashref->{value};
 }
 sub config_light {
     my ($self, $want) = @_;
@@ -142,25 +144,40 @@ sub env {
 
     my $id = $self->last_id;
 
-    my $sth = $self->{db}->prepare(
-        'SELECT * FROM stats WHERE id=?'
-    );
-
+    if (! $self->{env_sth}) {
+        $self->{env_sth} = $self->{db}->prepare(
+            'SELECT * FROM stats WHERE id=?'
+        );
+    }
+    my $sth = $self->{env_sth};
     $sth->execute($id);
     return $sth->fetchrow_hashref;
 }
 sub graph_data {
     my ($self) = @_;
-    $self->{graph_sth}->execute;
-    return $self->{graph_sth}->fetchall_arrayref;
+
+    if (! $self->{graph_sth}){
+        $self->{graph_sth} = $self->{db}->prepare(
+            "select * from (
+                select * from stats order by id DESC limit 5760
+            ) sub
+                order by id asc;"
+        );
+    }
+
+    my $sth = $self->{graph_sth};
+    $sth->execute;
+    return $sth->fetchall_arrayref;
 }
 sub insert_env {
     my ($self, $temp, $hum) = @_;
 
-    my $sth = $self->{db}->prepare(
-        'INSERT INTO stats VALUES (?, CURRENT_TIMESTAMP, ?, ?)'
-    );
-    $sth->execute(undef, $temp, $hum);
+    if (! $self->{insert_env_sth}){
+        $self->{insert_env_sth} = $self->{db}->prepare(
+            'INSERT INTO stats VALUES (?, CURRENT_TIMESTAMP, ?, ?)'
+        );
+    }
+    $self->{insert_env_sth}->execute(undef, $temp, $hum);
 }
 sub last_id {
     my $self = shift;
@@ -174,14 +191,14 @@ sub update {
     my ($self, $table, $col, $value, $where_col, $where_val) = @_;
 
     if (! defined $where_col) {
-        my $sth = $self->{db}->prepare( "UPDATE $table SET $col=?" );
-        $sth->execute( $value );
+        my $sth = $self->{db}->prepare("UPDATE $table SET $col=?");
+        $sth->execute($value);
     }
     else {
         my $sth = $self->{db}->prepare(
             "UPDATE $table SET $col=? WHERE $where_col=?"
         );
-        $sth->execute( $value, $where_val );
+        $sth->execute($value, $where_val);
     }
 }
 sub update_bulk {
@@ -201,7 +218,6 @@ sub update_bulk_all {
     my $sth = $self->{db}->prepare(
         "UPDATE $table SET $col=?;"
     );
-
     $sth->execute(@$data);
 }
 sub begin {

@@ -4,7 +4,6 @@ use App::RPi::EnvUI::DB;
 use App::RPi::EnvUI::Event;
 use Carp qw(confess);
 use Crypt::SaltedHash;
-use Data::Dumper;
 use DateTime;
 use JSON::XS;
 use Logging::Simple;

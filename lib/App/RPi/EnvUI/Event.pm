@@ -1,7 +1,6 @@
 package App::RPi::EnvUI::Event;
 
 use Async::Event::Interval;
-use Data::Dumper;
 
 our $VERSION = '0.27';
 
