@@ -122,7 +122,7 @@ $(document).ready(function(){
             var aux = 'aux'+ i;
             aux_state(aux);
         }
-    }
+    };
 
     function aux_state(aux){
 
@@ -155,7 +155,7 @@ $(document).ready(function(){
                 $('#'+ aux).flipswitch('refresh');
             }
         });
-    }
+    };
 
     // display functions
 
@@ -163,7 +163,7 @@ $(document).ready(function(){
          $.get('/time', function(data){
             $('#time').text(data);
         });
-    }
+    };
 
     function display_light(){
         $.get('/light', function(data){
@@ -181,7 +181,7 @@ $(document).ready(function(){
             $('#light_on_hours').text(light.on_hours);
             $('#light_on_at').text(light.on_at);
         });
-    }
+    };
 
     function display_water(){
         $.get('/water', function(data){
@@ -191,15 +191,14 @@ $(document).ready(function(){
                 return;
             }
         });
-    }
+    };
 
     function display_graphs(){
         $.get('/graph_data', function(data){
             var graph_data = $.parseJSON(data);
-            temp_graph(graph_data.temp);
-            humidity_graph(graph_data.humidity);
+            create_graphs(graph_data);
         });
-    }
+    };
 
     function display_env(){
         $.get('/fetch_env', function(data){
@@ -220,7 +219,7 @@ $(document).ready(function(){
             $('#temp').css('color', 'green')
         }
         $('#temp').text(temp +' F');
-    }
+    };
 
     function display_humidity(humidity){
         if (humidity < humidity_limit && humidity_limit != -1){
@@ -230,51 +229,49 @@ $(document).ready(function(){
             $('#humidity').css('color', 'green')
         }
         $('#humidity').text(humidity +' %');
-    }
+    };
 
     //graphs
 
-    // temperature graph
-
-    function temp_graph(data){
-        $.plot($("#temp_chart"), [{
-            data: data,
-            threshold: {
-                below: temp_limit,
-                color: "green"
+    function create_graphs(data){
+        info = {
+            temp: {
+                above_colour: 'red',
+                below_colour: 'green',
+                name: '#temp_chart',
+                limit: temp_limit
+            },
+            humidity: {
+                above_colour: 'green',
+                below_colour: 'red',
+                name: '#humidity_chart',
+                limit: humidity_limit
             }
-            }],
-            {
-            grid: {
-                hoverable: true,
-                borderWidth: 1,
-            },
-            xaxis: {
-                ticks: []
-            },
-            colors: ["red"]
-        });
-    }
+        };
 
-    // humidity graph
+        graphs = ['temp', 'humidity'];
 
-    function humidity_graph(data){
-        $.plot($("#humidity_chart"), [{
-            data: data,
-            threshold: {
-                below: humidity_limit,
-                color: "red"
-            }
-            }],
-            {
-            grid: {
-                hoverable: true,
-                borderWidth: 1,
-            },
-            xaxis: {
-                ticks: []
-            },
-            colors: ["green"]
+        $.each(graphs, function(index, graph){
+            $.plot($(info[graph].name), [
+                {
+                    data: data[graph],
+                    threshold: {
+                        below: info[graph].limit,
+                        color: info[graph].below_colour
+                    }
+                }],
+                {
+                    grid: {
+                        hoverable: true,
+                        borderWidth: 1
+                    },
+                    xaxis: {
+                        ticks: []
+                    },
+                    colors: [ info[graph].above_colour ]
+                }
+            )
         });
-    }
+    };
 });
+
