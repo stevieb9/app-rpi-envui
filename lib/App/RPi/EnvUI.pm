@@ -6,7 +6,6 @@ use Data::Dumper;
 use Dancer2;
 use Dancer2::Plugin::Auth::Extensible;
 use Dancer2::Core::Request;
-#use Dancer2::Session::JSON;
 use Mock::Sub no_warnings => 1;
 use POSIX qw(tzset);
 
@@ -32,13 +31,6 @@ get '/' => sub {
 
         # return template 'main';
         return template 'test';
-        # return template 'switch';
-        # return template 'switch2';
-        # return template 'menu';
-        # return template 'drag';
-        # return template 'flip';
-        # return template 'graph';
-        # return template 'graph_live';
     };
 
 # fetch graph code

@@ -40,15 +40,15 @@
   },
   "aux3": {
     "pin": "-1",
-    "desc": "water1"
+    "desc": "light"
   },
   "aux4": {
     "pin": "-1",
-    "desc": "water2"
+    "desc": "water1"
   },
   "aux5": {
     "pin": "-1",
-    "desc": "light"
+    "desc": "water2"
   },
   "aux6": {
       "pin": "-1",
