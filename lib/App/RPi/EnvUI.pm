@@ -7,7 +7,7 @@ use Dancer2::Core::Request;
 use Mock::Sub no_warnings => 1;
 use POSIX qw(tzset);
 
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 my $db = App::RPi::EnvUI::DB->new;
 my $api = App::RPi::EnvUI::API->new(db => $db);
@@ -53,7 +53,7 @@ post '/login' => sub {
 any '/logout' => sub {
 #        cookie session expires => '-1 day';
         app->destroy_session;
-#        redirect '/';
+        redirect '/';
     };
 
 get '/logged_in' => sub {
