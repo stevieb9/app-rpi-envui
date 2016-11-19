@@ -134,7 +134,9 @@ get '/fetch_env' => sub {
 
 get '/set_aux/:aux/:state' => sub {
         
-        if ((request->address ne '127.0.0.1' && ! session 'logged_in_user') || $ENV{UNIT_TEST}){
+        if (
+            (request->address ne '127.0.0.1' && ! session 'logged_in_user')
+            || $ENV{UNIT_TEST}){
             return to_json {
                     error => 'unauthorized request. You must be logged in'
             };
@@ -143,7 +145,7 @@ get '/set_aux/:aux/:state' => sub {
         my $aux_id = params->{aux};
         my $state = $api->_bool(params->{state});
 
-        my $log = $log->child('/fetch_env');
+        my $log = $log->child('/set_env');
         $log->_5("aux_id: $aux_id, state: $state");
 
         $state = $api->aux_state($aux_id, $state);
@@ -163,7 +165,6 @@ get '/set_aux/:aux/:state' => sub {
             state => $state,
         };
     };
-
 
 true;
 

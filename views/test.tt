@@ -56,7 +56,7 @@
                     <td style="text-align: center;"><input type="checkbox" data-role="flipswitch" id="aux1" class="button" style="width:120px;height:30px"></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><div class="graph_container"><div id="temp_chart" class="graph" width="600" height="200"></div></div></td>
+                    <!--<td colspan="2"><div class="graph_container"><div id="temp_chart" class="graph" width="600" height="200"></div></div></td>-->
                 </tr>
             </table>
         </div>
@@ -72,7 +72,7 @@
                     <td style="text-align: center;"><input id="aux2" class="button" style="width:120px;height:30px" type="checkbox" data-role="flipswitch"></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><div class="graph_container"><div id="humidity_chart" class="graph" width="600" height="200"></div></div></td>
+                    <!--<td colspan="2"><div class="graph_container"><div id="humidity_chart" class="graph" width="600" height="200"></div></div></td>-->
                 </tr>
             </table>
             </div>
