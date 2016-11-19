@@ -118,10 +118,10 @@ get '/get_aux/:aux' => sub {
 get '/fetch_env' => sub {
         my $log = $log->child('/fetch_env');
 
-        #my $data = $api->env();
-        my $data = {temp => 5, humidity => 5};
-
+        my $data = $api->env();
+        
         $log->_5("temp: $data->{temp}, humidity: $data->{humidity}");
+
         return to_json {
             temp => $data->{temp},
             humidity => $data->{humidity}

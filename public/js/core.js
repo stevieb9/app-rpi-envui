@@ -61,9 +61,9 @@ $(document).ready(function(){
 
     $('.drag').each(function(i, table){
         console.log(
-            $(table).attr('id') + " " +
-            $(table).position().top + " " +
-            $(table).position().left
+            // $(table).attr('id') + " " +
+            // $(table).position().top + " " +
+            // $(table).position().left
         );
     });
 
@@ -90,11 +90,9 @@ $(document).ready(function(){
 
     $.get('/get_control/temp_limit', function(data){
         temp_limit = data;
-        data = null;
     });
     $.get('/get_control/humidity_limit', function(data){
         humidity_limit = data;
-        data = HULL;
     });
 
     // initialization
@@ -204,17 +202,14 @@ $(document).ready(function(){
     }
 
     function display_env(){
-        return;
         $.get('/fetch_env', function(data){
             var json = $.parseJSON(data);
-            //display_temp(json.temp);
-            //display_humidity(json.humidity);
+            display_temp(json.temp);
+            display_humidity(json.humidity);
         });
 
         // display_graphs();
         aux_update();
-        //json = null;
-        //data = null;
     }
 
     function display_temp(temp){
@@ -225,7 +220,6 @@ $(document).ready(function(){
             $('#temp').css('color', 'green');
         }
         $('#temp').text(temp +' F');
-        temp = null;
     }
 
     function display_humidity(humidity){
@@ -236,7 +230,6 @@ $(document).ready(function(){
             $('#humidity').css('color', 'green');
         }
         $('#humidity').text(humidity +' %');
-        humidity = null;
     }
 
     //graphs
