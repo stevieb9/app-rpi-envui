@@ -60,11 +60,11 @@ $(document).ready(function(){
     // draggable widgets
 
     $('.drag').each(function(i, table){
-        console.log(
+        //console.log(
             // $(table).attr('id') + " " +
             // $(table).position().top + " " +
             // $(table).position().left
-        );
+        //);
     });
 
     $('.drag').draggable({
