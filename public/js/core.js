@@ -128,7 +128,7 @@ $(document).ready(function(){
     function aux_state(aux){
 
         $.ajax({
-            async: false,
+            async: true,
             type: 'GET',
             url: '/get_aux/' + aux,
             success: function(data){
