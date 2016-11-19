@@ -1,3 +1,4 @@
+"use strict";
 $(document).ready(function(){
 
     // authentication
@@ -76,8 +77,8 @@ $(document).ready(function(){
             //console.log($(this).position().top);
         },
         stop: function(){
-            var top = $(this).position().top;
-            var left = $(this).position().left;
+            //var top = $(this).position().top;
+            //var left = $(this).position().left;
             // console.log($(this).attr('id') + " t: " + top + " l: " + left);
         }
     });
@@ -89,9 +90,11 @@ $(document).ready(function(){
 
     $.get('/get_control/temp_limit', function(data){
         temp_limit = data;
+        data = null;
     });
     $.get('/get_control/humidity_limit', function(data){
         humidity_limit = data;
+        data = HULL;
     });
 
     // initialization
@@ -108,7 +111,7 @@ $(document).ready(function(){
             interval = interval * 1000;
             setInterval(display_env, interval);
         });
-    };
+    }
 
     // core functions
 
@@ -122,7 +125,7 @@ $(document).ready(function(){
             var aux = 'aux'+ i;
             aux_state(aux);
         }
-    };
+    }
 
     function aux_state(aux){
 
@@ -138,7 +141,7 @@ $(document).ready(function(){
                 }
 
                 var onTxt;
-                var ofTtxt;
+                var offTxt;
 
                 if (parseInt(json.override) == 1 && (aux == 'aux1' || aux == 'aux2')){
                     onTxt = 'OVERRIDE';
@@ -155,7 +158,7 @@ $(document).ready(function(){
                 $('#'+ aux).flipswitch('refresh');
             }
         });
-    };
+    }
 
     // display functions
 
@@ -163,7 +166,7 @@ $(document).ready(function(){
          $.get('/time', function(data){
             $('#time').text(data);
         });
-    };
+    }
 
     function display_light(){
         $.get('/light', function(data){
@@ -181,7 +184,7 @@ $(document).ready(function(){
             $('#light_on_hours').text(light.on_hours);
             $('#light_on_at').text(light.on_at);
         });
-    };
+    }
 
     function display_water(){
         $.get('/water', function(data){
@@ -191,50 +194,55 @@ $(document).ready(function(){
                 return;
             }
         });
-    };
+    }
 
     function display_graphs(){
         $.get('/graph_data', function(data){
             var graph_data = $.parseJSON(data);
             create_graphs(graph_data);
         });
-    };
+    }
 
     function display_env(){
+        return;
         $.get('/fetch_env', function(data){
             var json = $.parseJSON(data);
-            display_temp(json.temp);
-            display_humidity(json.humidity);
+            //display_temp(json.temp);
+            //display_humidity(json.humidity);
         });
 
-        display_graphs();
+        // display_graphs();
         aux_update();
-    };
+        //json = null;
+        //data = null;
+    }
 
     function display_temp(temp){
         if (temp > temp_limit && temp_limit != -1){
             $('#temp').css('color', 'red');
         }
         else {
-            $('#temp').css('color', 'green')
+            $('#temp').css('color', 'green');
         }
         $('#temp').text(temp +' F');
-    };
+        temp = null;
+    }
 
     function display_humidity(humidity){
         if (humidity < humidity_limit && humidity_limit != -1){
             $('#humidity').css('color', 'red');
         }
         else {
-            $('#humidity').css('color', 'green')
+            $('#humidity').css('color', 'green');
         }
         $('#humidity').text(humidity +' %');
-    };
+        humidity = null;
+    }
 
     //graphs
 
     function create_graphs(data){
-        info = {
+        var info = {
             temp: {
                 above_colour: 'red',
                 below_colour: 'green',
@@ -249,7 +257,7 @@ $(document).ready(function(){
             }
         };
 
-        graphs = ['temp', 'humidity'];
+        var graphs = ['temp', 'humidity'];
 
         $.each(graphs, function(index, graph){
             $.plot($(info[graph].name), [
@@ -270,8 +278,11 @@ $(document).ready(function(){
                     },
                     colors: [ info[graph].above_colour ]
                 }
-            )
+            );
         });
-    };
+
+        info = null;
+        graphs = null;
+    }
 });
 
