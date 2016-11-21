@@ -42,7 +42,9 @@ $(document).ready(function(){
     $('.button').on('change', flip_change);
 
     function flip_change(e){
-        console.log(this);
+        // use this to ensure aux_state() doesn't call this event handler
+        // console.log(this);
+
         var checked = $(this).prop('checked');
         var aux = $(this).attr('id');
         
@@ -163,8 +165,14 @@ $(document).ready(function(){
                 var checked = parseInt(json.state);
 
                 $('#'+ aux).prop('checked', checked);
+
+                // the following disables the global event handler
                 $('#'+ aux).off('change');
+
+                // refresh the button
                 $('#'+ aux).flipswitch('refresh');
+
+                // and this re-enables it
                 $('#'+ aux).on('change', flip_change);
 
             }
