@@ -38,12 +38,12 @@ $(document).ready(function(){
             $('#'+aux).flipswitch();
         }
     }
-
+    
     $('.button').on('change', function(e){
-        // console.log(e.originalEvent);
+        console.log(e);
         var checked = $(this).prop('checked');
         var aux = $(this).attr('id');
-
+        
         $.get('/set_aux_override/'+ aux +'/'+ checked, function(data){
             var json = $.parseJSON(data);
             if (json.error){
@@ -58,7 +58,7 @@ $(document).ready(function(){
             }
         });
     });
-
+    
     // main menu
 
     $('.myMenu ul li').hover(function() {
@@ -161,7 +161,9 @@ $(document).ready(function(){
                 var checked = parseInt(json.state);
 
                 $('#'+ aux).prop('checked', checked);
+                $('#'+ aux).off('change');
                 $('#'+ aux).flipswitch('refresh');
+
             }
         });
     }
