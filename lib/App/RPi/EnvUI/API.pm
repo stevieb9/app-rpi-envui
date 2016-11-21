@@ -452,7 +452,8 @@ sub light_off {
             epoch => $on_since
         );
 
-        $dt->add(hours => $on_hours);
+        # $dt->add(hours => $on_hours);
+        $dt->add(minutes => 1);
     }
 
     return $dt;
