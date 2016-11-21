@@ -121,14 +121,14 @@ sub action_light {
         return;
     }
 
-    my $on_since  = $self->_config_light('on_since');
+    my $on_since  = $self->light_on_since;
     my $light_on  = $self->light_on;
 
     print "now: " . $now->ymd . " " . $now->hms . "\n";
     print "on: " . $light_on->ymd . " " . $light_on->hms . "\n";
     print "on since: $on_since\n";
 
-    if (! $on_since  && $now > $light_on){
+    if ($now > $on_since && $now > $light_on){
         $self->db()->update('light', 'value', time(), 'id', 'on_since');
         $self->aux_state($self->_config_control('light_aux'), ON);
         pin_mode($self->_config_control('light_aux'),  OUTPUT);
@@ -139,7 +139,6 @@ sub action_light {
         my $light_off = $self->light_off;
         # print "off: " . $light_off->ymd . " " . $light_off->hms . "\n";
         if ($now > $light_off) {
-            $self->db()->update('light', 'value', 0, 'id', 'on_since');
             $self->aux_state( $self->_config_control('light_aux'), OFF);
             pin_mode($self->_config_control('light_aux'), OUTPUT);
             write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
@@ -455,6 +454,18 @@ sub light_off {
         # $dt->add(hours => $on_hours);
         $dt->add(minutes => 1);
     }
+
+    return $dt;
+}
+sub light_on_since {
+    my ($self) = @_;
+
+    my $on_since = $self->_config_light('on_since');
+
+    my $dt = DateTime->from_epoch(
+        time_zone => $self->_config_core('time_zone'),
+        epoch => $on_since
+    );
 
     return $dt;
 }
