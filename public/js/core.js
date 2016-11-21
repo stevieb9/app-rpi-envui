@@ -39,11 +39,19 @@ $(document).ready(function(){
         }
     }
 
-    $('.button').on('change', function(){
+    $('.button').on('change', function(e){
+        // console.log(e.originalEvent);
         var checked = $(this).prop('checked');
         var aux = $(this).attr('id');
 
-        $.get('/set_aux/'+ aux +'/'+ checked, function(data){
+        $.get('/set_aux_override/'+ aux +'/'+ checked, function(data){
+            var json = $.parseJSON(data);
+            if (json.error){
+                console.log(json.error);
+            }
+        });
+
+        $.get('/set_aux_state/'+ aux +'/'+ checked, function(data){
             var json = $.parseJSON(data);
             if (json.error){
                 console.log(json.error);

@@ -132,7 +132,7 @@ get '/fetch_env' => sub {
 # set routes
 #
 
-get '/set_aux/:aux/:state' => sub {
+get '/set_aux_state/:aux/:state' => sub {
         
         if (
             (request->address ne '127.0.0.1' && ! session 'logged_in_user')
@@ -152,18 +152,39 @@ get '/set_aux/:aux/:state' => sub {
 
         $log->_6("$aux_id updated state: $state");
 
-        my $override = $api->aux_override($aux_id) ? 0 : 1;
-        $log->_6("$aux_id override: $override");
-
-        $override = $api->aux_override($aux_id, $override);
-        $log->_6("$aux_id new override: $override");
-
         $api->switch($aux_id);
 
         return to_json {
             aux => $aux_id,
             state => $state,
         };
+    };
+
+get '/set_aux_override/:aux/:override' => sub {
+
+        if (
+            (request->address ne '127.0.0.1' && ! session 'logged_in_user')
+            || $ENV{UNIT_TEST}){
+            return to_json {
+                    error => 'unauthorized request. You must be logged in'
+            };
+        }
+
+        my $aux_id = params->{aux};
+        my $override = $api->_bool(params->{override});
+
+        my $log = $log->child('/set_aux_override');
+        $log->_5("aux_id: $aux_id, override $override");
+
+        $override = $api->aux_override($aux_id, $override);
+
+        $log->_6("$aux_id updated override $override");
+
+        return to_json {
+            aux => $aux_id,
+            override => $override,
+        };
+
     };
 
 true;
