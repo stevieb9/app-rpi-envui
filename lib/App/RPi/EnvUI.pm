@@ -169,7 +169,7 @@ get '/set_aux_override/:aux/:override' => sub {
                     error => 'unauthorized request. You must be logged in'
             };
         }
-
+        
         my $aux_id = params->{aux};
         my $override = $api->_bool(params->{override});
 

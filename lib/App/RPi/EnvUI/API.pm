@@ -124,8 +124,9 @@ sub action_light {
     my $on_since  = $self->_config_light('on_since');
     my $light_on  = $self->light_on;
 
-    # print "now: " . $now->ymd . " " . $now->hms . "\n";
-    # print "on: " . $light_on->ymd . " " . $light_on->hms . "\n";
+    print "now: " . $now->ymd . " " . $now->hms . "\n";
+    print "on: " . $light_on->ymd . " " . $light_on->hms . "\n";
+    print "on since: $on_since\n";
 
     if (! $on_since  && $now > $light_on){
         $self->db()->update('light', 'value', time(), 'id', 'on_since');
