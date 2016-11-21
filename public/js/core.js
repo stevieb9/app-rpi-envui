@@ -39,8 +39,10 @@ $(document).ready(function(){
         }
     }
     
-    $('.button').on('change', function(e){
-        console.log(e);
+    $('.button').on('change', flip_change);
+
+    function flip_change(e){
+        console.log(this);
         var checked = $(this).prop('checked');
         var aux = $(this).attr('id');
         
@@ -57,7 +59,7 @@ $(document).ready(function(){
                 console.log(json.error);
             }
         });
-    });
+    };
     
     // main menu
 
@@ -163,6 +165,7 @@ $(document).ready(function(){
                 $('#'+ aux).prop('checked', checked);
                 $('#'+ aux).off('change');
                 $('#'+ aux).flipswitch('refresh');
+                $('#'+ aux).on('change', flip_change);
 
             }
         });
