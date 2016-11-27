@@ -100,6 +100,8 @@ sub action_light {
     my $on_hours = $self->_config_light( 'on_hours' );
     my $aux = $self->_config_control( 'light_aux' );
     my $pin = $self->aux_pin( $aux );
+    my $on_time = $self->_config_light('on_time');
+    my $off_time = $self->_config_light('off_time');
 
     if ($on_hours == 0){
         if ($self->aux_state($aux)){
@@ -119,14 +121,10 @@ sub action_light {
 
     my $now = time;
 
-    print "$now\n";
-    print "$light_on_time\n";
-    print "$light_off_time\n";
-
-    if ($now > $light_on_time && $now < $light_off_time){
-        if ($self->aux_state($aux)){
+    if ($now > $on_time && $now < $off_time){
+        if (! $self->aux_state($aux)){
             $self->aux_state($aux, ON);
-            pin_mode($aux, OUTPUT);
+            pin_mode($pin, OUTPUT);
             write_pin($pin, HIGH);
         }
     }
@@ -147,23 +145,19 @@ sub set_light_times {
 
     my $hrs = $self->_config_light('on_hours');
 
-    my $light_on_time = $time;
-    my $light_off_time = $light_on_time + $hrs * 3600;
+    my $on_time = $time;
+    my $off_time = $on_time + $hrs * 3600;
 
     my $now = time;
 
-    if ($now > ($light_on_time - 86400) && $now < ($light_off_time - 86400)){
-        $light_on_time -= 24 * 3600;
-        $light_off_time -= 24 * 3600;
+    if ($now > ($on_time - 86400) && $now < ($off_time - 86400)){
+        $on_time -= 24 * 3600;
+        $off_time -= 24 * 3600;
     }
 
-    $self->db()->update('light', 'value', $light_on_time, 'id', 'on_time');
-    $self->db()->update('light', 'value', $light_off_time, 'id', 'off_time');
+    $self->db()->update('light', 'value', $on_time, 'id', 'on_time');
+    $self->db()->update('light', 'value', $off_time, 'id', 'off_time');
 
-    my $x = localtime($light_on_time);
-    my $y = localtime($light_off_time);
-
-    print "$x :: $y\n";
 }
 sub aux {
     my ($self, $aux_id) = @_;

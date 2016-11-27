@@ -22,14 +22,11 @@ $api->_config_light();
 #FIXME: add set/get subs
 
 $api->set_light_times;
-my $on  = $api->config_light('on_time');
-my $off  = $api->config_light('off_time');
+my $on  = $api->_config_light('on_time');
+my $off  = $api->_config_light('off_time');
 
-my $on_time = $on - 24 * 3600;
-my $off_time = $off - 24 * 3600;
-
-$db->update('light', 'value', $on_time, 'id', 'on_time');
-$db->update('light', 'value', $off_time, 'id', 'off_time');
+$db->update('light', 'value', $on, 'id', 'on_time');
+$db->update('light', 'value', $off, 'id', 'off_time');
 
 #
 # fetch routes
