@@ -19,6 +19,15 @@ my $log = $api->log()->child('webapp');
 
 $api->_config_light();
 
+#FIXME: add set/get subs
+
+$api->set_light_times;
+my $on  = $App::RPi::EnvUI::API::light_on_time;
+my $off = $App::RPi::EnvUI::API::light_off_time;
+
+$App::RPi::EnvUI::API::light_on_time = $on - 24 * 3600;
+$App::RPi::EnvUI::API::light_off_time = $off - 24 * 3600;
+
 #
 # fetch routes
 #

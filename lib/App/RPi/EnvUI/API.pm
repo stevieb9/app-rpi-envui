@@ -22,6 +22,7 @@ my $master_log;
 my $log;
 my $sensor;
 my $events;
+my ($light_on_time, $light_off_time);
 
 # public environment methods
 
@@ -95,54 +96,62 @@ sub action_temp {
 sub action_light {
     my ($self, $dt) = @_;
 
-    my $log = $log->child('action_light');
-    
-    my $now;
+    my $log = $log->child( 'action_light' );
 
-    if (defined $dt){
-        $now = $dt;
-    }
-    else {
-        $now = DateTime->now(time_zone => $self->_config_core('time_zone'));
-    }
+    my $on_hours = $self->_config_light( 'on_hours' );
+    my $aux = $self->_config_control( 'light_aux' );
+    my $pin = $self->aux_pin( $aux );
 
-    if ($self->_config_light('on_hours') == 0){
-        $self->aux_state($self->_config_control('light_aux'), OFF);
-        write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
+    if ($on_hours == 0){
+        if ($self->aux_state($aux)){
+            $self->aux_state($aux, OFF);
+            write_pin($pin, LOW);
+        }
         return;
     }
-    if ($self->_config_light('on_hours') == 24){
-        if(! $self->aux_state($self->_config_control('light_aux'))){
-            $self->db()->update('light', 'value', time(), 'id', 'on_since');
-            $self->aux_state($self->_config_control('light_aux'), ON);
-            pin_mode($self->_config_control('light_aux'),  OUTPUT);
-            write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
+    if ($on_hours == 24){
+        if(! $self->aux_state($aux)){
+            $self->aux_state($aux, ON);
+            pin_mode($pin, OUTPUT);
+            write_pin($pin, HIGH);
         }
         return;
     }
 
-    my $on_since  = $self->light_on_since;
-    my $light_on  = $self->light_on;
+    my $now = time;
 
-    print "now: " . $now->ymd . " " . $now->hms . "\n";
-    print "on: " . $light_on->ymd . " " . $light_on->hms . "\n";
-    print "on since: $on_since\n";
-
-    if ($now > $on_since && $now > $light_on){
-        $self->db()->update('light', 'value', time(), 'id', 'on_since');
-        $self->aux_state($self->_config_control('light_aux'), ON);
-        pin_mode($self->_config_control('light_aux'),  OUTPUT);
-        write_pin($self->aux_pin($self->_config_control('light_aux')), HIGH);
-    }
-
-    if ($on_since) {
-        my $light_off = $self->light_off;
-        # print "off: " . $light_off->ymd . " " . $light_off->hms . "\n";
-        if ($now > $light_off) {
-            $self->aux_state( $self->_config_control('light_aux'), OFF);
-            pin_mode($self->_config_control('light_aux'), OUTPUT);
-            write_pin($self->aux_pin($self->_config_control('light_aux')), LOW);
+    if ($now > $light_on_time && $now < $light_off_time){
+        if ($self->aux_state($aux)){
+            $self->aux_state($aux, ON);
+            pin_mode($aux, OUTPUT);
+            write_pin($pin, HIGH);
         }
+    }
+    elsif ($self->aux_state($aux)){
+        $self->aux_state($aux, OFF);
+        pin_mode($pin, OUTPUT);
+        write_pin($pin, LOW);
+        $self->set_light_times;
+    }
+}
+sub set_light_times {
+    my ($self) = @_;
+
+    my $on_at = $self->_config_light('on_at');
+
+    my $time = time;
+    $time += 60 until localtime($time) =~ /$on_at:/;
+
+    my $hrs = $self->_config_light('on_hours');
+
+    $light_on_time = $time;
+    $light_off_time = $light_on_time + $hrs * 3600;
+
+    my $now = time;
+
+    if ($now > ($light_on_time - 86400) && $now < ($light_off_time - 86400)){
+        $light_on_time -= 24 * 3600;
+        $light_off_time -= 24 * 3600;
     }
 }
 sub aux {
