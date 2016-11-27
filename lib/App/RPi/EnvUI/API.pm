@@ -22,7 +22,6 @@ my $master_log;
 my $log;
 my $sensor;
 my $events;
-our ($light_on_time, $light_off_time);
 
 # public environment methods
 
@@ -148,9 +147,8 @@ sub set_light_times {
 
     my $hrs = $self->_config_light('on_hours');
 
-    $light_on_time = $time;
-    $light_off_time = $light_on_time + $hrs * 3600;
-
+    my $light_on_time = $time;
+    my $light_off_time = $light_on_time + $hrs * 3600;
 
     my $now = time;
 
@@ -158,6 +156,10 @@ sub set_light_times {
         $light_on_time -= 24 * 3600;
         $light_off_time -= 24 * 3600;
     }
+
+    $self->db()->update('light', 'value', $light_on_time, 'id', 'on_time');
+    $self->db()->update('light', 'value', $light_off_time, 'id', 'off_time');
+
     my $x = localtime($light_on_time);
     my $y = localtime($light_off_time);
 
@@ -453,39 +455,6 @@ sub light_on {
       = $now->clone()->set_hour($on_hour)->set_minute($on_min)->set_second(0);
 
     return $on;
-}
-sub light_off {
-    my ($self, $dt) = @_;
-
-    my $on_hours = $self->_config_light('on_hours');
-    my $on_since = $self->_config_light('on_since');
-
-    if (defined $dt){
-        return $dt->clone()->add(hours => $on_hours);
-    }
-    else {
-        $dt = DateTime->from_epoch(
-            time_zone => $self->_config_core('time_zone'),
-            epoch => $on_since
-        );
-
-        # $dt->add(hours => $on_hours);
-        $dt->add(minutes => 1);
-    }
-
-    return $dt;
-}
-sub light_on_since {
-    my ($self) = @_;
-
-    my $on_since = $self->_config_light('on_since');
-
-    my $dt = DateTime->from_epoch(
-        time_zone => $self->_config_core('time_zone'),
-        epoch => $on_since
-    );
-
-    return $dt;
 }
 
 # public instance variable methods
@@ -830,7 +799,7 @@ sub _reset {
     #$self->db()->commit;
 }
 sub _reset_light {
-    $_[0]->db()->update('light', 'value', 0, 'id', 'on_since');
+    #FIXME: remove $_[0]->db()->update('light', 'value', 0, 'id', 'on_since');
 }
 sub _ui_test_mode {
     return -e 't/testing.lck';

@@ -22,11 +22,14 @@ $api->_config_light();
 #FIXME: add set/get subs
 
 $api->set_light_times;
-my $on  = $App::RPi::EnvUI::API::light_on_time;
-my $off = $App::RPi::EnvUI::API::light_off_time;
+my $on  = $api->config_light('on_time');
+my $off  = $api->config_light('off_time');
 
-$App::RPi::EnvUI::API::light_on_time = $on - 24 * 3600;
-$App::RPi::EnvUI::API::light_off_time = $off - 24 * 3600;
+my $on_time = $on - 24 * 3600;
+my $off_time = $off - 24 * 3600;
+
+$db->update('light', 'value', $on_time, 'id', 'on_time');
+$db->update('light', 'value', $off_time, 'id', 'off_time');
 
 #
 # fetch routes
