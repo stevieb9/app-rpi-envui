@@ -22,7 +22,7 @@ my $master_log;
 my $log;
 my $sensor;
 my $events;
-my ($light_on_time, $light_off_time);
+our ($light_on_time, $light_off_time);
 
 # public environment methods
 
@@ -120,6 +120,10 @@ sub action_light {
 
     my $now = time;
 
+    print "$now\n";
+    print "$light_on_time\n";
+    print "$light_off_time\n";
+
     if ($now > $light_on_time && $now < $light_off_time){
         if ($self->aux_state($aux)){
             $self->aux_state($aux, ON);
@@ -147,12 +151,17 @@ sub set_light_times {
     $light_on_time = $time;
     $light_off_time = $light_on_time + $hrs * 3600;
 
+
     my $now = time;
 
     if ($now > ($light_on_time - 86400) && $now < ($light_off_time - 86400)){
         $light_on_time -= 24 * 3600;
         $light_off_time -= 24 * 3600;
     }
+    my $x = localtime($light_on_time);
+    my $y = localtime($light_off_time);
+
+    print "$x :: $y\n";
 }
 sub aux {
     my ($self, $aux_id) = @_;
