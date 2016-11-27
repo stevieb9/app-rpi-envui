@@ -103,32 +103,16 @@ sub action_light {
     my $on_time  = $self->_config_light('on_time');
     my $off_time = $self->_config_light('off_time');
 
-    if ($on_hours == 0){
-        if ($self->aux_state($aux)){
-            $self->aux_state($aux, OFF);
-            write_pin($pin, LOW);
-        }
-        return;
-    }
-    if ($on_hours == 24){
-        if(! $self->aux_state($aux)){
-            $self->aux_state($aux, ON);
-            pin_mode($pin, OUTPUT);
-            write_pin($pin, HIGH);
-        }
-        return;
-    }
-
     my $now = time;
 
-    if ($now > $on_time && $now < $off_time){
+    if (($on_hours == 24) || ($now > $on_time && $now < $off_time)){
         if (! $self->aux_state($aux)){
             $self->aux_state($aux, ON);
             pin_mode($pin, OUTPUT);
             write_pin($pin, HIGH);
         }
     }
-    elsif ($self->aux_state($aux)){
+    elsif (($on_hours == 0) || ($self->aux_state($aux))){
         $self->aux_state($aux, OFF);
         pin_mode($pin, OUTPUT);
         write_pin($pin, LOW);
