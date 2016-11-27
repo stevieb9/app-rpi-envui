@@ -22,11 +22,6 @@ $api->_config_light();
 #FIXME: add set/get subs
 
 $api->set_light_times;
-my $on  = $api->_config_light('on_time');
-my $off  = $api->_config_light('off_time');
-
-$db->update('light', 'value', $on, 'id', 'on_time');
-$db->update('light', 'value', $off, 'id', 'off_time');
 
 #
 # fetch routes

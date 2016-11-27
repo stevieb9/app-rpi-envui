@@ -93,13 +93,13 @@ sub action_temp {
     }
 }
 sub action_light {
-    my ($self, $dt) = @_;
+    my ($self) = @_;
 
-    my $log = $log->child( 'action_light' );
+    my $log = $log->child('action_light');
 
-    my $on_hours = $self->_config_light( 'on_hours' );
-    my $aux = $self->_config_control( 'light_aux' );
-    my $pin = $self->aux_pin( $aux );
+    my $on_hours = $self->_config_light('on_hours');
+    my $aux = $self->_config_control('light_aux');
+    my $pin = $self->aux_pin($aux);
     my $on_time = $self->_config_light('on_time');
     my $off_time = $self->_config_light('off_time');
 
@@ -134,30 +134,6 @@ sub action_light {
         write_pin($pin, LOW);
         $self->set_light_times;
     }
-}
-sub set_light_times {
-    my ($self) = @_;
-
-    my $on_at = $self->_config_light('on_at');
-
-    my $time = time;
-    $time += 60 until localtime($time) =~ /$on_at:/;
-
-    my $hrs = $self->_config_light('on_hours');
-
-    my $on_time = $time;
-    my $off_time = $on_time + $hrs * 3600;
-
-    my $now = time;
-
-    if ($now > ($on_time - 86400) && $now < ($off_time - 86400)){
-        $on_time -= 24 * 3600;
-        $off_time -= 24 * 3600;
-    }
-
-    $self->db()->update('light', 'value', $on_time, 'id', 'on_time');
-    $self->db()->update('light', 'value', $off_time, 'id', 'off_time');
-
 }
 sub aux {
     my ($self, $aux_id) = @_;
@@ -436,19 +412,29 @@ sub env_temp_aux {
     my $self = shift;
     return $self->_config_control('temp_aux');
 }
-sub light_on {
+sub set_light_times {
     my ($self) = @_;
 
-    my ($on_hour, $on_min) = split /:/, $self->_config_light('on_at');
+    my $on_at = $self->_config_light('on_at');
 
-    my $now = DateTime->now(
-        time_zone => $self->db()->config_core('time_zone')
-    );
+    my $time = time;
+    $time += 60 until localtime($time) =~ /$on_at:/;
 
-    my $on
-      = $now->clone()->set_hour($on_hour)->set_minute($on_min)->set_second(0);
+    my $hrs = $self->_config_light('on_hours');
 
-    return $on;
+    my $on_time = $time;
+    my $off_time = $on_time + $hrs * 3600;
+
+    my $now = time;
+
+    if ($now > ($on_time - 86400) && $now < ($off_time - 86400)){
+        $on_time -= 24 * 3600;
+        $off_time -= 24 * 3600;
+    }
+
+    $self->db()->update('light', 'value', $on_time, 'id', 'on_time');
+    $self->db()->update('light', 'value', $off_time, 'id', 'off_time');
+
 }
 
 # public instance variable methods
@@ -1139,24 +1125,11 @@ Returns as an integer, the current humidity level.
 
 Returns as an integer, the current temperature level.
 
-=head2 light_on
+=head2 set_light_time
 
-Returns a L<DateTime> object with the C<HH:MM> set to the C<on_at> directive in
-the configuration file.
+Sets in the database the values for lights-on and lights-off time.
 
-=head2 light_off($dt)
-
-Returns a L<DateTime> object with the C<on_hours> config directive value added,
-which represents the time the light shall be turned off.
-
-Parameters:
-
-    $dt
-
-Optional, L<DateTime> object. Use only for testing. We'll use this as the on
-time C<DateTime> instead of one received from a call to C<light_on()>.
-
-Returns: C<DateTime> object.
+Takes no parameters, there is no return.
 
 =head2 log
 
