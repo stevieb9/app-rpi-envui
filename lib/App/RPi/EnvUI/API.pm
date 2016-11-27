@@ -98,9 +98,9 @@ sub action_light {
     my $log = $log->child('action_light');
 
     my $on_hours = $self->_config_light('on_hours');
-    my $aux = $self->_config_control('light_aux');
-    my $pin = $self->aux_pin($aux);
-    my $on_time = $self->_config_light('on_time');
+    my $aux      = $self->_config_control('light_aux');
+    my $pin      = $self->aux_pin($aux);
+    my $on_time  = $self->_config_light('on_time');
     my $off_time = $self->_config_light('off_time');
 
     if ($on_hours == 0){
