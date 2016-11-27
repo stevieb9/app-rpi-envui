@@ -112,7 +112,7 @@ sub action_light {
             write_pin($pin, HIGH);
         }
     }
-    elsif (($on_hours == 0) || ($self->aux_state($aux))){
+    elsif ($self->aux_state($aux)){
         $self->aux_state($aux, OFF);
         pin_mode($pin, OUTPUT);
         write_pin($pin, LOW);
