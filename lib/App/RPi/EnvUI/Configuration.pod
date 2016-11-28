@@ -142,22 +142,6 @@ specifies that we'll associate that auxillary with the light on/off event.
 
 Default: C<aux3>
 
-=head3 water1_aux
-
-Value: String, in the form C<auxN>, where C<N> is a value from 1-8. This
-specifies that we'll associate that auxillary with the water tank 1 on/off
-event.
-
-Default: C<aux4>
-
-=head3 water2_aux
-
-Value: String, in the form C<auxN>, where C<N> is a value from 1-8. This
-specifies that we'll associate that auxillary with the water tank 2 on/off
-event.
-
-Default: C<aux5>
-
 =head2 LIGHT CONFIGURATION SECTION
 
 This section manages the light control functionality.
@@ -195,18 +179,6 @@ hours are typical for a vegitative plant cycle.
 
 Default: C<12>
 
-=head2 WATER CONFIGURATION SECTION
-
-Directives found here control the water tank events.
-
-=head3 enable
-
-Value: Bool. Set to C<1> to enable the water/feeding functionality, and C<0> to
-disable it. If disabled, the feeding operation table will not appear in the  UI,
-and no events associated with this functionality will be executed.
-
-Default: C<0>
-
 =head2 AUXILLARY CONFIGURATION SECTION
 
 An auxillary (ie. aux) is the representation of a Raspberry Pi GPIO pin. There
@@ -233,8 +205,8 @@ Default:
     aux1: temp
     aux2: humidity
     aux3: light
-    aux4: water1
-    aux5: water2
+    aux4: none
+    aux5: none
     aux6: none
     aux7: none
     aux8: none

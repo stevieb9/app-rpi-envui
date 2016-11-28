@@ -82,11 +82,6 @@ get '/light' => sub {
         $log->_7("entered");
         return to_json $api->_config_light();
     };
-get '/water' => sub {
-        my $log = $log->child('/water');
-        $log->_7("entered");
-        return to_json $api->_config_water();
-    };
 get '/get_config/:want' => sub {
         my $want = params->{want};
 
@@ -301,15 +296,6 @@ Use: Internal
 
 Returns a JSON string containing the configuration for the C<light> section of
 the page.
-
-Return: JSON
-
-=head2 /water
-
-Use: Internal
-
-Returns a JSON string containing the configuration for the C<water> (feeding)
-section of the page.
 
 Return: JSON
 

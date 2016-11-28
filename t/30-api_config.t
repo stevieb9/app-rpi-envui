@@ -27,11 +27,11 @@ is $api->{testing}, 1, "testing param to new() ok";
 
     my @directives = qw(
         temp_limit humidity_limit temp_aux_on_time humidity_aux_on_time
-        temp_aux humidity_aux light_aux water1_aux water2_aux
+        temp_aux humidity_aux light_aux
         );
 
     my @values = qw(
-        80 20 1800 1800 aux1 aux2 aux3 aux4 aux5
+        80 20 1800 1800 aux1 aux2 aux3
         );
 
     is @directives, @values, "directives match number of values";
@@ -151,39 +151,6 @@ is $api->{testing}, 1, "testing param to new() ok";
     $db->update('light', 'value', $c->{on_hours}, 'id', 'on_hours');
     is $api->_config_light('on_hours'), 12, "on_hours back to default ok";
 
-}
-{ # config_water()
-
-    my @directives = qw(
-        enable
-        );
-
-    my @values = qw(
-        0
-        );
-
-    is @directives, @values, "config_water() test is set up equally";
-
-    my $conf = $api->_config_water;
-
-    is ref $conf, 'HASH', "config_water() is an href with no params";
-
-    for my $k (keys %$conf){
-        my $ok = grep {$_ eq $k} @directives;
-        is $ok, 1, "$k is a directive";
-    }
-
-    for my $d (@directives){
-        is exists $conf->{$d}, 1, "$d directive exists in conf";
-    }
-
-    my $i = 0;
-
-    for (@directives){
-        my $value = $api->_config_water($_);
-        is $value, $values[$i], "water $_ has value $values[$i] by default";
-        $i++;
-    }
 }
 
 unconfig();

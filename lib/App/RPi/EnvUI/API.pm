@@ -555,24 +555,6 @@ sub _config_light {
 
     return \%conf;
 }
-sub _config_water {
-    my $self = shift;
-    my $want = shift;
-
-    my $water = $self->db()->config_water;
-
-    if (defined $want){
-        return $water->{$want}{value};
-    }
-
-    my %conf;
-
-    for (keys %$water){
-        $conf{$_} = $water->{$_}{value};
-    }
-
-    return \%conf;
-}
 sub _init {
     my ($self) = @_;
 
@@ -724,7 +706,7 @@ sub _parse_config {
         $self->db()->update_bulk(@$db_struct, \@data);
     }
 
-    for my $conf_section (qw(control core light water)){
+    for my $conf_section (qw(control core light)){
         my $db_struct = [
             $conf_section,
             'value',

@@ -126,19 +126,6 @@ sub config_light {
         return $light;
     }
 }
-sub config_water {
-    my ($self, $want) = @_;
-
-    my $water = $self->{db}->selectall_hashref(
-        'SELECT * from water',
-        'id'
-    );
-
-    if (defined $want){
-        return $water->{$want}{value};
-    }
-    return $water;
-}
 sub env {
     my ($self) = @_;
 
@@ -345,11 +332,6 @@ configuration variable.
 Return: Single scalar value if C<$want> is sent in, or a hash reference of the
 entire configuration section where the keys are the variable names, and the
 values are the configuration values.
-
-=head2 config_water($want)
-
-Works exactly the same as C<config_light()> above, but for the feeding
-configuration.
 
 =head2 env
 

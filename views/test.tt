@@ -99,17 +99,6 @@
 </div>
 <br><br>
 
-<!-- Water tanks -->
-
-<table class="water">
-    <th class="opt_aux3"><font size="5">Water #1</font></th>
-    <th class="opt_aux4"><font size="5">Water #2</font></th>
-    <tr>
-        <td class="opt_aux3" width="600"><input id="aux3" class="button" style="width:120px;height:30px" type="checkbox" data-role="flipswitch"></td>
-        <td class="opt_aux4" width="600"><input id="aux4" class="button" style="width:120px;height:30px" type="checkbox" data-role="flipswitch"></td>
-    </tr>
-</table>
-
 <br><br>
 </body>
 </html>

@@ -39,20 +39,6 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     is $p->{enable}, 0, "fetch enable ok";
 }
 
-{ # /water route
-
-    my $res = $test->request(GET '/water');
-    ok $res->is_success, '/water request ok';
-
-    my $j = $res->content;
-    my $p = decode_json $j;
-
-    is ref $p, 'HASH', "/water returns json, which is an href";
-    is keys %$p, 1, "return has proper num keys";
-
-    is $p->{enable}, 0, "fetch enable ok";
-}
-
 unset_testing();
 db_remove();
 unconfig();

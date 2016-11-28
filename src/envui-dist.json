@@ -17,17 +17,12 @@
     "humidity_aux_on_time": "1800",
     "temp_aux": "aux1",
     "humidity_aux": "aux2",
-    "light_aux": "aux3",
-    "water1_aux": "aux4",
-    "water2_aux": "aux5"
+    "light_aux": "aux3"
   },
   "light": {
     "on_at": "18:00",
     "on_hours": "12",
     "toggle": "disabled",
-    "enable": "0"
-  },
-  "water": {
     "enable": "0"
   },
   "aux1": {
@@ -44,11 +39,11 @@
   },
   "aux4": {
     "pin": "-1",
-    "desc": "water1"
+    "desc": ""
   },
   "aux5": {
     "pin": "-1",
-    "desc": "water2"
+    "desc": ""
   },
   "aux6": {
       "pin": "-1",
