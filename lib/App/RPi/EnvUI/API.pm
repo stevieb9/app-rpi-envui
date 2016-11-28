@@ -100,8 +100,11 @@ sub action_light {
     my $on_hours = $self->_config_light('on_hours');
     my $aux      = $self->_config_control('light_aux');
     my $pin      = $self->aux_pin($aux);
+    my $override = $self->aux_override($aux);
     my $on_time  = $self->_config_light('on_time');
     my $off_time = $self->_config_light('off_time');
+
+    return if $override;
 
     my $now = time;
 
