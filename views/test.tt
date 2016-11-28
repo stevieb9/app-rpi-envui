@@ -97,8 +97,78 @@
         </tr>
     </table>
 </div>
-<br><br>
 
 <br><br>
+
+<table class="top">
+    <tr>
+        <td>
+            <div class="drag" id="aux4_widget">
+            <table class="inner">
+                <th colspan="2" align="center"><font size="5"><p class="widget_handle">Aux #4</p></font></th>
+                <tr>
+                    <td style="text-align: center;"><input type="checkbox" data-role="flipswitch" id="aux4" class="button" style="width:120px;height:30px"></td>
+                </tr>
+            </table>
+        </div>
+        </td>
+        <td>
+            <div class="drag" id="aux5_widget">
+            <table class="inner">
+                <th colspan="2" align="center"><font size="5"><p class="widget_handle">Aux #5</p></font></th>
+                <tr>
+                    <td style="text-align: center;"><input id="aux5" class="button" style="width:120px;height:30px" type="checkbox" data-role="flipswitch"></td>
+                </tr>
+            </table>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<br><br>
+
+<table class="top">
+    <tr>
+        <td>
+            <div class="drag" id="aux6_widget">
+            <table class="inner">
+                <th colspan="2" align="center"><font size="5"><p class="widget_handle">Aux #6</p></font></th>
+                <tr>
+                    <td style="text-align: center;"><input type="checkbox" data-role="flipswitch" id="aux6" class="button" style="width:120px;height:30px"></td>
+                </tr>
+            </table>
+        </div>
+        </td>
+        <td>
+            <div class="drag" id="aux7_widget">
+            <table class="inner">
+                <th colspan="2" align="center"><font size="5"><p class="widget_handle">Aux #7</p></font></th>
+                <tr>
+                    <td style="text-align: center;"><input id="aux7" class="button" style="width:120px;height:30px" type="checkbox" data-role="flipswitch"></td>
+                </tr>
+            </table>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<br><br>
+
+<table class="top">
+    <tr>
+        <td>
+            <div class="drag" id="aux8_widget">
+            <table class="inner">
+                <th colspan="2" align="center"><font size="5"><p class="widget_handle">Aux #8</p></font></th>
+                <tr>
+                    <td style="text-align: center;"><input type="checkbox" data-role="flipswitch" id="aux8" class="button" style="width:120px;height:30px"></td>
+                </tr>
+            </table>
+        </div>
+        </td>
+    </tr>
+</table>
+
+
 </body>
 </html>
