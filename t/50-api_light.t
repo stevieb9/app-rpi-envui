@@ -25,28 +25,28 @@ my $db = App::RPi::EnvUI::DB->new(testing => 1);
     # light should be off by default
 
     is
-        $api->_config_light('on_since'),
+        $api->_config_light('on_time'),
         0,
-        "on_since not set, hours not same: light on_since is zero";
+        "light on_time is zero";
+
+    is
+        $api->_config_light('off_time'),
+        0,
+        "light off_time is zero";
 
     is
         $api->aux_state( $api->_config_control( 'light_aux' ) ),
         0,
         "light aux is currently in state off";
 
-    my $now = DateTime->now(time_zone => $api->_config_core('time_zone'));
+    my %conf = (
+        now => time() + 86400,
+        on_hours => '1',
+    );
 
-    my ($on_dt, $off_dt);
-    $on_dt = $now->clone()->set_minute($now->minute);
-    $on_dt->add(minutes => 2);
-    $on_dt = light_on($on_dt);
-    $off_dt = $api->light_off($on_dt);
-
-    $api->action_light;
+    $api->action_light(%conf);
 
     # light should be off
-
-    ok $api->_config_light('on_since') == 0, "light on_since is zero";
 
     is
         $api->aux_state( $api->_config_control( 'light_aux' ) ),
@@ -59,47 +59,9 @@ my $db = App::RPi::EnvUI::DB->new(testing => 1);
     # light should be off for the test
 
     is
-        $api->_config_light('on_since'),
-        0,
-        "light is off for the test";
-
-    is
         $api->aux_state( $api->_config_control( 'light_aux' ) ),
         0,
         "light aux is currently in state off for the test";
-
-    my $now = DateTime->now(time_zone => $api->_config_core('time_zone'));
-
-    my ($on_dt, $off_dt);
-    $on_dt = $now->clone()->set_minute($now->minute);
-    $on_dt->subtract(minutes => 2);
-    $on_dt = light_on($on_dt);
-
-    $api->action_light;
-
-    # light should be on
-
-    ok $api->_config_light('on_since') > 0, "light on_since is non-zero";
-
-    is
-        $api->aux_state($api->_config_control('light_aux')),
-        1,
-        "light on time reached, light is on";
-
-
-    $on_dt->subtract(hours => 12);
-    $on_dt = light_on($on_dt);
-
-     $api->action_light($on_dt->add(hours => 24, minutes => 5));
-
-    # light should be off
-
-    ok $api->_config_light('on_since') == 0, "light on_since zero";
-
-    is
-        $api->aux_state($api->_config_control('light_aux')),
-        0,
-        "light off time reached, light is off";
 }
 
 { # on_hours == 0 and == 24
@@ -134,23 +96,29 @@ my $db = App::RPi::EnvUI::DB->new(testing => 1);
     is $App::RPi::EnvUI::API::pm_sub->called, 0, "pin_mode() reset";
     is $App::RPi::EnvUI::API::wp_sub->called, 0, "write_pin() reset";
 
+    # $api->aux_state($aux, 0);
+
     $db->update('light', 'value', 0, 'id', 'on_hours');
     $api->action_light;
-    is $api->aux_state($aux), 0, "when on_hours is 0, light goes/stays off";
-    is $App::RPi::EnvUI::API::pm_sub->called, 0, "pin_mode() *not* called";
+    is $api->aux_state($aux), 0, "when on_hours is 0, light goes off if on";
+    is $App::RPi::EnvUI::API::pm_sub->called, 1, "pin_mode() *is* called";
     is $App::RPi::EnvUI::API::wp_sub->called, 1, "write_pin() *is* called";
+
+    $App::RPi::EnvUI::API::pm_sub->reset;
+    $App::RPi::EnvUI::API::wp_sub->reset;
+
+    is $App::RPi::EnvUI::API::pm_sub->called, 0, "pin_mode() reset";
+    is $App::RPi::EnvUI::API::wp_sub->called, 0, "write_pin() reset";
+
+    $api->aux_state($aux, 0);
+
+    $api->action_light;
+    is $api->aux_state($aux), 0, "when on_hours is 0, light stays off";
+    is $App::RPi::EnvUI::API::pm_sub->called, 0, "pin_mode() *not* called";
+    is $App::RPi::EnvUI::API::wp_sub->called, 0, "write_pin() *not* called";
 
     $db->update('light', 'value', 12, 'id', 'on_hours');
     is $api->_config_light('on_hours'), 12, "on_hours reset back to default ok";
-}
-
-sub light_on {
-    my ($on_dt) = @_;
-    my $time = $on_dt->hms;
-    $time =~ s/:\d+$//;
-    $db->update('light', 'value', $time, 'id', 'on_at');
-
-    return $api->light_on;
 }
 
 unconfig();

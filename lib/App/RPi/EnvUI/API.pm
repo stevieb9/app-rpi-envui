@@ -93,20 +93,24 @@ sub action_temp {
     }
 }
 sub action_light {
-    my ($self) = @_;
+    my ($self, %test_conf) = @_;
 
     my $log = $log->child('action_light');
 
-    my $on_hours = $self->_config_light('on_hours');
     my $aux      = $self->_config_control('light_aux');
     my $pin      = $self->aux_pin($aux);
     my $override = $self->aux_override($aux);
-    my $on_time  = $self->_config_light('on_time');
-    my $off_time = $self->_config_light('off_time');
 
     return if $override;
 
-    my $now = time;
+    my $on_time  = $self->_config_light('on_time');
+    my $off_time = $self->_config_light('off_time');
+
+    my $on_hours = defined $test_conf{on_hours}
+        ? $test_conf{on_hours}
+        : $self->_config_light('on_hours');
+
+    my $now = defined $test_conf{now} ? $test_conf{now} : time;
 
     if (($on_hours == 24) || ($now > $on_time && $now < $off_time)){
         if (! $self->aux_state($aux)){
@@ -685,7 +689,6 @@ sub _parse_config {
     $self->db()->begin;
 
     $self->_reset;
-    $self->_reset_light;
 
     $config = $self->config if ! defined $config;
 
