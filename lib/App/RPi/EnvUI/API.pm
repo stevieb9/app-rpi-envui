@@ -765,9 +765,6 @@ sub _reset {
 
     #$self->db()->commit;
 }
-sub _reset_light {
-    #FIXME: remove $_[0]->db()->update('light', 'value', 0, 'id', 'on_since');
-}
 sub _ui_test_mode {
     return -e 't/testing.lck';
 }

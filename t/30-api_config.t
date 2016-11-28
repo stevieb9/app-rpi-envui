@@ -88,11 +88,11 @@ is $api->{testing}, 1, "testing param to new() ok";
 { # config_light()
 
     my @directives = qw(
-        on_at on_hours on_since toggle enable
+        on_at on_hours on_time off_time toggle enable
         );
 
     my @values = qw(
-        18:00 12 0 disabled 0
+        18:00 12 0 0 disabled 0
         );
 
     is @directives, @values, "config_light() test is set up equally";
@@ -100,7 +100,7 @@ is $api->{testing}, 1, "testing param to new() ok";
     my $c = $api->_config_light;
 
     is ref $c, 'HASH', "_config_light() returns a hashref w/o params";
-    is keys %$c, 5, "...and has proper count of keys";
+    is keys %$c, 6, "...and has proper count of keys";
 
     for my $k (keys %$c){
         my $ok = grep {$_ eq $k} @directives;

@@ -98,11 +98,11 @@ my $api = App::RPi::EnvUI::API->new(
 { # config_light()
 
     my @directives = qw(
-        on_at on_hours on_since toggle enable
+        on_at on_hours on_time off_time toggle enable
     );
 
     my @values = qw(
-        18:00 12 0 disabled 0
+        18:00 12 0 0 disabled 0
     );
 
     is @directives, @values, "config_light() test is set up equally";
