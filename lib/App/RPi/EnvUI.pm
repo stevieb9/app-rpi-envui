@@ -353,7 +353,7 @@ humidity). Takes no parameters.
 
 Return: JSON. A JSON string in the form C<{"temp": "Int", "humidity": "Int"}>
 
-=head2 /set_aux/:aux/:state
+=head2 /set_aux_state/:aux/:state
 
 Use: Internal
 
@@ -373,6 +373,31 @@ Mandatory: Bool. The state of the auxillary after the button change.
 
 Return: JSON. Returns the current state of the auxillary in the format
 C<>{"aux": "aux_name", "state": "bool"}>.
+
+Note: The UI user must be logged in to access this route.
+
+=head2 /set_aux_override/:aux/:state
+
+Use: Internal
+
+Sets the override status of an auxillary channel, when an on-change event occurs
+to a button that is associated with an auxillary.
+
+Parameters:
+
+    :aux
+
+Mandatory: String. The string name of the auxillary channel to change state on
+(eg: C<aux1>).
+
+    :state
+
+Mandatory: Bool. The override status of the auxillary after the button change.
+
+Return: JSON. Returns the current state of the auxillary in the format
+C<>{"aux": "aux_name", "override": "bool"}>.
+
+Note: The UI user must be logged in to access this route.
 
 =head1 AUTHOR
 

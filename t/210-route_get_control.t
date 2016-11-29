@@ -23,11 +23,11 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
 {
     my @directives = qw(
         temp_limit humidity_limit temp_aux_on_time humidity_aux_on_time
-        temp_aux humidity_aux light_aux water1_aux water2_aux
+        temp_aux humidity_aux light_aux
         );
 
     my @values = qw(
-        80 20 1800 1800 aux1 aux2 aux3 aux4 aux5
+        80 20 1800 1800 aux1 aux2 aux3
         );
 
     is @directives, @values, "test configuration ok";

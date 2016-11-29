@@ -10,7 +10,13 @@ Changes history for App::RPi::EnvUI
         - /logout route now redirects back to the home page
         - removed everything related to the water auxs; aux 4 and 5 are now just
           generic, unused auxs now
-        - all auxs are now listed in the HTML template
+        - all auxs are now listed in the HTML template (hidden if pin == -1)
+        - completely changed the way we track light times. Added
+          set_light_times(). It's called once on webapp start, then at the end
+          of each light-off event. It's all done with epoch now instead of
+          DateTime objects
+        - the set_aux route has been broken out into two separate routes:
+          set_aux_state and set_aux_override. (closes #30)
 
 0.26    2016-10-25
         - functionality adddition and bug fix beta release

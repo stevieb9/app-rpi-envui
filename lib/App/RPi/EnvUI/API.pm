@@ -409,7 +409,7 @@ sub set_light_times {
     my $on_at = $self->_config_light('on_at');
 
     my $time = time;
-    $time += 60 until localtime($time) =~ /$on_at:/;
+    $time += 30 until localtime($time) =~ /$on_at:/;
 
     my $hrs = $self->_config_light('on_hours');
 
