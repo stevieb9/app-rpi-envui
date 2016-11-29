@@ -25,7 +25,6 @@ use HTTP::Request::Common;
 use Plack::Test;
 use App::RPi::EnvUI;
 
-
 my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
 
 { # /set_aux_state route

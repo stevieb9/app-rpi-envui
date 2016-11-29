@@ -36,9 +36,25 @@ $(document).ready(function(){
         }
         else {
             $('#'+aux).flipswitch();
+            $('#'+ aux).flipswitch("option", "onText",  "ON");
+            $('#'+ aux).flipswitch("option", "offText", "OFF");
         }
+
+        // hide all generic auxs if necessary
+
+        $.ajax({
+            async: false,
+            type: 'GET',
+            url: '/get_aux/' + aux,
+            success: function(data){
+                var json = $.parseJSON(data);
+                if (parseInt(json.pin) == '-1'){
+                    $('#'+aux+'_widget').hide();
+                }
+            }
+        });
     }
-    
+
     $('.button').on('change', flip_change);
 
     function flip_change(e){
@@ -111,7 +127,6 @@ $(document).ready(function(){
 
     event_interval();
     display_env();
-    display_water();
     display_light();
 
     // events
@@ -129,7 +144,6 @@ $(document).ready(function(){
 
         display_time();
         display_light();
-        display_water();
 
         for(i = 1; i < 9; i++){
             var aux = 'aux'+ i;
@@ -150,29 +164,29 @@ $(document).ready(function(){
                     return;
                 }
 
-                var onTxt;
-                var offTxt;
+                var onText;
+                var offText;
 
-                if (parseInt(json.override) == 1 && (aux == 'aux1' || aux == 'aux2')){
-                    onTxt = 'OVERRIDE';
-                    offTxt = 'OVERRIDE';
+                if (parseInt(json.override) == 1 && (aux == 'aux1' || aux == 'aux2' || aux == 'aux3')){
+                    onText = 'OVERRIDE';
+                    offText = 'OVERRIDE';
                 }
                 else {
-                    onTxt = 'ON';
-                    offTxt = 'OFF';
+                    onText = 'ON';
+                    offText = 'OFF';
                 }
 
                 var checked = parseInt(json.state);
 
                 $('#'+ aux).prop('checked', checked);
 
-                // the following disables the global event handler
                 $('#'+ aux).off('change');
 
-                // refresh the button
+                $('#'+ aux).flipswitch("option", "onText",  onText);
+                $('#'+ aux).flipswitch("option", "offText", offText);
+
                 $('#'+ aux).flipswitch('refresh');
 
-                // and this re-enables it
                 $('#'+ aux).on('change', flip_change);
 
             }
