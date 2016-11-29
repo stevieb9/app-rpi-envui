@@ -1163,6 +1163,11 @@ Optional, L<RPi::DHT11> object instance.
 
 Return: The sensor object.
 
+=head2 set_light_times
+
+Internal method that sets the light on-off times in the database, once on webapp
+initial startup, then at the end of the lights-off trigger in C<action_light()>.
+
 =head2 switch($aux_id)
 
 Enables/disables the GPIO pin associated with the specified auxillary channel,

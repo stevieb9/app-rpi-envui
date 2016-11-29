@@ -1,3 +1,5 @@
+t/envui\.db$
+t/envui\.json$
 ^devel/
 t/testing\.lck$
 ^envui/
