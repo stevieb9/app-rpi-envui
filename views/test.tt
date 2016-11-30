@@ -24,6 +24,11 @@
             <div class="center myMenu">
                 <ul class="dropDownMenu">
                     <li><a href="/">Home</a></li>
+                    <li class="menuHeader">System
+                        <ul>
+                            <li><a onClick="reset_display(); return false;">Reset Layout</a></li>
+                        </ul>
+                    </li>
                     <li><a href="/stats">Statistics</a>
                     <li class="menuHeader">About
                         <ul>

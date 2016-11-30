@@ -87,13 +87,12 @@ $(document).ready(function(){
 
     // draggable widgets
 
-    $('.drag').each(function(i, table){
-        //console.log(
-            // $(table).attr('id') + " " +
-            // $(table).position().top + " " +
-            // $(table).position().left
-        //);
-    });
+    var s_positions = localStorage.positions || "{}";
+    var positions = $.parseJSON(s_positions);
+
+    $.each(positions, function (id, pos){
+        $('#'+ id).css(pos)
+    })
 
     $('.drag').draggable({
         handle: 'p.widget_handle',
@@ -102,12 +101,12 @@ $(document).ready(function(){
         opacity: 0.5,
         cursor: "move",
         drag: function(){
-            //console.log($(this).position().top);
+
         },
         stop: function(){
-            //var top = $(this).position().top;
-            //var left = $(this).position().left;
-            // console.log($(this).attr('id') + " t: " + top + " l: " + left);
+            positions[this.id] = $(this).position();
+            //console.log(positions);
+            localStorage.positions = JSON.stringify(positions)
         }
     });
 
@@ -137,6 +136,8 @@ $(document).ready(function(){
             setInterval(display_env, interval);
         });
     }
+
+
 
     // core functions
 
@@ -216,16 +217,6 @@ $(document).ready(function(){
             }
             $('#light_on_hours').text(light.on_hours);
             $('#light_on_at').text(light.on_at);
-        });
-    }
-
-    function display_water(){
-        $.get('/water', function(data){
-            var water = $.parseJSON(data);
-            if (water.enable == "0"){
-                $('.water').hide();
-                return;
-            }
         });
     }
 
@@ -314,3 +305,9 @@ $(document).ready(function(){
     }
 });
 
+// reset layout
+
+function reset_display(){
+    localStorage.clear();
+    window.location.reload(true);
+}
