@@ -91,7 +91,7 @@ $(document).ready(function(){
     var positions = $.parseJSON(s_positions);
 
     $.each(positions, function (id, pos){
-        $('#'+ id).css(pos)
+        $('#'+ id).css(pos);
     })
 
     $('.drag').draggable({
@@ -103,9 +103,9 @@ $(document).ready(function(){
         drag: function(){
 
         },
-        stop: function(){
-            positions[this.id] = $(this).position();
-            //console.log(positions);
+        stop: function(event, ui){
+            positions[this.id] = ui.position;
+            console.log(positions);
             localStorage.positions = JSON.stringify(positions)
         }
     });
