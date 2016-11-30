@@ -168,7 +168,7 @@ $(document).ready(function(){
                 var onText;
                 var offText;
 
-                if (parseInt(json.override) == 1 && (aux == 'aux1' || aux == 'aux2' || aux == 'aux3')){
+                if (parseInt(json.override) == 1 && (aux == 'aux1'||'aux2'||'aux3')){
                     onText = 'OVERRIDE';
                     offText = 'OVERRIDE';
                 }
