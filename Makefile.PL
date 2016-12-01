@@ -67,7 +67,7 @@ WriteMakefile(
     NAME                => 'App::RPi::EnvUI',
     AUTHOR              => q{Steve Bertrand <steveb@cpan.org>},
     VERSION_FROM        => 'lib/App/RPi/EnvUI.pm',
-    ABSTRACT            => '',
+    ABSTRACT_FROM            => 'lib/App/RPi/EnvUI.pm',
     ($eumm_version >= 6.3001
         ? ('LICENSE'=> 'perl')
         : ()),

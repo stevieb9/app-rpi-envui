@@ -1,6 +1,8 @@
 Changes history for App::RPi::EnvUI
 
-0.27    2016-11-30
+0.28    2016-11-30
+        - all updates other than a Makefile.PL file were 0.27. This release is
+          just a small correction
         - correct issue where the minute portion of the time was displaying
           only a single digit if minutes were less than 10 (fixes #23)
         - clean up of all sample test files and random test code snips

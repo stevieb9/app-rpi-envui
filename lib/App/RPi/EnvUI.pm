@@ -7,7 +7,7 @@ use Dancer2::Core::Request;
 use Mock::Sub no_warnings => 1;
 use POSIX qw(tzset);
 
-our $VERSION = '0.27';
+our $VERSION = '0.29';
 
 my $db = App::RPi::EnvUI::DB->new;
 my $api = App::RPi::EnvUI::API->new(db => $db);
