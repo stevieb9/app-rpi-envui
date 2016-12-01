@@ -210,40 +210,25 @@ Now direct your browser at your Pi, on port 3000:
 
 =head1 DESCRIPTION
 
-A self-contained web application that runs on a Raspberry Pi and monitors and
-manages an indoor grow room environment, with an API that can be used external
-to the web app itself.
+*** This is trial software until v1.00 is released. It's still a constant work
+in progress, so the docs are awful, but I am trying to improve them as I learn
+the things I need to know to get where I want to be.***
 
-***NOTE*** This distribution is still in heavy development. It will unit test
-on any *nix PC, but at this time, it will only run correctly on a Raspberry Pi
-with L<wiringPi|http://wiringpi.com> installed. We also require C<sudo> to run
-the webapp, due to limitations in other software I rely upon, but I've got fixes
-in the works to eliminate the C<sudo> requirement.
+*** Note that my focus hasn't been one about detailed security, so please, if
+you desire to test this software, ensure it is not Internet facing, and you have
+adequate protection from undesired access ***
+
+A self-contained, one-page web application that runs on a Raspberry Pi and
+monitors and manages an indoor grow room environment, with an API that can be
+used external to the web app itself.
 
 This distribution reads environmental sensors, turns on/off devices based on
-specific thresholds, contains an adjustable grow light timer, as well as
-feeding timers.
+specific thresholds, contains an adjustable grow light timer, and five extra
+auxillary channels that you can configure for your own use.
 
 The software connects to Raspberry Pi GPIO pins for each C<"auxillary">, and at
 specific times or thresholds, turns on and or off the 120/240v devices that
 you've relayed to that voltage (if you choose to use this functionality).
-
-Whether or not you connect/use the automation functionality, the web UI is a
-one-page app that relies on jQuery/Javascript to pull updates from the server,
-push changes to the server, and display up-to-date live information relating to
-all functionality.
-
-Buttons are present to manually override devices (turn on/off) outside of their
-schedule or whether they've hit thresholds or not. Devices that have been
-overridden through the web UI will not be triggered by automation until the
-override is lifted.
-
-The current temperature and humidity is prominently displayed as are all of the
-other features/statistics.
-
-This is pretty much a singleton application, meaning that all web browsers open
-to the app's UI page will render updates at the same time, regardless if another
-browser or the automation makes any changes.
 
 =head1 WHAT IT DOES
 
@@ -269,15 +254,50 @@ We also include a grow light scheduler, so that you can connect your light, set
 the schedule, and we'll manage it. The light has an override switch in the UI,
 but that can be disabled to prevent any accidents.
 
-...manages auto-feeding too, but that's not any where near complete yet.
-
 =head1 HOW IT WORKS
 
 Upon installation of this module, a new directory C<envui> will be created in
 your home directory. All of the necessary pieces of code required for this web
 app to run are copied into that directory. You simply change into that
 directory, and run C<sudo plackup bin/app.pl>, then point your browser to
-C<http://raspberry.pi:3000>.
+C<http://raspberry.pi:3000>. I haven't integrated it into a full-blown web
+server as of yet.
+
+There are eight auxillary channels (UI buttons that connect to GPIO pins to turn
+devices on or off). Three are dedicated to specific functionality. The first
+(aux1) is used for temperature sensor duties. The second, humidity sensor
+duties. The third is set up to manage a single grow lamp. The remaining five
+auxillaries can be set and connected to whatever you please, but these channels
+do not have any logic behind them yet; they're just on or off.
+
+=head1 WEB UI
+
+The UI and infrastructure behind it is in its infancy. There are vast changes
+that I'll be making. Currently I have:
+
+    - a reasonably nice menu system, with the current time displayed
+    - all auxillaries are movable objects within the page
+    - if objects are moved, the layout will be preserved across a refresh
+    - ability to easily reset page layout to default
+    - temp, humidity and light auxillary objects will be in override state if
+      the state is changed in the UI (ie. automation routines will skip them)
+    - the memory footprint of a long run is very manageable (7-15MB)
+    - longest unchanged runtime: 178 hours
+    - it's a singleton; all browsers pointed to the UI will see the same state,
+      with updates every three seconds maximum
+    - design is geared to a 5" LCD touchscreen for attaching to the device
+      itself, but renders reasonably well on any device size
+    - authentication is required for any routes that set state of any kind
+    - everything is stored in a DB backend
+
+=head1 HOWTO
+
+I'm not going into detail here yet. Look at the
+L<App::RPi::EnvUI::Configuration> documentation to get an idea of the config
+file.
+
+Map the C<pin> of each aux in the configuration file to a GPIO pin. Start up the
+app per L</HOW IT WORKS>. Go to the webpage in an HTML5-capable browser.
 
 =head1 ROUTES
 

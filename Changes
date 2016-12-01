@@ -1,6 +1,6 @@
 Changes history for App::RPi::EnvUI
 
-0.27 NOREL
+0.27    2016-11-30
         - correct issue where the minute portion of the time was displaying
           only a single digit if minutes were less than 10 (fixes #23)
         - clean up of all sample test files and random test code snips
@@ -21,6 +21,10 @@ Changes history for App::RPi::EnvUI
           HTML5's `localStorage`
         - new menu header "System", with sub menu "Reset Layout", resets layout
           to defaults
+        - template layout changes
+        - JS code restructured entirely; all functions have been moved out of
+          $(document).ready
+        - all auxs will now be hidden if the pin is set to -1 in the config/db
 
 0.26    2016-10-25
         - functionality adddition and bug fix beta release
@@ -50,6 +54,7 @@ Changes history for App::RPi::EnvUI
         - major work on UI enhancements; objects are drag/droppable, and graph
           functionality is well on its way (fixes #24)(new graph_data() methods
           in DB and API, and new /graph_data route)
+        - made a feeble attempt at bettering explanations in POD
 
 0.25    2016-10-16
         - separated out API::new() initialization code into _init(), which loads
