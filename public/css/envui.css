@@ -25,7 +25,11 @@ td {
 }
 
 .inner {
-    width: 50%;
+    width: 33.333333%;
+}
+
+.inner_aux {
+    width: 33.33333%;
 }
 
 /* main menu */
@@ -139,3 +143,4 @@ td {
 .button {
     width: 200px;
 }
+

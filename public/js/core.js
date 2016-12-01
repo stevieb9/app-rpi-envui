@@ -35,7 +35,7 @@ $(document).ready(function(){
             $('#'+aux).flipswitch("option", "disabled", true);
         }
         else {
-            $('#'+aux).flipswitch();
+            $('#'+ aux).flipswitch();
             $('#'+ aux).flipswitch("option", "onText",  "ON");
             $('#'+ aux).flipswitch("option", "offText", "OFF");
         }
@@ -49,7 +49,7 @@ $(document).ready(function(){
             success: function(data){
                 var json = $.parseJSON(data);
                 if (parseInt(json.pin) == '-1'){
-                    $('#'+aux+'_widget').hide();
+                    // $('#'+aux+'_widget').hide();
                 }
             }
         });
@@ -136,8 +136,6 @@ $(document).ready(function(){
             setInterval(display_env, interval);
         });
     }
-
-
 
     // core functions
 
@@ -304,6 +302,8 @@ $(document).ready(function(){
         graphs = null;
     }
 });
+
+// external functions
 
 // reset layout
 

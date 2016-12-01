@@ -6,7 +6,6 @@ Makefile
 *~
 *.bak
 *.swp
-*.bak
 .hg/
 .git/
 MYMETA.*
