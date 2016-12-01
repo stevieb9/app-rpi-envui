@@ -9,14 +9,12 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
-	<script language="javascript" type="text/javascript" src="js/flot.js"></script>
-	<script language="javascript" type="text/javascript" src="js/flot.threshold.js"></script>
-
     <script type="text/javascript" src="js/core.js"></script>
 </head>
 
 
 <body>
+<div data-role="page" id="home">
 <table width="100%">
     <tr>
     <td width="90%" style="white-space: nowrap;" >
@@ -29,7 +27,7 @@
                             <li><a onClick="reset_display(); return false;">Reset Layout</a></li>
                         </ul>
                     </li>
-                    <li><a onClick="render_graphs(); return false;">Statistics</a>
+                    <li><a href="/stats">Statistics</a>
                     <li class="menuHeader">About
                         <ul>
                             <li><a href="https://github.com/stevieb9" target="_blank">Author Github</a></li>
@@ -161,7 +159,7 @@
         </td>
     </tr>
 </table>
-
+</div>
 
 </body>
 </html>

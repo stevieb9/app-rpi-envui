@@ -748,7 +748,9 @@ sub _reset {
         'aux', 'on_time', [0]
     );
 
-    #$self->db()->commit;
+    # remove all statistics
+
+    $self->db()->delete('stats');
 }
 sub _ui_test_mode {
     return -e 't/testing.lck';

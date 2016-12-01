@@ -1,5 +1,18 @@
 Changes history for App::RPi::EnvUI
 
+0.29 UNREL
+        - added DB::delete(), which will remove all data from a table
+        - stats DB table is now emptied on webapp load. This will make graphing
+          easier (avoid gaps where the app was down)
+        - added new stats template and stats.js logic, Statistics in the menu
+          load this template for the statistical graphs for temperature and
+          humidity
+        - the various templates now have a div id, so that we can combine all of
+          our javascript/jquery into a single file
+        - switched to $(document).on('pageinit') from $(document).ready() so
+          that the appropriate js is executed on specific page loads (see above
+          point)
+
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is
           just a small correction

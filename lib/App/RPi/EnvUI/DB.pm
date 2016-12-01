@@ -140,6 +140,15 @@ sub env {
     $sth->execute($id);
     return $sth->fetchrow_hashref;
 }
+sub delete {
+    my ($self, $table) = @_;
+
+    my $sth = $self->{db}->prepare(
+        "DELETE FROM $table;"
+    );
+
+    $sth->execute;
+}
 sub graph_data {
     my ($self) = @_;
 
@@ -249,18 +258,6 @@ Optional, Bool. C<1> to enable testing mode, C<0> to disable.
 
 Default: C<0> (off)
 
-=head2 user($user)
-
-Fetches a user's information as found in the 'auth' database table.
-
-Parameters:
-
-    $user
-
-Mandatory, String. The name of the user to fetch the password for.
-
-Return: A hash reference containing the user's details.
-
 =head2 aux($aux_id)
 
 Fetches and returns a hash reference containing the details of an auxillary
@@ -332,6 +329,16 @@ configuration variable.
 Return: Single scalar value if C<$want> is sent in, or a hash reference of the
 entire configuration section where the keys are the variable names, and the
 values are the configuration values.
+
+=head2 delete($table)
+
+Deletes all data from the specified table.
+
+Parameters:
+
+    $table
+
+Mandatory, String. The name of the table to delete all the data from.
 
 =head2 env
 
@@ -416,6 +423,18 @@ the value to update to, and the where clause value.
 
 Same as C<update_bulk()> except operates on all table rows (there's no where
 clause).
+
+=head2 user($user)
+
+Fetches a user's information as found in the 'auth' database table.
+
+Parameters:
+
+    $user
+
+Mandatory, String. The name of the user to fetch the password for.
+
+Return: A hash reference containing the user's details.
 
 =head1 AUTHOR
 
