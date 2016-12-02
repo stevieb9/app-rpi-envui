@@ -2,6 +2,7 @@
 
 var temp_limit = -1;
 var humidity_limit = -1;
+var graph_event = null; // graph interval timer
 
 $(document).on('pageshow', '#home', function(){
 
@@ -110,8 +111,12 @@ $(document).on('pageshow', '#home', function(){
 
 
 $(document).on('pageshow', '#stats', function(){
-    display_time();
+    // display_time();
     graph_interval();
+});
+
+$(document).on('pagebeforehide', '#stats', function(){
+    clearInterval(graph_event);
 });
 
 // external functions
@@ -282,7 +287,7 @@ function display_humidity(humidity){
 function graph_interval(){
     $.get('/get_config/event_display_timer', function(interval){
         interval = interval * 1000;
-        setInterval(display_graphs, interval);
+        graph_event = setInterval(display_graphs, interval);
     });
 }
 
