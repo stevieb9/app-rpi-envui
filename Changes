@@ -9,7 +9,7 @@ Changes history for App::RPi::EnvUI
           humidity
         - the various templates now have a div id, so that we can combine all of
           our javascript/jquery into a single file
-        - switched to $(document).on('pageinit') from $(document).ready() so
+        - switched to $(document).on('pageshow') from $(document).ready() so
           that the appropriate js is executed on specific page loads (see above
           point)
 

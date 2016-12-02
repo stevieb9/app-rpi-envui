@@ -5,8 +5,6 @@ var humidity_limit = -1;
 
 $(document).on('pageshow', '#home', function(){
 
-    console.log('loaded home');
-
     // authentication
 
     var logged_in;
@@ -21,15 +19,15 @@ $(document).on('pageshow', '#home', function(){
         }
     });
 
-    $('#auth').addClass('a');
+    $('div.ui-page-active #auth').addClass('a');
 
     if (logged_in){
-        $('#auth').text('Logout');
-        $('#auth').attr('href', '/logout');
+        $('div.ui-page-active #auth').text('Logout');
+        $('div.ui-page-active #auth').attr('href', '/logout');
     }
     else {
-        $('#auth').text('Login');
-        $('#auth').attr('href', '/login');
+        $('div.ui-page-active #auth').text('Login');
+        $('div.ui-page-active #auth').attr('href', '/login');
     }
 
     // aux buttons
@@ -38,12 +36,12 @@ $(document).on('pageshow', '#home', function(){
         var aux = 'aux' + i;
 
         if (! logged_in){
-            $('#'+aux).flipswitch("option", "disabled", true);
+            $('div.ui-page-active #'+ aux).flipswitch("option", "disabled", true);
         }
         else {
-            $('#'+ aux).flipswitch();
-            $('#'+ aux).flipswitch("option", "onText",  "ON");
-            $('#'+ aux).flipswitch("option", "offText", "OFF");
+            $('div.ui-page-active #'+ aux).flipswitch();
+            $('div.ui-page-active #'+ aux).flipswitch("option", "onText",  "ON");
+            $('div.ui-page-active #'+ aux).flipswitch("option", "offText", "OFF");
         }
 
         // hide all generic auxs if necessary
@@ -55,17 +53,17 @@ $(document).on('pageshow', '#home', function(){
             success: function(data){
                 var json = $.parseJSON(data);
                 if (parseInt(json.pin) == '-1'){
-                    // $('#'+aux+'_widget').hide();
+                    // $('div.ui-page-active #'+aux+'_widget').hide();
                 }
             }
         });
     }
 
-    $('.button').on('change', flip_change);
+    $('div.ui-page-active .button').on('change', flip_change);
 
     // main menu
 
-    $('.myMenu ul li').hover(function() {
+    $('div.ui-page-active .myMenu ul li').hover(function() {
         $(this).children('ul').stop(true, false, true).slideToggle(300);
     });
 
@@ -75,10 +73,10 @@ $(document).on('pageshow', '#home', function(){
     var positions = $.parseJSON(s_positions);
 
     $.each(positions, function (id, pos){
-        $('#'+ id).css(pos);
+        $('div.ui-page-active #'+ id).css(pos);
     })
 
-    $('.drag').draggable({
+    $('div.ui-page-active .drag').draggable({
         handle: 'p.widget_handle',
         grid: [10, 1],
         scroll: false,
@@ -167,16 +165,16 @@ function aux_state(aux){
 
             var checked = parseInt(json.state);
 
-            $('#'+ aux).prop('checked', checked);
+            $('div.ui-page-active #'+ aux).prop('checked', checked);
 
-            $('#'+ aux).off('change');
+            $('div.ui-page-active #'+ aux).off('change');
 
-            $('#'+ aux).flipswitch("option", "onText",  onText);
-            $('#'+ aux).flipswitch("option", "offText", offText);
+            $('div.ui-page-active #'+ aux).flipswitch("option", "onText",  onText);
+            $('div.ui-page-active #'+ aux).flipswitch("option", "offText", offText);
 
-            $('#'+ aux).flipswitch('refresh');
+            $('div.ui-page-active #'+ aux).flipswitch('refresh');
 
-            $('#'+ aux).on('change', flip_change);
+            $('div.ui-page-active #'+ aux).on('change', flip_change);
 
         }
     });
@@ -216,7 +214,7 @@ function display_time(){
     console.log("displaying time");
      $.get('/time', function(data){
         console.log(data);
-        $("#"+ page > '#time').text(data);
+        $("div.ui-page-active #time").text(data);
     });
 }
 
@@ -224,17 +222,17 @@ function display_light(){
     $.get('/light', function(data){
         var light = $.parseJSON(data);
         if (light.enable == "0"){
-            $('.light').hide();
+            $('div.ui-page-active .light').hide();
             return;
         }
         if (light.toggle == 'disabled'){
-            $('#aux3').flipswitch('option', 'disable', true);
+            $('div.ui-page-active #aux3').flipswitch('option', 'disable', true);
         }
         else {
-            $('#aux3').flipswitch();
+            $('div.ui-page-active #aux3').flipswitch();
         }
-        $('#light_on_hours').text(light.on_hours);
-        $('#light_on_at').text(light.on_at);
+        $('div.ui-page-active #light_on_hours').text(light.on_hours);
+        $('div.ui-page-active #light_on_at').text(light.on_at);
     });
 }
 
@@ -251,22 +249,22 @@ function display_env(){
 
 function display_temp(temp){
     if (temp > temp_limit && temp_limit != -1){
-        $('#temp').css('color', 'red');
+        $('div.ui-page-active #temp').css('color', 'red');
     }
     else {
-        $('#temp').css('color', 'green');
+        $('div.ui-page-active #temp').css('color', 'green');
     }
-    $('#temp').text(temp +' F');
+    $('div.ui-page-active #temp').text(temp +' F');
 }
 
 function display_humidity(humidity){
     if (humidity < humidity_limit && humidity_limit != -1){
-        $('#humidity').css('color', 'red');
+        $('div.ui-page-active #humidity').css('color', 'red');
     }
     else {
-        $('#humidity').css('color', 'green');
+        $('div.ui-page-active #humidity').css('color', 'green');
     }
-    $('#humidity').text(humidity +' %');
+    $('div.ui-page-active #humidity').text(humidity +' %');
 }
 
 
@@ -315,7 +313,7 @@ function create_graphs(data){
     var graphs = ['temp', 'humidity'];
 
     $.each(graphs, function(index, graph){
-        $.plot($(info[graph].name), [
+        $.plot($('div.ui-page-active ' + info[graph].name), [
             {
                 data: data[graph],
                 threshold: {
