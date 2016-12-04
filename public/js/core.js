@@ -2,13 +2,12 @@
 
 var temp_limit = -1;
 var humidity_limit = -1;
+var logged_in;
 var graph_event = null; // graph interval timer
 
 $(document).on('pageshow', '#home', function(){
-
+//$(document).ready(function() {
     // authentication
-
-    var logged_in;
 
     $.ajax({
         async: false,
@@ -111,6 +110,21 @@ $(document).on('pageshow', '#home', function(){
 
 
 $(document).on('pageshow', '#stats', function(){
+
+    $('div.ui-page-active .myMenu ul li').hover(function() {
+        $(this).children('ul').stop(true, false, true).slideToggle(300);
+    });
+    $('div.ui-page-active #auth').addClass('a');
+
+    if (logged_in){
+        $('div.ui-page-active #auth').text('Logout');
+        $('div.ui-page-active #auth').attr('href', '/logout');
+    }
+    else {
+        $('div.ui-page-active #auth').text('Login');
+        $('div.ui-page-active #auth').attr('href', '/login');
+    }
+
     // display_time();
     graph_interval();
 });
