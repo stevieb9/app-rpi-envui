@@ -30,7 +30,7 @@
                             <li><a onClick="reset_display(); return false;">Reset Layout</a></li>
                         </ul>
                     </li>
-                    <li><a href="/stats">Statistics</a>
+                    <li><a href="/stats">Statistics</a></li>
                     <li class="menuHeader">About
                         <ul>
                             <li><a href="https://github.com/stevieb9" target="_blank">Author Github</a></li>

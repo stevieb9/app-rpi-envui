@@ -54,7 +54,7 @@ $(document).on('pageshow', '#home', function(){
             success: function(data){
                 var json = $.parseJSON(data);
                 if (parseInt(json.pin) == '-1'){
-                    // $('div.ui-page-active #'+aux+'_widget').hide();
+                    $('div.ui-page-active #'+aux+'_widget').hide();
                 }
             }
         });

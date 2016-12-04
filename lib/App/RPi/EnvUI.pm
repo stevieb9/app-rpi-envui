@@ -18,9 +18,6 @@ tzset();
 my $log = $api->log()->child('webapp');
 
 $api->_config_light();
-
-#FIXME: add set/get subs
-
 $api->set_light_times;
 
 #
