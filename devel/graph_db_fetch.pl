@@ -22,8 +22,6 @@ my $sth = $dbh->prepare(
 $sth->execute;
 my $aref = $sth->fetchall_arrayref;
 
-# perl -E '@a=qw(15 16); $c=10-@a; for (0..$c){push @a, 0};@b; @a=reverse @a; push @b, [$_, $a[$_]] for 0..$#a; say "$_->[0], $_->[1]" for @b'
-
 my $check = 1;
 my $count = 0;
 my %data;
