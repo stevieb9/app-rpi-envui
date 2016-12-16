@@ -738,6 +738,9 @@ sub _reset {
     my $self = shift;
     # reset dynamic db attributes
 
+    my $log = $log->child('_reset');
+    $log->_7("reset() called");
+
     $self->db()->update_bulk_all(
         'aux', 'state', [0]
     );

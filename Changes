@@ -12,6 +12,9 @@ Changes history for App::RPi::EnvUI
         - switched to $(document).on('pageshow') from $(document).ready() so
           that the appropriate js is executed on specific page loads (see above
           point)
+        - clean up debugging code in JS
+        - implemented more debug logging
+
 
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is

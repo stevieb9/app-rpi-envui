@@ -6,7 +6,7 @@ var logged_in;
 var graph_event = null; // graph interval timer
 
 $(document).on('pageshow', '#home', function(){
-//$(document).ready(function() {
+
     // authentication
 
     $.ajax({
@@ -59,6 +59,8 @@ $(document).on('pageshow', '#home', function(){
         });
     }
 
+    // button event
+
     $('div.ui-page-active .button').on('change', flip_change);
 
     // main menu
@@ -92,7 +94,7 @@ $(document).on('pageshow', '#home', function(){
         }
     });
 
-    // set variables
+    // set limits
 
     $.get('/get_control/temp_limit', function(data){
         temp_limit = data;
@@ -125,9 +127,10 @@ $(document).on('pageshow', '#stats', function(){
         $('div.ui-page-active #auth').attr('href', '/login');
     }
 
-    // display_time();
     graph_interval();
 });
+
+// stop the graph timed event when not in stats page
 
 $(document).on('pagebeforehide', '#stats', function(){
     clearInterval(graph_event);
@@ -200,9 +203,6 @@ function aux_state(aux){
 }
 
 function flip_change(e){
-    // use this to ensure aux_state() doesn't call this event handler
-    // console.log(this);
-
     var checked = $(this).prop('checked');
     var aux = $(this).attr('id');
 
@@ -262,7 +262,6 @@ function display_env(){
         display_humidity(json.humidity);
     });
 
-    // display_graphs();
     aux_update();
 }
 
@@ -286,15 +285,7 @@ function display_humidity(humidity){
     $('div.ui-page-active #humidity').text(humidity +' %');
 }
 
-
-
-
-// stats.tt js
-
-
-
-
-// external functions
+// statistics page JS
 
 // events
 
