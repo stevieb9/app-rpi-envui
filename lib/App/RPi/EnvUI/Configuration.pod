@@ -27,8 +27,6 @@ update the database with the new information.
 
 Default: C<15>
 
-Default: C<5>
-
 =head3 event_action_timer
 
 Value: Integer, representing the interval (seconds) that the server will read

@@ -20,7 +20,13 @@ Changes history for App::RPi::EnvUI
         - correct significant logging issues. We were initializing the system
           in a way that the log level was not set until long after we've
           performed numerous tasks in API
-          
+        - fix issue where on app start, three API objects were being generated
+          (closes #36)
+        - the fix above (three API objects) was also causing resets of auxs due
+          to -1 values. (fixes #31)
+        - various log level adjustments
+        - fix Configuration POD issue (closes #32)
+
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is
           just a small correction

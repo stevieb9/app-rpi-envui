@@ -77,7 +77,7 @@ get '/stats' => sub {
 
 get '/light' => sub {
         my $log = $log->child('/light');
-        $log->_5("/light");
+        $log->_6("/light");
         return to_json $api->_config_light();
     };
 get '/get_config/:want' => sub {
@@ -117,7 +117,7 @@ get '/fetch_env' => sub {
 
         my $data = $api->env();
         
-        $log->_5("temp: $data->{temp}, humidity: $data->{humidity}");
+        $log->_6("temp: $data->{temp}, humidity: $data->{humidity}");
 
         return to_json {
             temp => $data->{temp},

@@ -19,6 +19,7 @@ our ($temp_sub, $hum_sub, $wp_sub, $pm_sub);
 
 # class variables
 
+my $api;
 my $master_log;
 my $log;
 my $sensor;
@@ -27,12 +28,22 @@ my $events;
 # public environment methods
 
 sub new {
+
+    # return the stored object if we've already run new()
+
+    if (defined $api){
+        $log->_5('returning stored API object');
+        return $api if defined $api;
+    }
+
     my $self = bless {}, shift;
 
     my $caller = (caller)[0];
     $self->_args(@_, caller => $caller);
 
     $self->_init;
+
+    $api = $self;
 
     $log->_5("successfully initialized the system");
 
