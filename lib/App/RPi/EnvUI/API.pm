@@ -363,7 +363,7 @@ sub auth {
 sub events {
     my $self = shift;
 
-    my $log = $master_log->child('events');
+    my $log = $log->child('events');
 
     $events = App::RPi::EnvUI::Event->new($self->testing);
 
