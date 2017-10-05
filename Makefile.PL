@@ -60,6 +60,7 @@ local:
 	mkdir ~/envui/views
 	cp views/* ~/envui/views
 
+    cp config.yml ~/envui
 EOF
 }
 

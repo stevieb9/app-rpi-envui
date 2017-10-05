@@ -14,7 +14,7 @@ Changes history for App::RPi::EnvUI
           point)
         - clean up debugging code in JS
         - implemented more debug logging
-
+        - installer (Makefile.PL) now installs the Dancer2 config.yml file
 
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is
