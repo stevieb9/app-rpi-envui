@@ -177,8 +177,8 @@ function aux_state(aux){
             var offText;
 
             if (parseInt(json.override) == 1 && (aux == 'aux1'||'aux2'||'aux3')){
-                onText = 'OVERRIDE';
-                offText = 'OVERRIDE';
+                onText = 'HOLD';
+                offText = 'HOLD';
             }
             else {
                 onText = 'ON';

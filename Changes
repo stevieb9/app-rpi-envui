@@ -28,6 +28,8 @@ Changes history for App::RPi::EnvUI
         - fix Configuration POD issue (closes #32)
         - change /time to add prepending zero to hours if the length is < 1
         - we now display both the date and the time in the UI
+        - tweaks to the UI button layout, we've switched from label OVERRIDE
+          to HOLD, and manipulated the size and indenting (closes #33)
 
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is
