@@ -4,6 +4,7 @@ use App::RPi::EnvUI::DB;
 use App::RPi::EnvUI::Event;
 use Carp qw(confess);
 use Crypt::SaltedHash;
+use Data::Dumper;
 use DateTime;
 use JSON::XS;
 use Logging::Simple;
@@ -31,14 +32,17 @@ sub new {
     my $caller = (caller)[0];
     $self->_args(@_, caller => $caller);
 
-    $self->_log;
     $self->_init;
 
-    $log->_7("successfully initialized the system");
+    $log->_5("successfully initialized the system");
 
-    $self->events if ! $self->testing && ! defined $events;
-
-    $log->_7("successfully started the async events");
+    if (! $self->testing && ! defined $events){
+        $self->events;
+        $log->_5('successfully created new async events')
+    }
+    else {
+        $log->_5("async events have already been spawned");
+    }
 
     return $self;
 }
@@ -46,12 +50,12 @@ sub action_humidity {
     my ($self, $aux_id, $humidity) = @_;
 
     my $log = $log->child('action_humidity');
-    $log->_5("aux: $aux_id, humidity: $humidity");
+    $log->_6("aux: $aux_id, humidity: $humidity");
 
     my $limit = $self->_config_control('humidity_limit');
     my $min_run = $self->_config_control('humidity_aux_on_time');
 
-    $log->_5("limit: $limit, minimum runtime: $min_run");
+    $log->_6("limit: $limit, minimum runtime: $min_run");
 
     if (! $self->aux_override($aux_id) && $humidity != -1){
         if ($humidity < $limit && $self->aux_time($aux_id) == 0) {
@@ -76,7 +80,7 @@ sub action_temp {
     my $limit = $self->_config_control('temp_limit');
     my $min_run = $self->_config_control('temp_aux_on_time');
 
-    $log->_5("limit: $limit, minimum runtime: $min_run");
+    $log->_6("limit: $limit, minimum runtime: $min_run");
 
     if (! $self->aux_override($aux_id) && $temp != -1){
         if ($temp > $limit && $self->aux_time($aux_id) == 0){
@@ -199,7 +203,7 @@ sub aux_state {
     }
 
     $state = $self->aux($aux_id)->{state};
-    $log->_5("$aux_id state = $state");
+    $log->_6("$aux_id state = $state");
     return $state;
 }
 sub aux_time {
@@ -296,7 +300,7 @@ sub read_sensor {
     my $temp = $self->sensor()->temp('f');
     my $hum = $self->sensor()->humidity;
 
-    $log->_5("temp: $temp, humidity: $hum");
+    $log->_6("temp: $temp, humidity: $hum");
 
     return ($temp, $hum);
 }
@@ -310,12 +314,12 @@ sub switch {
 
     if ($pin != -1){
         if ($state){
-            $log->_5("set $pin state to HIGH");
+            $log->_6("set $pin state to HIGH");
             pin_mode($pin, OUTPUT);
             write_pin($pin, HIGH);
         }
         else {
-            $log->_5("set $pin state to LOW");
+            $log->_6("set $pin state to LOW");
             pin_mode($pin, OUTPUT);
             write_pin($pin, LOW);
         }
@@ -348,7 +352,7 @@ sub auth {
 sub events {
     my $self = shift;
 
-    my $log = $self->log('events');
+    my $log = $master_log->child('events');
 
     $events = App::RPi::EnvUI::Event->new($self->testing);
 
@@ -358,7 +362,7 @@ sub events {
     $self->{events}{env_to_db}->start;
     $self->{events}{env_action}->start;
 
-    $log->_7("events successfully started");
+    $log->_5("events successfully started");
 }
 sub log {
     my $self = shift;
@@ -558,18 +562,23 @@ sub _config_light {
 sub _init {
     my ($self) = @_;
 
-    my $log = $log->child('_init()');
-
     $self->db(
         App::RPi::EnvUI::DB->new(
             testing => $self->testing
         )
     );
 
+    $self->log_level($self->_config_core('log_level'));
+    $self->_log;
+
+    my $log = $log->child('_init()');
+
     if ($self->_ui_test_mode || $self->testing){
+        $log->_5('in test mode');
         $self->_test_mode
     }
     else {
+        $log->_5('in prod mode');
         $self->_prod_mode;
     }
 }
@@ -593,14 +602,14 @@ sub _test_mode {
             return_value => 80
         );
 
-        $log->_7( "mocked RPi::DHT11::temp" );
+        $log->_6( "mocked RPi::DHT11::temp" );
 
         $hum_sub = $mock->mock(
             'RPi::DHT11::humidity',
             return_value => 20
         );
 
-        $log->_7( "mocked RPi::DHT11::humidity" );
+        $log->_6( "mocked RPi::DHT11::humidity" );
 
         $pm_sub = $mock->mock(
             'App::RPi::EnvUI::API::pin_mode',
@@ -613,7 +622,7 @@ sub _test_mode {
         );
     }
 
-    $log->_7(
+    $log->_5(
         "mocked WiringPi::write_pin as App::RPi::EnvUI::API::write_pin"
     );
 
@@ -621,7 +630,7 @@ sub _test_mode {
 
     $self->sensor(bless {}, 'RPi::DHT11');
 
-    $log->_7("blessed a fake sensor");
+    $log->_5("blessed a fake sensor");
 
 }
 sub _prod_mode {
@@ -739,7 +748,7 @@ sub _reset {
     # reset dynamic db attributes
 
     my $log = $log->child('_reset');
-    $log->_7("reset() called");
+    $log->_5("reset() called");
 
     $self->db()->update_bulk_all(
         'aux', 'state', [0]

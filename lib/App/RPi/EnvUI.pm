@@ -4,6 +4,7 @@ use App::RPi::EnvUI::API;
 use Dancer2;
 use Dancer2::Plugin::Auth::Extensible;
 use Dancer2::Core::Request;
+use Data::Dumper;
 use Mock::Sub no_warnings => 1;
 use POSIX qw(tzset);
 
@@ -15,7 +16,7 @@ my $api = App::RPi::EnvUI::API->new(db => $db);
 $ENV{TZ} = $api->_config_core('time_zone');
 tzset();
 
-my $log = $api->log()->child('webapp');
+my $log = $api->log->child('webapp');
 
 $api->_config_light();
 $api->set_light_times;
@@ -26,7 +27,7 @@ $api->set_light_times;
 
 get '/' => sub {
         my $log = $log->child('/');
-        $log->_7("entered");
+        $log->_5("in /home");
 
         # return template 'main';
         return template 'test';
@@ -76,7 +77,7 @@ get '/stats' => sub {
 
 get '/light' => sub {
         my $log = $log->child('/light');
-        $log->_7("entered");
+        $log->_5("/light");
         return to_json $api->_config_light();
     };
 get '/get_config/:want' => sub {
@@ -105,7 +106,7 @@ get '/get_aux/:aux' => sub {
         my $aux_id = params->{aux};
 
         my $log = $log->child('/get_aux');
-        $log->_5("fetching aux object for $aux_id");
+        $log->_7("fetching aux object for $aux_id");
 
         $api->switch($aux_id);
 
