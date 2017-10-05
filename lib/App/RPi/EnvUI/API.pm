@@ -53,7 +53,7 @@ sub action_humidity {
 
     $log->_5("limit: $limit, minimum runtime: $min_run");
 
-    if (! $self->aux_override($aux_id)) {
+    if (! $self->aux_override($aux_id) && $humidity != -1){
         if ($humidity < $limit && $self->aux_time($aux_id) == 0) {
             $log->_5("humidity limit reached turning $aux_id to HIGH");
             $self->aux_state($aux_id, HIGH);
@@ -78,7 +78,7 @@ sub action_temp {
 
     $log->_5("limit: $limit, minimum runtime: $min_run");
 
-    if (! $self->aux_override($aux_id)){
+    if (! $self->aux_override($aux_id) && $temp != -1){
         if ($temp > $limit && $self->aux_time($aux_id) == 0){
             $log->_5("temp limit reached turning $aux_id to HIGH");
             $self->aux_state($aux_id, HIGH);

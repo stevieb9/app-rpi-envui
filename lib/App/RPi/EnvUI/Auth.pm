@@ -19,7 +19,6 @@ sub authenticate_user {
 sub get_user_details {
     my ($self, $user) = @_;
     my $api = App::RPi::EnvUI::API->new;
-
     return $api->user($user);
 }
 

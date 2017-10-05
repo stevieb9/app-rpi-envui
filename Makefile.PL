@@ -33,6 +33,7 @@ return <<EOF;
 install:: all local
 
 local:
+	cp ~/envui/config/envui.json ~
 
 	rm -rf ~/envui
 	mkdir ~/envui
@@ -60,7 +61,7 @@ local:
 	mkdir ~/envui/views
 	cp views/* ~/envui/views
 
-    cp config.yml ~/envui
+	cp config.yml ~/envui
 EOF
 }
 

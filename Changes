@@ -15,6 +15,8 @@ Changes history for App::RPi::EnvUI
         - clean up debugging code in JS
         - implemented more debug logging
         - installer (Makefile.PL) now installs the Dancer2 config.yml file
+        - fix the -1 temp/hum from enabling devices on initial page load (work
+          on #31)
 
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is
