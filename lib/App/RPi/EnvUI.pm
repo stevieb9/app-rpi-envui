@@ -66,9 +66,15 @@ get '/logged_in' => sub {
     };
 
 get '/time' => sub {
-        my ($h, $m) = (localtime)[2, 1];
-        $m = "0$m" if length $m < 2;
-        return join ':', ($h, $m);
+        my ($y, $m, $d, $h, $min) = (localtime)[5, 4, 3, 2, 1];
+
+        $y += 1900;
+
+        for ($m, $d, $h, $min){
+            $_ = "0$_" if length $_ < 2;
+        }
+
+        return "$y-$m-$d $h:$min";
     };
 
 get '/stats' => sub {
