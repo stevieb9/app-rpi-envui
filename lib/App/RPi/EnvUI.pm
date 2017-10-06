@@ -29,8 +29,7 @@ get '/' => sub {
         my $log = $log->child('/');
         $log->_5("in /home");
 
-        # return template 'main';
-        return template 'test';
+        return template 'main';
     };
 
 # fetch graph code
