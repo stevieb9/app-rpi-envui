@@ -199,10 +199,6 @@ __END__
 App::RPi::EnvUI - One-page asynchronous grow room environment control web
 application
 
-=for html
-<a href="http://travis-ci.org/stevieb9/app-rpi-envui"><img src="https://secure.travis-ci.org/stevieb9/app-rpi-envui.png"/></a>
-<a href='https://coveralls.io/github/stevieb9/app-rpi-envui?branch=master'><img src='https://coveralls.io/repos/stevieb9/app-rpi-envui/badge.svg?branch=master&service=github' alt='Coverage Status' /></a>
-
 =head1 SYNOPSIS
 
     cd ~/envui
@@ -214,7 +210,7 @@ Now direct your browser at your Pi, on port 3000:
 
 =head1 DESCRIPTION
 
-*** This is trial software until v1.00 is released. It's still a constant work
+*** This is beta software until v1.00 is released. It's still a constant work
 in progress, so the docs are awful, but I am trying to improve them as I learn
 the things I need to know to get where I want to be.***
 
@@ -429,7 +425,7 @@ Steve Bertrand, E<lt>steveb@cpan.org<gt>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2016 Steve Bertrand.
+Copyright 2017 Steve Bertrand.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published

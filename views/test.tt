@@ -16,7 +16,6 @@
     <script type="text/javascript" src="js/core.js"></script>
 </head>
 
-
 <body>
 <div data-role="page" id="home">
 <table width="100%">

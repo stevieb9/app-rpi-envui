@@ -18,6 +18,7 @@ public/css/flipswitch.struct.css
 public/js/core.js
 public/js/flot.js
 public/js/flot.threshold.js
+public/js/stats.js
 README
 src/db.sql
 src/envui-dist.db
@@ -50,4 +51,5 @@ t/999-cleanup.t
 t/setup.pl
 t/TestBase.pm
 views/main.tt
+views/stats.tt
 views/test.tt
