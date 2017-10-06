@@ -270,6 +270,9 @@ duties. The third is set up to manage a single grow lamp. The remaining five
 auxillaries can be set and connected to whatever you please, but these channels
 do not have any logic behind them yet; they're just on or off.
 
+Note that you must be logged in to toggle the connected devices. The default
+username is C<admin> and the default password is C<admin>.
+
 =head1 WEB UI
 
 The UI and infrastructure behind it is in its infancy. There are vast changes
@@ -289,6 +292,9 @@ that I'll be making. Currently I have:
       itself, but renders reasonably well on any device size
     - authentication is required for any routes that set state of any kind
     - everything is stored in a DB backend
+
+Note that you must be logged in to toggle the connected devices. The default
+username is C<admin> and the default password is C<admin>.
 
 =head1 HOWTO
 

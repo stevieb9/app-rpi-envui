@@ -33,6 +33,8 @@ Changes history for App::RPi::EnvUI
         - we now show a tooltip on the buttoms to inform the user that to make
           changes, they must be logged in. (closes #38)
         - removed Travis CI integration (for lack of SQLite)
+        - added blurb about needing to be logged in to make changes (and
+          included the default un/pw)
 
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is
