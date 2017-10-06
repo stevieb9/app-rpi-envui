@@ -30,6 +30,8 @@ Changes history for App::RPi::EnvUI
         - we now display both the date and the time in the UI
         - tweaks to the UI button layout, we've switched from label OVERRIDE
           to HOLD, and manipulated the size and indenting (closes #33)
+        - we now show a tooltip on the buttoms to inform the user that to make
+          changes, they must be logged in. (closes #38)
 
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is

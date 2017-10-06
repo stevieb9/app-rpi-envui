@@ -36,7 +36,11 @@ $(document).on('pageshow', '#home', function(){
         var aux = 'aux' + i;
 
         if (! logged_in){
-            $('div.ui-page-active #'+ aux).flipswitch("option", "disabled", true);
+            $('div.ui-page-active #' + aux).flipswitch("option", "disabled", true);
+            $('div.ui-page-active #'+aux+'_widget').prop(
+                'title',
+                'You must be logged in to make changes.'
+            );
         }
         else {
             $('div.ui-page-active #'+ aux).flipswitch();
@@ -89,7 +93,6 @@ $(document).on('pageshow', '#home', function(){
         },
         stop: function(event, ui){
             positions[this.id] = ui.position;
-            console.log(positions);
             localStorage.positions = JSON.stringify(positions)
         }
     });
@@ -230,9 +233,7 @@ function reset_display(){
 
 function display_time(){
     var page = $(".ui-page-active").attr("id");
-    console.log("displaying time");
      $.get('/time', function(data){
-        console.log(data);
         $("div.ui-page-active #time").text(data);
     });
 }
@@ -297,7 +298,6 @@ function graph_interval(){
 }
 
 function display_graphs(){
-    console.log("displaying graph");
     $.get('/graph_data', function(data){
         var graph_data = $.parseJSON(data);
         create_graphs(graph_data);
