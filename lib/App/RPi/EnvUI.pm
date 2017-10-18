@@ -304,6 +304,15 @@ file.
 Map the C<pin> of each aux in the configuration file to a GPIO pin. Start up the
 app per L</HOW IT WORKS>. Go to the webpage in an HTML5-capable browser.
 
+I start the application by doing the following. It'll restart the application
+properly after every startup:
+
+    sudo crontab -e
+    
+    # add a line similar to the following:
+
+    @reboot  cd /home/pi/envui && /home/pi/perl5/perlbrew/perls/perl-5.26.0/bin/plackup bin/app.pl
+
 =head1 ROUTES
 
 =head2 /
