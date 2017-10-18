@@ -51,4 +51,3 @@ t/setup.pl
 t/TestBase.pm
 views/main.tt
 views/stats.tt
-views/test.tt
