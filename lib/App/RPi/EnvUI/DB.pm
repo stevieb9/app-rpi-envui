@@ -61,7 +61,7 @@ sub user {
 
     $sth->execute($user);
 
-    my $res = $sth->fetchrow_hashref();
+    my $res = $sth->fetchrow_hashref;
 
     return ref $res ne 'HASH'
         ? {user => $user, pass => ''}

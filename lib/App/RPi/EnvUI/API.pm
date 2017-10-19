@@ -148,7 +148,7 @@ sub aux {
 
     $log->_7("getting aux information for $aux_id");
 
-    my $aux = $self->db()->aux($aux_id);
+    my $aux = $self->db->aux($aux_id);
     return $aux;
 }
 sub auxs {
@@ -157,7 +157,7 @@ sub auxs {
     my $log = $log->child('auxs');
     $log->_7("retrieving all auxs");
 
-    return $self->db()->auxs;
+    return $self->db->auxs;
 }
 sub aux_id {
     my ($self, $aux) = @_;
@@ -178,7 +178,7 @@ sub aux_override {
     }
 
     if (defined $override){
-        $self->db()->update('aux', 'override', $override, 'id', $aux_id);
+        $self->db->update('aux', 'override', $override, 'id', $aux_id);
     }
     return $self->aux($aux_id)->{override};
 }
@@ -192,7 +192,7 @@ sub aux_pin {
     }
 
     if (defined $pin){
-        $self->db()->update('aux', 'pin', $pin, 'id', $aux_id);
+        $self->db->update('aux', 'pin', $pin, 'id', $aux_id);
     }
     return $self->aux($aux_id)->{pin};
 }
@@ -210,7 +210,7 @@ sub aux_state {
 
     if (defined $state){
         $log->_5("setting state to $state for $aux_id");
-        $self->db()->update('aux', 'state', $state, 'id', $aux_id);
+        $self->db->update('aux', 'state', $state, 'id', $aux_id);
     }
 
     $state = $self->aux($aux_id)->{state};
@@ -228,7 +228,7 @@ sub aux_time {
     }
 
     if (defined $time) {
-        $self->db()->update('aux', 'on_time', $time, 'id', $aux_id);
+        $self->db->update('aux', 'on_time', $time, 'id', $aux_id);
     }
 
     my $on_time = $self->aux($aux_id)->{on_time};
@@ -252,7 +252,7 @@ sub env {
     }
 
     if (defined $temp){
-        $self->db()->insert_env($temp, $hum);
+        $self->db->insert_env($temp, $hum);
     }
 
     my $event_error = 0;
@@ -262,7 +262,7 @@ sub env {
         print "event failure!\n";
     }
 
-    my $ret = $self->db()->env;
+    my $ret = $self->db->env;
 
     return {temp => -1, humidity => -1, error => $error} if ! defined $ret;
 
@@ -273,7 +273,7 @@ sub env {
 sub graph_data {
     my ($self) = @_;
 
-    my $graph_data = $self->db()->graph_data;
+    my $graph_data = $self->db->graph_data;
 
     my $check = 1;
     my $count = 0;
@@ -309,7 +309,7 @@ sub graph_data {
 }
 sub humidity {
     my $self = shift;
-    return $self->env()->{humidity};
+    return $self->env->{humidity};
 }
 sub read_sensor {
     my $self = shift;
@@ -319,8 +319,8 @@ sub read_sensor {
     if (! defined $self->sensor){
         confess "\$self->{sensor} is not defined";
     }
-    my $temp = $self->sensor()->temp('f');
-    my $hum = $self->sensor()->humidity;
+    my $temp = $self->sensor->temp('f');
+    my $hum = $self->sensor->humidity;
 
     $log->_6("temp: $temp, humidity: $hum");
 
@@ -349,7 +349,7 @@ sub switch {
 }
 sub temp {
     my $self = shift;
-    return $self->env()->{temp};
+    return $self->env->{temp};
 }
 
 # public core operational methods
@@ -367,7 +367,7 @@ sub auth {
     }
     my $csh = Crypt::SaltedHash->new(algorithm => 'SHA1');
 
-    my $crypted = $self->db()->user($user)->{pass};
+    my $crypted = $self->db->user($user)->{pass};
 
     return $csh->validate($crypted, $pw);
 }
@@ -416,7 +416,7 @@ sub user {
         confess "\n\nuser() requires a username to be sent in\n\n";
     }
 
-    return $self->db()->user($un);
+    return $self->db->user($un);
 }
 
 # public configuration getters
@@ -449,8 +449,8 @@ sub set_light_times {
         $off_time -= 24 * 3600;
     }
 
-    $self->db()->update('light', 'value', $on_time, 'id', 'on_time');
-    $self->db()->update('light', 'value', $off_time, 'id', 'off_time');
+    $self->db->update('light', 'value', $on_time, 'id', 'on_time');
+    $self->db->update('light', 'value', $off_time, 'id', 'off_time');
 
 }
 
@@ -541,20 +541,20 @@ sub _bool {
 sub _config_control {
     my $self = shift;
     my $want = shift;
-    return $self->db()->config_control($want);
+    return $self->db->config_control($want);
 }
 sub _config_core {
     my $self = shift;
     my $want = shift;
 
-    if (! defined $self->db()){
+    if (! defined $self->db){
         confess "API's DB object is not defined.";
     }
 
     if (! defined $want){
         confess "_config_core() requires a \$want param\n";
     }
-    return $self->db()->config_core($want);
+    return $self->db->config_core($want);
 }
 sub _config_light {
     my $self = shift;
@@ -562,7 +562,7 @@ sub _config_light {
 
     my %conf;
 
-    my $light = $self->db()->config_light;
+    my $light = $self->db->config_light;
 
     for (keys %$light){
         if ($_ eq 'on_hours'){
@@ -698,7 +698,7 @@ sub _log {
 sub _parse_config {
     my ($self, $config) = @_;
 
-    $self->db()->begin;
+    $self->db->begin;
 
     $self->_reset;
 
@@ -733,7 +733,7 @@ sub _parse_config {
             #$self->aux_pin( $aux_id, $pin );
         }
 
-        $self->db()->update_bulk(@$db_struct, \@data);
+        $self->db->update_bulk(@$db_struct, \@data);
     }
 
     for my $conf_section (qw(control core light)){
@@ -759,10 +759,10 @@ sub _parse_config {
             }
         }
 
-        $self->db()->update_bulk(@$db_struct, \@data);
+        $self->db->update_bulk(@$db_struct, \@data);
     }
 
-    $self->db()->commit;
+    $self->db->commit;
 }
 sub _reset {
     my $self = shift;
@@ -771,19 +771,19 @@ sub _reset {
     my $log = $log->child('_reset');
     $log->_5("reset() called");
 
-    $self->db()->update_bulk_all(
+    $self->db->update_bulk_all(
         'aux', 'state', [0]
     );
-    $self->db()->update_bulk_all(
+    $self->db->update_bulk_all(
         'aux', 'override', [0]
     );
-    $self->db()->update_bulk_all(
+    $self->db->update_bulk_all(
         'aux', 'on_time', [0]
     );
 
     # remove all statistics
 
-    $self->db()->delete('stats');
+    $self->db->delete('stats');
 }
 sub _ui_test_mode {
     return -e 't/testing.lck';

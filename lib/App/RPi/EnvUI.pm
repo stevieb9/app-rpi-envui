@@ -28,7 +28,6 @@ $api->set_light_times;
 get '/' => sub {
         my $log = $log->child('/');
         $log->_5("in /home");
-
         return template 'main';
     };
 
@@ -52,7 +51,6 @@ post '/login' => sub {
     };
 
 any '/logout' => sub {
-#        cookie session expires => '-1 day';
         app->destroy_session;
         redirect '/';
     };
@@ -83,30 +81,22 @@ get '/stats' => sub {
 get '/light' => sub {
         my $log = $log->child('/light');
         $log->_6("/light");
-        return to_json $api->_config_light();
+        return to_json $api->_config_light;
     };
 
 get '/get_config/:want' => sub {
         my $want = params->{want};
-
         my $log = $log->child('/get_config');
-
         my $value = $api->_config_core($want);
-
         $log->_5("param: $want, value: $value");
-
         return $value;
     };
 
 get '/get_control/:want' => sub {
         my $want = params->{want};
-
         my $log = $log->child('/get_control');
-
         my $value = $api->_config_control($want);
-
         $log->_5("param: $want, value: $value");
-
         return $value;
     };
 get '/get_aux/:aux' => sub {
@@ -122,7 +112,7 @@ get '/get_aux/:aux' => sub {
 get '/fetch_env' => sub {
         my $log = $log->child('/fetch_env');
 
-        my $data = $api->env();
+        my $data = $api->env;
         
         $log->_6(
             "temp: $data->{temp}, humidity: $data->{humidity}, " .
