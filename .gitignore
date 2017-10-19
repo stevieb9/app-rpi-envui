@@ -9,7 +9,7 @@ Makefile
 .hg/
 .git/
 MYMETA.*
-*.tar.gz
+*.tar\.gz
 _build/
 blib/
 Build/

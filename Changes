@@ -35,6 +35,10 @@ Changes history for App::RPi::EnvUI
         - removed Travis CI integration (for lack of SQLite)
         - added blurb about needing to be logged in to make changes (and
           included the default un/pw)
+        - bumped prereq of Async::Event::Interval to 0.04 for the updated status
+          functionality
+        - added config directive, "event_timeout"
+
 
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is

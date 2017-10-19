@@ -18,7 +18,7 @@ tzset();
 
 my $log = $api->log->child('webapp');
 
-$api->_config_light();
+$api->_config_light;
 $api->set_light_times;
 
 #
@@ -85,6 +85,7 @@ get '/light' => sub {
         $log->_6("/light");
         return to_json $api->_config_light();
     };
+
 get '/get_config/:want' => sub {
         my $want = params->{want};
 
@@ -96,6 +97,7 @@ get '/get_config/:want' => sub {
 
         return $value;
     };
+
 get '/get_control/:want' => sub {
         my $want = params->{want};
 
@@ -147,7 +149,7 @@ get '/set_aux_state/:aux/:state' => sub {
         my $aux_id = params->{aux};
         my $state = $api->_bool(params->{state});
 
-        my $log = $log->child('/set_env');
+        my $log = $log->child('/set_aux_state');
         $log->_5("aux_id: $aux_id, state: $state");
 
         $state = $api->aux_state($aux_id, $state);

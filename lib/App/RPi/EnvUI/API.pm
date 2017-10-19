@@ -255,9 +255,17 @@ sub env {
         $self->db()->insert_env($temp, $hum);
     }
 
+    my $event_error = 0;
+
+    if ($self->{events}{env_to_db}->status == -1){
+        $event_error = 1;
+        print "event failure!\n";
+    }
+
     my $ret = $self->db()->env;
     return {temp => -1, humidity => -1} if ! defined $ret;
-    return $self->db()->env;
+
+    $ret->{error => $event_error};
 }
 sub graph_data {
     my ($self) = @_;
@@ -686,7 +694,6 @@ sub _log {
 }
 sub _parse_config {
     my ($self, $config) = @_;
-
 
     $self->db()->begin;
 

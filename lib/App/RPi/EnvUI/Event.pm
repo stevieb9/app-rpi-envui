@@ -19,11 +19,15 @@ sub env_to_db {
 
     $api->{db} = $db;
     $self->{db} = $db;
+    $self->{timeout} = $api->_config_control('event_timeout');
 
     my $event = Async::Event::Interval->new(
         $api->_config_core('event_fetch_timer'),
         sub {
+            local $SIG{ALRM} = sub { kill 9, $$; };
+            alarm $self->{timeout};
             my ($temp, $hum) = $api->read_sensor;
+            alarm 0;
             $api->env($temp, $hum);
         },
     );
