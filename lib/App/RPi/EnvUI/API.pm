@@ -263,9 +263,12 @@ sub env {
     }
 
     my $ret = $self->db()->env;
-    return {temp => -1, humidity => -1} if ! defined $ret;
+
+    return {temp => -1, humidity => -1, error => $error} if ! defined $ret;
 
     $ret->{error => $event_error};
+
+    return $ret;
 }
 sub graph_data {
     my ($self) = @_;

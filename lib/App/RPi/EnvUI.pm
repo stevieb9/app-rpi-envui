@@ -124,11 +124,15 @@ get '/fetch_env' => sub {
 
         my $data = $api->env();
         
-        $log->_6("temp: $data->{temp}, humidity: $data->{humidity}");
+        $log->_6(
+            "temp: $data->{temp}, humidity: $data->{humidity}, " .
+            "error => $data->{error}"
+        );
 
         return to_json {
             temp => $data->{temp},
-            humidity => $data->{humidity}
+            humidity => $data->{humidity},
+            error => $data->{error}
         };
     };
 
