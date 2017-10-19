@@ -41,6 +41,8 @@ INSERT INTO control VALUES ('temp_aux', 'aux1');
 INSERT INTO control VALUES ('humidity_aux', 'aux2');
 INSERT INTO control VALUES ('light_aux', 'aux3');
 
+INSERT INTO control VALUES ('event_timeout', '60');
+
 DROP TABLE IF EXISTS core;
 
 CREATE TABLE core (
