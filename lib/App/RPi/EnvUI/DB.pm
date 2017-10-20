@@ -9,8 +9,8 @@ BEGIN {
         require DBI;
         DBI->import;
     }
-    if (! exists $INC{'RPi/WiringPi/Constant.pm'}){
-        require RPi::WiringPi::Constant;
+    if (! exists $INC{'RPi/Const.pm'}){
+        require RPi::Const;
         DateTime->import(qw(:all));
     }
 }

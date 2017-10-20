@@ -9,7 +9,7 @@ use DateTime;
 use JSON::XS;
 use Logging::Simple;
 use Mock::Sub no_warnings => 1;
-use RPi::WiringPi::Constant qw(:all);
+use RPi::Const qw(:all);
 
 our $VERSION = '0.29';
 

@@ -103,7 +103,7 @@ WriteMakefile(
         'Mock::Sub' => '1.07',
         'Plack::Test' => 0,
         'RPi::DHT11' => '1.01',
-        'RPi::WiringPi::Constant' => '0.02',
+        'RPi::Const' => '1.02',
         'Test::More' => 0,
         'WiringPi::API' => '1.04',
     },
