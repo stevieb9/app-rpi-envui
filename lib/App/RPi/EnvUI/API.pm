@@ -888,11 +888,10 @@ required.
 
 Parameters (only used for testing):
 
-    $dt
+    %args
 
-Optional (use for testing only!), L<DateTime> object. This object will replace
-a call to C<now()>, so that when we're testing, we can simulate now as being in
-the future to test on/off triggers properly.
+Optional (use for testing only!). Pass in a hash with the desired configuration
+parameters as found in the configuration file for light configuration.
 
 =head2 action_temp($aux_id, $temperature)
 

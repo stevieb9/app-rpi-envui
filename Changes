@@ -41,6 +41,7 @@ Changes history for App::RPi::EnvUI
         - updated src db and schema with new directives
         - change to using RPi::Const instead of RPi::WiringPi::Const
           (closes #42)
+        - fix documentation for API::action_light() (closes #44)
 
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is
