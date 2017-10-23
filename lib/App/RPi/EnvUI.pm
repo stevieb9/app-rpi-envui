@@ -113,10 +113,9 @@ get '/fetch_env' => sub {
         my $log = $log->child('/fetch_env');
 
         my $data = $api->env;
-        
+         
         $log->_6(
-            "temp: $data->{temp}, humidity: $data->{humidity}, " .
-            "error => $data->{error}"
+            "temp: $data->{temp}, humidity: $data->{humidity}"
         );
 
         return to_json {
@@ -176,6 +175,8 @@ get '/set_aux_override/:aux/:override' => sub {
 
         $override = $api->aux_override($aux_id, $override);
 
+        return if $override == -1;
+         
         $log->_6("$aux_id updated override $override");
 
         return to_json {

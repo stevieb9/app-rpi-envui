@@ -209,7 +209,7 @@ function flip_change(e){
     var checked = $(this).prop('checked');
     var aux = $(this).attr('id');
 
-    $.get('/set_aux_override/'+ aux +'/'+ checked, function(data){
+    $.get('/set_aux_override/'+ aux +'/'+ 'true', function(data){
         var json = $.parseJSON(data);
         if (json.error){
             console.log(json.error);

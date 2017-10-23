@@ -176,8 +176,17 @@ sub aux_override {
     if ($aux_id !~ /^aux/){
         confess "aux_override() requires an aux ID as its first param\n";
     }
+    
+
+    my $light_toggle = $self->_config_light('toggle');
+    my $light_aux = $self->_config_control('light_aux');
+
+    if ($light_toggle !~ /enable/ && $aux_id eq $light_aux){
+        return -1;
+    }
 
     if (defined $override){
+        $override = $self->aux_override($aux_id) ? 0 : 1;
         $self->db->update('aux', 'override', $override, 'id', $aux_id);
     }
     return $self->aux($aux_id)->{override};
