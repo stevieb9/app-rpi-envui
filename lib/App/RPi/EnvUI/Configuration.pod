@@ -152,14 +152,6 @@ management table in the UI, and we will not perform any light on/off events.
 
 Default: C<0>
 
-=head3 toggle
-
-Value: Bool. Set to C<1> to allow the light's on/off button to be toggled in the
-UI, and C<0> to have it disabled, preventing manual overrides of the schedule.
-The C<enable> directive must be set for this to have any effect.
-
-Default: C<0>
-
 =head3 on_at
 
 Value: A time, in C<HH:MM> format, in 24 hour clock (eg: C<18:30>). This is the
@@ -208,6 +200,11 @@ Default:
     aux6: none
     aux7: none
     aux8: none
+
+=head3 toggle
+
+Value: Bool. C<0> will disable the ability to toggle the auxillary channel via
+the UI, and C<1> will enable it.
 
 =head1 AUTHOR
 

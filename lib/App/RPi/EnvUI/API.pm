@@ -179,13 +179,14 @@ sub aux_override {
         confess "aux_override() requires an aux ID as its first param\n";
     }
 
-    my $light_aux = $self->_config_control('light_aux');
+    if (defined $override){
+        $log->_5("attempted override of aux: $aux_id");
+        my $toggle = $self->aux($aux_id)->{toggle};
 
-    if ($aux_id eq $light_aux && defined $override){
-        $log->_5("attempted override of the light aux");
-        my $light_toggle = $self->_config_light('toggle');
-        if ($light_toggle != 1){
-            $log->_5("light toggling is not enabled. Not overriding the lamp");
+        if ($toggle != 1){
+            $log->_5(
+                "toggling of aux id $aux_id is disabled in the config file"
+            );
             return -1;
         }
     }
@@ -734,11 +735,12 @@ sub _parse_config {
 
     # auxillary channels
 
-    {
+    { # pin numbers
+
         my $db_struct = [
             'aux',
             'pin',
-            'id'
+            'id',
         ];
         my @data;
 
@@ -746,7 +748,24 @@ sub _parse_config {
             my $aux_id = "aux$_";
             my $pin = $conf->{$aux_id}{pin};
             push @data, [$pin, $aux_id];
-            #$self->aux_pin( $aux_id, $pin );
+        }
+
+        $self->db->update_bulk(@$db_struct, \@data);
+    }
+
+    { # aux toggle
+
+        my $db_struct = [
+            'aux',
+            'toggle',
+            'id',
+        ];
+        my @data;
+
+        for (1 .. 8) {
+            my $aux_id = "aux$_";
+            my $toggle = $conf->{$aux_id}{toggle};
+            push @data, [$toggle, $aux_id];
         }
 
         $self->db->update_bulk(@$db_struct, \@data);

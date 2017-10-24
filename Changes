@@ -51,6 +51,8 @@ Changes history for App::RPi::EnvUI
           failing to prevent toggling (we now throw a JS alert). (closes #39)
         - implemented much more robust logging throughout the override call
           chain (closes #29)
+        - removed the toggle option from the light config, and instead added
+          the option to all auxillary channels
 
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is

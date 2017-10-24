@@ -253,12 +253,7 @@ function display_light(){
             $('div.ui-page-active .light').hide();
             return;
         }
-        if (light.toggle == 'disabled'){
-            $('div.ui-page-active #aux3').flipswitch('option', 'disable', true);
-        }
-        else {
-            $('div.ui-page-active #aux3').flipswitch();
-        }
+
         $('div.ui-page-active #light_on_hours').text(light.on_hours);
         $('div.ui-page-active #light_on_at').text(light.on_at);
     });
