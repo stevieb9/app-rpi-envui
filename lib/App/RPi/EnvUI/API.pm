@@ -11,7 +11,7 @@ use Logging::Simple;
 use Mock::Sub no_warnings => 1;
 use RPi::Const qw(:all);
 
-our $VERSION = '0.29';
+our $VERSION = '0.30';
 
 # mocked sub handles for when we're in testing mode
 

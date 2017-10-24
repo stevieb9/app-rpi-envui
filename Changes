@@ -1,5 +1,8 @@
 Changes history for App::RPi::EnvUI
 
+0.30 UNREL
+        -
+
 0.29    2017-10-24
         - this project is still in BETA status and should not be used in a
           production growing environment without extreme monitoring
