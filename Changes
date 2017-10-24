@@ -47,6 +47,10 @@ Changes history for App::RPi::EnvUI
         - fix override issues (fixes #37)
         - the main page now displays the limits for temp and humidity
           (closes #40)
+        - fix issue where the "toggle" config directive for the light aux was
+          failing to prevent toggling (we now throw a JS alert). (closes #39)
+        - implemented much more robust logging throughout the override call
+          chain (closes #29)
 
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is

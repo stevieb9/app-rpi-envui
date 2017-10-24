@@ -68,7 +68,6 @@ sub user {
         : $res;
 }
 sub aux {
-
     my ($self, $aux_id) = @_;
 
     if (! $self->{aux_sth}) {

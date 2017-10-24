@@ -179,8 +179,6 @@ function aux_state(aux){
             var onText;
             var offText;
 
-            console.log("aux: " + aux + " o: " + json.override);
-
             if (parseInt(json.override) == 1 && (aux == 'aux1'||'aux2'||'aux3')){
                 onText = 'HOLD';
                 offText = 'HOLD';
@@ -213,15 +211,23 @@ function flip_change(e){
 
     $.get('/set_aux_override/'+ aux +'/'+ 'true', function(data){
         var json = $.parseJSON(data);
+
         if (json.error){
             console.log(json.error);
         }
-    });
 
-    $.get('/set_aux_state/'+ aux +'/'+ checked, function(data){
-        var json = $.parseJSON(data);
-        if (json.error){
-            console.log(json.error);
+        var override_status = parseInt(json.override);
+
+        if (override_status != -1){
+            $.get('/set_aux_state/'+ aux +'/'+ checked, function(data){
+                var json = $.parseJSON(data);
+                if (json.error){
+                    console.log(json.error);
+                }
+            });
+        }
+        else {
+            alert("aux id " + aux + " toggling is disabled in the config file");
         }
     });
 }

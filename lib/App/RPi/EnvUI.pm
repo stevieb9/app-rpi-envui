@@ -159,31 +159,34 @@ get '/set_aux_state/:aux/:state' => sub {
 
 get '/set_aux_override/:aux/:override' => sub {
 
+        my $log = $log->child('/set_aux_override');
+
         if (
             (request->address ne '127.0.0.1' && ! session 'logged_in_user')
             || $ENV{UNIT_TEST}){
+            $log->_1("attempted call of a 'set' operation while not logged in");
             return to_json {
                     error => 'unauthorized request. You must be logged in'
             };
         }
-        
+
         my $aux_id = params->{aux};
         my $override = $api->_bool(params->{override});
 
-        my $log = $log->child('/set_aux_override');
-        $log->_5("aux_id: $aux_id, override $override");
+        $log->_5("setting override for aux id: $aux_id");
 
         $override = $api->aux_override($aux_id, $override);
 
-        return if $override == -1;
-         
-        $log->_6("$aux_id updated override $override");
+        $log->_5("current override status for aux id $aux_id is $override");
+
+        if ($override == -1){
+            $log->_5("override for aux id $aux_id is currently disabled");
+        }
 
         return to_json {
             aux => $aux_id,
             override => $override,
         };
-
     };
 
 true;

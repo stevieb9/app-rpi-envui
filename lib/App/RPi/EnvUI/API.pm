@@ -173,20 +173,27 @@ sub aux_override {
 
     my ($aux_id, $override) = @_;
 
+    my $log = $log->child('aux_override');
+
     if ($aux_id !~ /^aux/){
         confess "aux_override() requires an aux ID as its first param\n";
     }
-    
 
-    my $light_toggle = $self->_config_light('toggle');
     my $light_aux = $self->_config_control('light_aux');
 
-    if ($light_toggle !~ /enable/ && $aux_id eq $light_aux){
-        return -1;
+    if ($aux_id eq $light_aux && defined $override){
+        $log->_5("attempted override of the light aux");
+        my $light_toggle = $self->_config_light('toggle');
+        if ($light_toggle != 1){
+            $log->_5("light toggling is not enabled. Not overriding the lamp");
+            return -1;
+        }
     }
 
     if (defined $override){
+        $log->_5("override set operation called for $aux_id");
         $override = $self->aux_override($aux_id) ? 0 : 1;
+        $log->_5("override set to $override for aux id: $aux_id");
         $self->db->update('aux', 'override', $override, 'id', $aux_id);
     }
     return $self->aux($aux_id)->{override};
