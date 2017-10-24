@@ -179,6 +179,8 @@ function aux_state(aux){
             var onText;
             var offText;
 
+            console.log("aux: " + aux + " o: " + json.override);
+
             if (parseInt(json.override) == 1 && (aux == 'aux1'||'aux2'||'aux3')){
                 onText = 'HOLD';
                 offText = 'HOLD';
@@ -274,6 +276,8 @@ function display_temp(temp){
         $('div.ui-page-active #temp').css('color', 'green');
     }
     $('div.ui-page-active #temp').text(temp +' F');
+
+    $('div.ui-page-active #temp_limit').text('Limit: ' + temp_limit);
 }
 
 function display_humidity(humidity){
@@ -284,6 +288,8 @@ function display_humidity(humidity){
         $('div.ui-page-active #humidity').css('color', 'green');
     }
     $('div.ui-page-active #humidity').text(humidity +' %');
+
+    $('div.ui-page-active #humidity_limit').text('Limit: ' + humidity_limit);
 }
 
 // statistics page JS

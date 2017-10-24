@@ -45,6 +45,8 @@ Changes history for App::RPi::EnvUI
           (closes #42)
         - fix documentation for API::action_light() (closes #44)
         - fix override issues (fixes #37)
+        - the main page now displays the limits for temp and humidity
+          (closes #40)
 
 0.28    2016-11-30
         - all updates other than a Makefile.PL file were 0.27. This release is

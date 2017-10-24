@@ -59,6 +59,9 @@
                     <td style="text-align: center;"><font size="5"><div class="data" id="temp"></div></font></td>
                 </tr>
                 <tr>
+                    <td style="text-align: center;"><font size="3"><div class="data" id="temp_limit"></div></font></td>
+                </tr>
+                <tr>
                     <td style="text-align: center;"><input type="checkbox" data-role="flipswitch" id="aux1" class="button" style="width:120px;height:30px"></td>
                 </tr>
                 <tr>
@@ -93,6 +96,9 @@
                 <th colspan="2" align="center"><font size="5"><p class="widget_handle">Humidity</p></font></th>
                 <tr>
                     <td style="text-align: center;"><font size="5"><div class="data" id="humidity"></div></font></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;"><font size="3"><div class="data" id="humidity_limit"></div></font></td>
                 </tr>
                 <tr>
                     <td style="text-align: center;"><input id="aux2" class="button" style="width:120px;height:30px" type="checkbox" data-role="flipswitch"></td>
