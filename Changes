@@ -1,7 +1,9 @@
 Changes history for App::RPi::EnvUI
 
 0.30 UNREL
-        -
+        - the env_to_db() Event will now restart itself if it crashes
+        - entire rework of the light timing code (removed set_light_times())
+          and replaced it with two separate private methods
 
 0.29    2017-10-24
         - this project is still in BETA status and should not be used in a
