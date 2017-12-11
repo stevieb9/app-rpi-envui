@@ -121,7 +121,7 @@ my $db = App::RPi::EnvUI::DB->new(testing => 1);
     is $api->_config_light('on_hours'), 12, "on_hours reset back to default ok";
 }
 
-unconfig();
-db_remove();
+#unconfig();
+#db_remove();
 done_testing();
 

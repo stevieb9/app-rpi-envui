@@ -25,8 +25,8 @@ my $log;
 my $sensor;
 my $events;
 
-my $light_on_time;
-my $light_off_time;
+my ($light_on_at, $light_on_hours);
+my ($dt_light_on, $dt_light_off);
 my $light_initialized = 0;
 
 # public environment methods
@@ -118,7 +118,7 @@ sub action_light {
     # - refactor/clean up the two new private methods, and put them into the
     #   proper location
     # - modify/remove the light times from the db and db API (and docs)
-    # - clean up this method properly (remove any remnants
+    # - clean up this method properly (remove any remnants of past work)
     # - add logging
     # - figure out better method for class vars that belong in here
 
@@ -130,65 +130,64 @@ sub action_light {
 
     return if $override;
 
-    my $on_at = $self->_config_light('on_at');
-    
-    my $on_hours = defined $test_conf{on_hours}
-        ? $test_conf{on_hours}
-        : $self->_config_light('on_hours');
+    my $dt_now = DateTime->now->set_time_zone('local');
 
-    if (! $light_initialized){
-        my $dt_now = DateTime->now;
-        $dt_now->set_time_zone('local');
+    if (! $light_initialized || $self->testing){
 
-        my $dt_on = $dt_now->clone;
-        $dt_on->set_hour((split(/:/, $on_at))[0]);
-        $dt_on->set_minute((split(/:/, $on_at))[1]);
-        $dt_on->set_second(0);
+        $light_on_hours = defined $test_conf{on_hours}
+            ? $test_conf{on_hours}
+            : $self->_config_light('on_hours');
 
-        $light_on_time = [$dt_on->hour, $dt_on->minute, $dt_on->second];
+        $light_on_at = defined $test_conf{on_at}
+            ? $test_conf{on_at}
+            : $self->_config_light('on_at');
 
-        my $dt_off = $dt_on->clone;
-        $dt_off->add(hours => $on_hours);
+        ($dt_light_on, $dt_light_off) 
+          = _init_light_time($dt_now, $light_on_at, $light_on_hours);
         
-        $light_off_time = [$dt_off->hour, $dt_off->minute, $dt_off->second];
-
-        #printf "on:  h: %d, m: %d\n", $light_on_time->[0], $light_on_time->[1];
-        #printf "off: h: %d, m: %d\n", $light_off_time->[0], $light_off_time->[1];
-
         $light_initialized = 1;
     }
-
-    if (($on_hours == 24) || _is_lights_on_time($light_on_time, $light_off_time)){
+   
+    if ($light_on_hours == 24 || $dt_now > $dt_light_on){
         if (! $self->aux_state($aux)){
             $self->aux_state($aux, ON);
             pin_mode($pin, OUTPUT);
             write_pin($pin, HIGH);
         }
     }
-    if ($self->aux_state($aux) && ! _is_lights_on_time($light_on_time, $light_off_time)){
-        $self->aux_state($aux, OFF);
-        pin_mode($pin, OUTPUT);
-        write_pin($pin, LOW);
+    if (! $light_on_hours || $dt_now > $dt_light_off){
+        if ($self->aux_state($aux)){
+            $self->aux_state($aux, OFF);
+            pin_mode($pin, OUTPUT);
+            write_pin($pin, LOW);
+            _set_light_on_time($dt_now, $light_on_at);
+            _set_light_off_time($dt_light_on, $light_on_hours);
+        }
     }
 }
-sub _is_lights_on_time {
-    my ($on, $off) = @_;
-    my @now = (localtime(time))[2,1,0];
+sub _init_light_time {
+    my ($dt_now, $on_at, $on_hours) = @_;
 
-    if (_light_time_compare($on, $off) == 1){
-        return _light_time_compare(\@now, $on) == 1 || _light_time_compare(\@now, $off) == -1;
-    }
-    else {
-        return _light_time_compare(\@now, $on) == 1 && _light_time_compare(\@now, $off) == -1
-    }
-    return 0;
-}    
-sub _light_time_compare {
-    my ($a, $b) = @_;
-    for (0..2){
-        return $a->[$_] <=> $b->[$_] if $a->[$_] != $b->[$_];
-    }
-    return 0;
+    $dt_light_on = _set_light_on_time($dt_now, $on_at);
+    $dt_light_off = _set_light_off_time($dt_light_on, $on_hours);
+
+    return ($dt_light_on, $dt_light_off);
+}
+sub _set_light_off_time {
+    my ($dt_on, $on_time) = @_;
+
+    my $dt_off = $dt_on->clone;
+    $dt_off->add(hours => $on_time);
+}
+sub _set_light_on_time {
+    my ($dt_now, $on_at) = @_;
+    
+    my $dt_on = $dt_now->clone;
+    $dt_on->set_second(0);
+    $dt_on->set_hour((split(/:/, $on_at))[0]);
+    $dt_on->set_minute((split(/:/, $on_at))[1]);
+
+    return $dt_on;
 }
 sub aux {
     my ($self, $aux_id) = @_;

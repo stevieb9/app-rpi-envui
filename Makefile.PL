@@ -33,6 +33,7 @@ return <<EOF;
 install:: all local
 
 local:
+
 	cp ~/envui/config/envui.json ~
 
 	rm -rf ~/envui
