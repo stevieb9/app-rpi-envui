@@ -175,9 +175,10 @@ sub _init_light_time {
 }
 sub _set_light_off_time {
     my ($dt_on, $on_time) = @_;
-
+    
     my $dt_off = $dt_on->clone;
     $dt_off->add(hours => $on_time);
+    return $dt_off;
 }
 sub _set_light_on_time {
     my ($dt_now, $on_at) = @_;
@@ -186,7 +187,6 @@ sub _set_light_on_time {
     $dt_on->set_second(0);
     $dt_on->set_hour((split(/:/, $on_at))[0]);
     $dt_on->set_minute((split(/:/, $on_at))[1]);
-
     return $dt_on;
 }
 sub aux {
