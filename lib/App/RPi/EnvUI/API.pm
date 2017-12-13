@@ -1,5 +1,7 @@
 package App::RPi::EnvUI::API;
 
+use strict;
+use warnings;
 use App::RPi::EnvUI::DB;
 use App::RPi::EnvUI::Event;
 use Carp qw(confess);
@@ -24,6 +26,8 @@ my $master_log;
 my $log;
 my $sensor;
 my $events;
+
+# class variables for the light operation
 
 my ($light_on_at, $light_on_hours);
 my ($dt_light_on, $dt_light_off);
@@ -115,15 +119,10 @@ sub action_light {
     my ($self, %test_conf) = @_;
 
     #FIXME: remove set_light_times() from here and docs
-    # - refactor/clean up the two new private methods, and put them into the
-    #   proper location
     # - modify/remove the light times from the db and db API (and docs)
-    # - clean up this method properly (remove any remnants of past work)
-    # - add logging
     # - figure out better method for class vars that belong in here
 
     my $log = $log->child('action_light');
-
     my $aux      = $self->_config_control('light_aux');
     my $pin      = $self->aux_pin($aux);
     my $override = $self->aux_override($aux);
@@ -134,6 +133,8 @@ sub action_light {
 
     if (! $light_initialized || $self->testing){
 
+        $log->_5("initializing light");
+
         $light_on_hours = defined $test_conf{on_hours}
             ? $test_conf{on_hours}
             : $self->_config_light('on_hours');
@@ -142,7 +143,9 @@ sub action_light {
             ? $test_conf{on_at}
             : $self->_config_light('on_at');
 
-        ($dt_light_on, $dt_light_off) 
+        $log->_6("light on: $light_on_at, light hours: $light_on_hours");
+
+        ($dt_light_on, $dt_light_off)
           = _init_light_time($dt_now, $light_on_at, $light_on_hours);
         
         $light_initialized = 1;
@@ -150,6 +153,7 @@ sub action_light {
    
     if ($light_on_hours == 24 || $dt_now > $dt_light_on){
         if (! $self->aux_state($aux)){
+            $log->_6("turning light on");
             $self->aux_state($aux, ON);
             pin_mode($pin, OUTPUT);
             write_pin($pin, HIGH);
@@ -157,37 +161,14 @@ sub action_light {
     }
     if (! $light_on_hours || $dt_now > $dt_light_off){
         if ($self->aux_state($aux)){
+            $log->_6("turning light off");
             $self->aux_state($aux, OFF);
             pin_mode($pin, OUTPUT);
             write_pin($pin, LOW);
-            _set_light_on_time($dt_now, $light_on_at);
-            _set_light_off_time($dt_light_on, $light_on_hours);
+            $light_on_dt = _set_light_on_time($dt_now, $light_on_at);
+            $light_off_dt = _set_light_off_time($dt_light_on, $light_on_hours);
         }
     }
-}
-sub _init_light_time {
-    my ($dt_now, $on_at, $on_hours) = @_;
-
-    $dt_light_on = _set_light_on_time($dt_now, $on_at);
-    $dt_light_off = _set_light_off_time($dt_light_on, $on_hours);
-
-    return ($dt_light_on, $dt_light_off);
-}
-sub _set_light_off_time {
-    my ($dt_on, $on_time) = @_;
-    
-    my $dt_off = $dt_on->clone;
-    $dt_off->add(hours => $on_time);
-    return $dt_off;
-}
-sub _set_light_on_time {
-    my ($dt_now, $on_at) = @_;
-    
-    my $dt_on = $dt_now->clone;
-    $dt_on->set_second(0);
-    $dt_on->set_hour((split(/:/, $on_at))[0]);
-    $dt_on->set_minute((split(/:/, $on_at))[1]);
-    return $dt_on;
 }
 sub aux {
     my ($self, $aux_id) = @_;
@@ -488,36 +469,13 @@ sub user {
 # public configuration getters
 
 sub env_humidity_aux {
-    my $self = shift;
-    return $self->_config_control('humidity_aux');
+    return $_[0]->_config_control('humidity_aux');
+}
+sub env_light_aux {
+    return $_[0]->_config_control('light_aux');
 }
 sub env_temp_aux {
-    my $self = shift;
-    return $self->_config_control('temp_aux');
-}
-sub set_light_times {
-    my ($self) = @_;
-
-    my $on_at = $self->_config_light('on_at');
-
-    my $time = time;
-    $time += 30 until localtime($time) =~ /$on_at:/;
-
-    my $hrs = $self->_config_light('on_hours');
-
-    my $on_time = $time;
-    my $off_time = $on_time + $hrs * 3600;
-
-    my $now = time;
-
-    if ($now > ($on_time - 86400) && $now < ($off_time - 86400)){
-        $on_time -= 24 * 3600;
-        $off_time -= 24 * 3600;
-    }
-
-    $self->db->update('light', 'value', $on_time, 'id', 'on_time');
-    $self->db->update('light', 'value', $off_time, 'id', 'off_time');
-
+    return $_[0]->_config_control('temp_aux');
 }
 
 # public instance variable methods
@@ -605,13 +563,11 @@ sub _bool {
     return $bool eq 'true' ? 1 : 0;
 }
 sub _config_control {
-    my $self = shift;
-    my $want = shift;
+    my ($self, $want) = @_;
     return $self->db->config_control($want);
 }
 sub _config_core {
-    my $self = shift;
-    my $want = shift;
+    my ($self, $want) = @_;
 
     if (! defined $self->db){
         confess "API's DB object is not defined.";
@@ -623,8 +579,7 @@ sub _config_core {
     return $self->db->config_core($want);
 }
 sub _config_light {
-    my $self = shift;
-    my $want = shift;
+    my ($self, $want) = @_;
 
     my %conf;
 
@@ -669,6 +624,12 @@ sub _init {
         $log->_5('in prod mode');
         $self->_prod_mode;
     }
+}
+sub _init_light_time {
+    my ($dt_now, $on_at, $on_hours) = @_;
+    $dt_light_on = _set_light_on_time($dt_now, $on_at);
+    $dt_light_off = _set_light_off_time($dt_light_on, $on_hours);
+    return ($dt_light_on, $dt_light_off);
 }
 sub _test_mode {
     my ($self) = @_;
@@ -868,6 +829,20 @@ sub _reset {
     # remove all statistics
 
     $self->db->delete('stats');
+}
+sub _set_light_off_time {
+    my ($dt_on, $on_time) = @_;
+    my $dt_off = $dt_on->clone;
+    $dt_off->add(hours => $on_time);
+    return $dt_off;
+}
+sub _set_light_on_time {
+    my ($dt_now, $on_at) = @_;
+    my $dt_on = $dt_now->clone;
+    $dt_on->set_second(0);
+    $dt_on->set_hour((split(/:/, $on_at))[0]);
+    $dt_on->set_minute((split(/:/, $on_at))[1]);
+    return $dt_on;
 }
 sub _ui_test_mode {
     return -e 't/testing.lck';
