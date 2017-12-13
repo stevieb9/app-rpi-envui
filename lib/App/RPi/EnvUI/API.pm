@@ -165,8 +165,8 @@ sub action_light {
             $self->aux_state($aux, OFF);
             pin_mode($pin, OUTPUT);
             write_pin($pin, LOW);
-            $light_on_dt = _set_light_on_time($dt_now, $light_on_at);
-            $light_off_dt = _set_light_off_time($dt_light_on, $light_on_hours);
+            $dt_light_on = _set_light_on_time($dt_now, $light_on_at);
+            $dt_light_off = _set_light_off_time($dt_light_on, $light_on_hours);
         }
     }
 }
@@ -313,7 +313,7 @@ sub env {
 
     return {temp => -1, humidity => -1, error => $event_error} if ! defined $ret;
 
-    $ret->{error => $event_error};
+    $ret->{error} = $event_error;
 
     return $ret;
 }
@@ -848,7 +848,7 @@ sub _ui_test_mode {
     return -e 't/testing.lck';
 }
 
-true;
+1;
 __END__
 
 =head1 NAME

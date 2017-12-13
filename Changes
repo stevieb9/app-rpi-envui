@@ -4,6 +4,10 @@ Changes history for App::RPi::EnvUI
         - the env_to_db() Event will now restart itself if it crashes
         - significant modifications to the API action_light() infrastructure...
           we use DateTime objects now, per stevieb9/scripts/perl/light_timer
+        - code cleanup
+        - fix void assignment of hash in API
+        - DateTime objects are now properly set in the class scope for 
+          action_light()
 
 0.29    2017-10-24
         - this project is still in BETA status and should not be used in a
