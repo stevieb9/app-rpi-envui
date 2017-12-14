@@ -54,7 +54,7 @@ CREATE TABLE core (
 INSERT INTO core VALUES ('event_fetch_timer', 15);
 INSERT INTO core VALUES ('event_action_timer', 3);
 INSERT INTO core VALUES ('event_display_timer', 4);
-INSERT INTO core VALUES ('time_zone', 'America/Edmonton');
+INSERT INTO core VALUES ('time_zone', 'America/Vancouver');
 INSERT INTO core VALUES ('sensor_pin', -1);
 INSERT INTO core VALUES ('testing', 0);
 INSERT INTO core VALUES ('debug_sensor', 0);

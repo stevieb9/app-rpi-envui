@@ -3,7 +3,7 @@
     "event_fetch_timer": "15",
     "event_action_timer": "3",
     "event_display_timer": "4",
-    "time_zone": "America/Edmonton",
+    "time_zone": "America/Vancouver",
     "sensor_pin": "-1",
     "testing": "0",
     "debug_sensor": "0",
