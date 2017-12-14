@@ -30,7 +30,7 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     my $p = decode_json $j;
 
     is ref $p, 'HASH', "/fetch_env return an href in JSON";
-    is keys %$p, 2, "and has proper key count";
+    is keys %$p, 3, "and has proper key count";
 
     for (qw(temp humidity)){
         is exists $p->{$_}, 1, "$_ has a key in /fetch_env";

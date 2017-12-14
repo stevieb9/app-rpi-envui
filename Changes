@@ -13,6 +13,9 @@ Changes history for App::RPi::EnvUI
           "on" time will be pushed to the following day
         - updated the timezone in the src config file and db to 
           America/Vancouver
+        - fix issue where in test mode, Events aren't created and stored into
+          the API object, therefore calls to Event->status() would fail when
+          calling the API->env() method in testing (fixes #48)
 
 0.29    2017-10-24
         - this project is still in BETA status and should not be used in a

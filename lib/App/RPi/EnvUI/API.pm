@@ -302,10 +302,12 @@ sub env {
 
     my $event_error = 0;
 
-    if ($self->{events}{env_to_db}->status == -1){
-        $event_error = 1;
-        print "event failure, restarting!\n";
-        $self->{events}{env_to_db}->restart;
+    if (! $self->testing){
+        if ($self->{events}{env_to_db}->status == -1){
+            $event_error = 1;
+            print "event failure, restarting!\n";
+            $self->{events}{env_to_db}->restart;
+        }
     }
 
     my $ret = $self->db->env;
