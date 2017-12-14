@@ -89,7 +89,7 @@ WriteMakefile(
     },
     PL_FILES            => {},
     PREREQ_PM => {
-        'Async::Event::Interval' => 0.04,
+        'Async::Event::Interval' => 0.05,
         'Crypt::SaltedHash' => 0,
         'Dancer2'     => 0.203001,
         'Dancer2::Plugin::Auth::Extensible' => 0,

@@ -203,7 +203,7 @@ sub aux_override {
 
     my $log = $log->child('aux_override');
 
-    if ($aux_id !~ /^aux/){
+    if (! defined $aux_id || $aux_id !~ /^aux/){
         confess "aux_override() requires an aux ID as its first param\n";
     }
 
@@ -232,7 +232,7 @@ sub aux_pin {
     # returns the auxillary's GPIO pin number
     my ($aux_id, $pin) = @_;
 
-    if ($aux_id !~ /^aux/){
+    if (! defined $aux_id || $aux_id !~ /^aux/){
         confess "aux_pin() requires an aux ID as its first param\n";
     }
 
@@ -249,7 +249,7 @@ sub aux_state {
 
     my $log = $log->child('aux_state');
 
-    if ($aux_id !~ /^aux/){
+    if (! defined $aux_id || $aux_id !~ /^aux/){
         confess "aux_state() requires an aux ID as its first param\n";
     }
 
@@ -268,7 +268,7 @@ sub aux_time {
 
     my ($aux_id, $time) = @_;
 
-    if ($aux_id !~ /^aux/){
+    if (! defined $aux_id || $aux_id !~ /^aux/){
         confess "aux_time() requires an aux ID as its first param\n";
     }
 

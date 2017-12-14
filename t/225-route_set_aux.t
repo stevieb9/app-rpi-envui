@@ -97,7 +97,8 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
         my $id = "aux$_";
 
         my $override = aux($id)->{override};
-        is $override, 0, "$id has proper default override";
+        print "$id: $override\n";
+        is $override, 1, "$id has proper default override";
 
         $res = $test->request( GET "/set_aux_override/$id/1" );
         is $res->is_success, 1, "/set_aux_override $id ok";
@@ -146,7 +147,7 @@ sub aux {
 }
 
 unset_testing();
-db_remove();
-unconfig();
+#db_remove();
+#unconfig();
 done_testing();
 

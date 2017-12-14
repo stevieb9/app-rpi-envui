@@ -32,7 +32,7 @@ is $api->{testing}, 1, "testing param to new() ok";
         my $aux = $api->aux($name);
 
         is ref $aux, 'HASH', "aux() returns $name as an href";
-        is keys %$aux, 6, "$name has proper key count";
+        is keys %$aux, 7, "$name has proper key count";
 
         for (qw(id desc pin state override on_time)){
             is exists $aux->{$_}, 1, "$name has directive $_";

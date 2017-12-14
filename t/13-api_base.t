@@ -17,6 +17,21 @@ use Test::More;
 
 #FIXME: add tests to test overrides for hum and temp
 
+{ # config file not found
+
+    # this test must be run prior to generating the cached API object
+
+    unconfig();
+    is -e 't/envui.json', undef, "for testing, config file has been removed ok";
+
+    my $ok = eval { App::RPi::EnvUI::API->new(testing => 1); 1; };
+
+    is $ok, undef, "we die if a config file is not found";
+    like $@, qr/config file .*? not found/, "...the error message is sane";
+
+    config();
+}
+
 my $api = App::RPi::EnvUI::API->new(
     testing => 1,
     config_file => 't/envui.json'
@@ -93,20 +108,6 @@ is $api->{testing}, 1, "testing param to new() ok";
 
     is $dht_new_sub->called, 1, "RPi::DHT11->new is called by _prod_mode()";
     is ref $api->sensor, 'RPi::DHT11', "_prod_mode() generates a sensor";
-}
-
-{ # config file not found
-
-    unconfig();
-
-    is -e 't/envui.json', undef, "for testing, config file has been removed ok";
-
-    my $ok = eval { App::RPi::EnvUI::API->new(testing => 1); 1; };
-
-    is $ok, undef, "we die if a config file is not found";
-    like $@, qr/config file .*? not found/, "...the error message is sane";
-
-    config();
 }
 
 { # passwd()
