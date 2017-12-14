@@ -29,9 +29,9 @@ my $events;
 
 # class variables for the light operation
 
-my ($light_on_at, $light_on_hours);
-my ($dt_light_on, $dt_light_off);
-my $light_initialized = 0;
+our ($light_on_at, $light_on_hours);
+our ($dt_now_test, $dt_light_on, $dt_light_off);
+our $light_initialized = 0;
 
 # public environment methods
 
@@ -116,7 +116,7 @@ sub action_temp {
     }
 }
 sub action_light {
-    my ($self, %test_conf) = @_;
+    my ($self) = @_;
 
     #FIXME: remove set_light_times() from here and docs
     # - modify/remove the light times from the db and db API (and docs)
@@ -129,19 +129,17 @@ sub action_light {
 
     return if $override;
 
-    my $dt_now = DateTime->now->set_time_zone('local');
+    my $dt_now = defined $dt_now_test
+        ? $dt_now_test->set_time_zone('local')
+        : DateTime->now->set_time_zone('local');
 
-    if (! $light_initialized || $self->testing){
+    if (! $light_initialized){
 
         $log->_5("initializing light");
 
-        $light_on_hours = defined $test_conf{on_hours}
-            ? $test_conf{on_hours}
-            : $self->_config_light('on_hours');
+        $light_on_hours = $self->_config_light('on_hours');
 
-        $light_on_at = defined $test_conf{on_at}
-            ? $test_conf{on_at}
-            : $self->_config_light('on_at');
+        $light_on_at = $self->_config_light('on_at');
 
         $log->_6("light on: $light_on_at, light hours: $light_on_hours");
 
@@ -150,7 +148,7 @@ sub action_light {
         
         $light_initialized = 1;
     }
-   
+
     if ($light_on_hours == 24 || $dt_now > $dt_light_on){
         if (! $self->aux_state($aux)){
             $log->_6("turning light on");
@@ -159,6 +157,7 @@ sub action_light {
             write_pin($pin, HIGH);
         }
     }
+
     if (! $light_on_hours || $dt_now > $dt_light_off){
         if ($self->aux_state($aux)){
             $log->_6("turning light off");
@@ -842,6 +841,15 @@ sub _set_light_on_time {
     $dt_on->set_second(0);
     $dt_on->set_hour((split(/:/, $on_at))[0]);
     $dt_on->set_minute((split(/:/, $on_at))[1]);
+
+    if ($dt_on < $dt_now){
+        # this situation happens if the light on and off times are within the
+        # same 24 hour period. We check to see if the updated on time is less
+        # than now; if it is, we need to advance to tomorrow
+
+        $dt_on->add(hours => 24);
+    }
+
     return $dt_on;
 }
 sub _ui_test_mode {
