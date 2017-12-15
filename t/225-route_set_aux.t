@@ -78,13 +78,11 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     $res = $test->request( GET "/set_aux_override/aux1" );
     like $res->content, qr/Not Found/, "/set_aux_override 404s if only one param sent";
 
-
     # good call
     $res = $test->request( GET "/set_aux_override/aux1/0" );
     is $res->is_success, 1, "with two valid params, /set_aux_override ok";
     $p = decode_json $res->content;
   
-    print "!!!!!!!!!!!!!!! $p->{override}\n";  
     is ref $p, 'HASH', "and is a href";
     is keys %$p, 2, "...and has proper key count";
     is exists $p->{override}, 1, "and override key exists";
@@ -98,7 +96,6 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
         my $id = "aux$_";
 
         my $override = aux($id)->{override};
-        print "$id: $override\n";
         is $override, 0, "$id has proper default override";
 
         $res = $test->request( GET "/set_aux_override/$id/1" );
@@ -149,7 +146,7 @@ sub aux {
 }
 
 unset_testing();
-#db_remove();
-#unconfig();
+db_remove();
+unconfig();
 done_testing();
 

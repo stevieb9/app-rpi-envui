@@ -219,7 +219,7 @@ function flip_change(e){
         var override_status = parseInt(json.override);
 
         if (override_status != -1){
-            $.get('/set_aux_state/'+ aux +'/'+ checked, function(data){
+            $.get('/get_aux_override/'+ aux, function(data){
                 var json = $.parseJSON(data);
                 if (json.error){
                     console.log(json.error);
