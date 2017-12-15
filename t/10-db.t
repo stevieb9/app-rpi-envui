@@ -83,7 +83,7 @@ my $api = App::RPi::EnvUI::API->new(
     );
 
     my @values = qw(
-        15 3 4 -1 0 America/Edmonton
+        15 3 4 -1 0 America/Vancouver
     );
 
     my $i = 0;

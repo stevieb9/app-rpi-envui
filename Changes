@@ -16,6 +16,9 @@ Changes history for App::RPi::EnvUI
         - fix issue where in test mode, Events aren't created and stored into
           the API object, therefore calls to Event->status() would fail when
           calling the API->env() method in testing (fixes #48)
+        - fixed issue where override was not operating correctly. Fixed Perl and
+          JS code (fixes #49)
+        - code/test tidying, and all tests now pass ;)
 
 0.29    2017-10-24
         - this project is still in BETA status and should not be used in a
