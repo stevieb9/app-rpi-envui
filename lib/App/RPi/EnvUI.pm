@@ -171,6 +171,7 @@ get '/set_aux_override/:aux/:override' => sub {
         my $override = $api->_bool(params->{override});
 
         $log->_5("setting override for aux id: $aux_id");
+        print("setting aux override\n");
 
         $override = $api->aux_override($aux_id, $override);
 

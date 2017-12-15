@@ -200,6 +200,7 @@ sub aux_override {
     # sets a manual override flag if an aux is turned on manually (via button)
 
     my ($aux_id, $override) = @_;
+    print "yyyyy: $override\n";
 
     my $log = $log->child('aux_override');
 
@@ -221,7 +222,9 @@ sub aux_override {
 
     if (defined $override){
         $log->_5("override set operation called for $aux_id");
+        print "xxxx " . $self->aux_override($aux_id) . "\n";
         $override = $self->aux_override($aux_id) ? 0 : 1;
+        print "### $override\n";
         $log->_5("override set to $override for aux id: $aux_id");
         $self->db->update('aux', 'override', $override, 'id', $aux_id);
     }

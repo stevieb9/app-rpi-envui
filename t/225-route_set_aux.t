@@ -83,14 +83,15 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     $res = $test->request( GET "/set_aux_override/aux1/0" );
     is $res->is_success, 1, "with two valid params, /set_aux_override ok";
     $p = decode_json $res->content;
-
+  
+    print "!!!!!!!!!!!!!!! $p->{override}\n";  
     is ref $p, 'HASH', "and is a href";
     is keys %$p, 2, "...and has proper key count";
     is exists $p->{override}, 1, "and override key exists";
     is $p->{override}, 0, "and override has correct default value";
     is exists $p->{aux}, 1, "and aux key exists";
     is $p->{aux}, 'aux1', "and aux has correct default value";
-
+    
     # loop over all auxs
 
     for (1..8){
@@ -98,7 +99,7 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
 
         my $override = aux($id)->{override};
         print "$id: $override\n";
-        is $override, 1, "$id has proper default override";
+        is $override, 0, "$id has proper default override";
 
         $res = $test->request( GET "/set_aux_override/$id/1" );
         is $res->is_success, 1, "/set_aux_override $id ok";
@@ -107,6 +108,7 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
         $switch_sub->reset;
         is $switch_sub->called, 0, "switch() mock reset for next test";
     }
+    done_testing; exit;
 }
 { # not auth'd set_aux_state
 
