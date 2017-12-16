@@ -38,6 +38,9 @@ post '/login' => sub {
         my $user = params->{username};
         my $pass = params->{password};
 
+        my $log = $log->child("/login");
+        $log->_4("proceeding to authenticate with username: $user");
+
         my ($success, $realm) = authenticate_user($user, $pass);
 
         if ($success){
