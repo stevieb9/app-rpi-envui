@@ -49,6 +49,8 @@ sub new {
     my $caller = (caller)[0];
     $self->_args(@_, caller => $caller);
 
+    warn "API in test mode\n" if $self->testing;
+
     $self->_init;
 
     $api = $self;
