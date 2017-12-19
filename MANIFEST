@@ -1,7 +1,6 @@
 bin/app.pl
 Changes
 config.yml
-config/envui.json
 db/envui.db
 lib/App/RPi/EnvUI.pm
 lib/App/RPi/EnvUI/API.pm

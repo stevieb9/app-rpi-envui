@@ -59,7 +59,7 @@ INSERT INTO core VALUES ('sensor_pin', -1);
 INSERT INTO core VALUES ('testing', 0);
 INSERT INTO core VALUES ('debug_sensor', 0);
 INSERT INTO core VALUES ('log_file', "");
-INSERT INTO core VALUES ('log_level', -1);
+INSERT INTO core VALUES ('debug_level', -1);
 
 DROP TABLE IF EXISTS light;
 

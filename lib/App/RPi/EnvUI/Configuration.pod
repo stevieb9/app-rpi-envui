@@ -64,9 +64,9 @@ information.
 
 Default: C<0>
 
-=head3 log_level
+=head3 debug_level
 
-Value: Integer, C<-1> through C<7>. Sets the logging level.
+Value: Integer, C<-1> through C<7>. Sets the debug logging level.
 
 Default: C<-1> (off)
 

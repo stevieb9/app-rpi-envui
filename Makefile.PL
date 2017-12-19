@@ -16,17 +16,6 @@ if (! grep { -x "$_/sqlite3" } split /:/, $ENV{PATH}) {
     die "sqlite3 must be installed to continue\n";
 }
 
-# copy initial db and conf file
-
-if (! -e 'db/envui.db'){
-    print "copying default db...\n";
-    copy 'src/envui-dist.db', 'db/envui.db' or die $!;
-}
-if (! -e 'config/envui.json'){
-    print "copying default config...\n";
-    copy 'src/envui-dist.json', 'config/envui.json' or die $1;
-}
-
 sub MY::postamble {
 return <<EOF;
 

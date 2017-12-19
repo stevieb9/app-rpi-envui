@@ -446,7 +446,7 @@ sub events {
 sub log {
     my $self = shift;
     $master_log->file($self->log_file) if $self->log_file;
-    $master_log->level($self->log_level);
+    $master_log->level($self->debug_level);
     return $master_log;
 }
 sub passwd {
@@ -517,7 +517,7 @@ sub log_file {
 
     return $self->{log_file};
 }
-sub log_level {
+sub debug_level {
     my ($self, $level) = @_;
 
     if (defined $level){
@@ -525,10 +525,10 @@ sub log_level {
             warn "log level has to be between 0 and 7... disabling logging\n";
             $level = -1;
         }
-        $self->{log_level} = $level;
+        $self->{debug_level} = $level;
     }
 
-    return $self->{log_level};
+    return $self->{debug_level};
 }
 sub sensor {
     my ($self, $sensor) = @_;
@@ -541,6 +541,9 @@ sub testing {
     if (defined $bool){
         $self->{testing} = $bool;
     }
+
+    $self->{testing} = 1 if _ui_test_mode();
+
     return $self->{testing};
 }
 sub test_mock {
@@ -560,7 +563,7 @@ sub _args {
     $self->debug_sensor($args{debug_sensor});
     $self->config($args{config_file});
     $self->log_file($args{log_file});
-    $self->log_level($args{log_level});
+    $self->debug_level($args{debug_level});
     $self->testing($args{testing});
     $self->test_mock($args{test_mock});
 }
@@ -621,12 +624,12 @@ sub _init {
         )
     );
 
-    $self->log_level($self->_config_core('log_level'));
+    $self->debug_level($self->_config_core('debug_level'));
     $self->_log;
 
     my $log = $log->child('_init()');
 
-    if ($self->_ui_test_mode || $self->testing){
+    if ($self->testing){
         $log->_5('in test mode');
         $self->_test_mode
     }
@@ -727,7 +730,7 @@ sub _log {
         name => 'EnvUI',
         print => 1,
         file => $self->log_file,
-        level => $self->log_level
+        level => $self->debug_level
     );
 
     $log = $master_log->child('API');
@@ -919,7 +922,7 @@ the way the system works, the API has to avoid mocking out items in test mode,
 and the mocks have to be set within the test file itself. Do not use this flag
 unless you are writing unit tests.
 
-    log_level
+    debug_level
 
 Optional, Integer. Send in a level of C<0-7> to enable logging.
 
@@ -928,7 +931,7 @@ Default: C<-1> (logging disabled)
     log_file
 
 Optional, String. Name of file to log to. We log to C<STDOUT> by default. The
-C<log_level> parameter must be changed from default for this parameter to have
+C<debug_level> parameter must be changed from default for this parameter to have
 any effect.
 
 Default: C<undef>
@@ -1236,9 +1239,9 @@ when instantiating a new object.
 
 Return: The string name of the currently in-use log file, if set.
 
-=head2 log_level($level)
+=head2 debug_level($level)
 
-Sets/gets the current logging level.
+Sets/gets the current debug logging level.
 
 Parameters:
 
