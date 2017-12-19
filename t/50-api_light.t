@@ -152,7 +152,7 @@ my $dt_off = \$App::RPi::EnvUI::API::dt_light_off;
     # print "now: $$dt_now | on: $$dt_on | off: $$dt_off\n";
 }
 
-#unconfig();
-#db_remove();
+unconfig();
+db_remove();
 done_testing();
 

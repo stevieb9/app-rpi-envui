@@ -19,7 +19,6 @@ our $VERSION = '0.30';
 
 BEGIN {
     if ($ENV{SUPPRESS_WARN}){
-        print "Suppressing all warnings...\n";
         $SIG{__WARN__} = sub {};
     }
 }
