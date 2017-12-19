@@ -332,6 +332,11 @@ Return: Single scalar value if C<$want> is sent in, or a hash reference of the
 entire configuration section where the keys are the variable names, and the
 values are the configuration values.
 
+=head2 db
+
+Returns the actual database instance after it has been created in C<<new()>>.
+Takes no parameters.
+
 =head2 delete($table)
 
 Deletes all data from the specified table.

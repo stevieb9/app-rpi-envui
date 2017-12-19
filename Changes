@@ -19,6 +19,9 @@ Changes history for App::RPi::EnvUI
         - fixed issue where override was not operating correctly. Fixed Perl and
           JS code (fixes #49)
         - code/test tidying, and all tests now pass ;)
+        - fix issue in Auth, where we were calling API::user() by class, not by
+          object, broke during recent update to API code. (fixes #50)
+        - add API::env_light_aux() and DB::db() to POD
 
 0.29    2017-10-24
         - this project is still in BETA status and should not be used in a

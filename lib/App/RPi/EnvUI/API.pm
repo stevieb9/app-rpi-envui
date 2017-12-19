@@ -1174,6 +1174,11 @@ Takes no parameters.
 Returns the string name of the temperature auxillary channel (default: C<aux1>).
 Takes no parameters.
 
+=head2 env_light_aux
+
+Returns the string name of the light auxillary channel (default: C<aux3>).
+Takes no parameters.
+
 =head2 events
 
 Initializes and starts the asynchronous timed events that operate in their own
