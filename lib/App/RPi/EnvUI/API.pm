@@ -15,6 +15,15 @@ use RPi::Const qw(:all);
 
 our $VERSION = '0.30';
 
+# configure handlers
+
+BEGIN {
+    if ($ENV{SUPPRESS_WARN}){
+        print "Suppressing all warnings...\n";
+        $SIG{__WARN__} = sub {};
+    }
+}
+
 # mocked sub handles for when we're in testing mode
 
 our ($temp_sub, $hum_sub, $wp_sub, $pm_sub);
@@ -1330,6 +1339,16 @@ Mandatory, String. The username of the user to fetch details for.
 
 Return: href, the hash reference containing user details per the 'user' database
 table.
+
+=head1 ENVIRONMENT VARIABLES
+
+=head2 SUPPRESS_WARN
+
+Set this variable to a true value to suppress all warnings via a 
+C<<$SIG{__WARN__}>> handler. This is handy when running tests, when you don't
+need to know specific details about core workings.
+
+Implemented in C<<API.pm>>.
 
 =head1 AUTHOR
 
