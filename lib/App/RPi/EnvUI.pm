@@ -66,6 +66,7 @@ get '/time' => sub {
         my ($y, $m, $d, $h, $min) = (localtime)[5, 4, 3, 2, 1];
 
         $y += 1900;
+        $m++;
 
         for ($m, $d, $h, $min){
             $_ = "0$_" if length $_ < 2;
