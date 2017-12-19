@@ -73,6 +73,12 @@ $(document).on('pageshow', '#home', function(){
         $(this).children('ul').stop(true, false, true).slideToggle(300);
     });
 
+    $.get('/get_config/devel', function(devel){
+        if (parseInt(devel) == '1'){
+            $('#time').css({'background-color': 'red'});
+        }
+    });
+
     // draggable widgets
 
     var s_positions = localStorage.positions || "{}";

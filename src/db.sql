@@ -60,6 +60,7 @@ INSERT INTO core VALUES ('testing', 0);
 INSERT INTO core VALUES ('debug_sensor', 0);
 INSERT INTO core VALUES ('log_file', "");
 INSERT INTO core VALUES ('debug_level', -1);
+INSERT INTO core VALUES ('devel', 0);
 
 DROP TABLE IF EXISTS light;
 

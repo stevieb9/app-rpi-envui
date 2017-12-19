@@ -8,7 +8,8 @@
     "testing": "0",
     "debug_sensor": "0",
     "log_file": "",
-    "debug_level": "-1"
+    "debug_level": "-1",
+    "devel": "0"
   },
   "control": {
     "temp_limit": "80",

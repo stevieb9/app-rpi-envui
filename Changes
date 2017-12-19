@@ -28,7 +28,10 @@ Changes history for App::RPi::EnvUI
         - renamed "log_level" config file variable to "debug_level"
         - removed config/ from the distribution, and consolidated the testing()
           and _ui_testing() configuration to use the config file in t/ instead
-           
+        - added new config directive, "devel", if set to 1, we'll turn the
+          background of the time display in the UI red to signify this isn't
+          a production system (closes #47)
+                   
 0.29    2017-10-24
         - this project is still in BETA status and should not be used in a
           production growing environment without extreme monitoring
