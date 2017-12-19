@@ -3,6 +3,7 @@ package App::RPi::EnvUI::Auth;
 use warnings;
 use strict;
 
+use App::RPi::EnvUI::API;
 use App::RPi::EnvUI::DB;
 use Moo;
 with 'Dancer2::Plugin::Auth::Extensible::Role::Provider';
@@ -15,12 +16,10 @@ sub authenticate_user {
     my $auth = $self->match_password($pass, $user_details->{pass});
     return $auth;
 }
-
 sub get_user_details {
     my ($self, $user) = @_;
-    App::RPi::EnvUI::API->user($user);
+    App::RPi::EnvUI::API->new->user($user);
 }
-
 sub get_user_roles {
     return;
 }
