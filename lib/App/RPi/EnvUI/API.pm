@@ -24,6 +24,7 @@ BEGIN {
 }
 
 # mocked sub handles for when we're in testing mode
+# writePin() and pinMode() from wiringPi
 
 our ($temp_sub, $hum_sub, $wp_sub, $pm_sub);
 
@@ -181,13 +182,9 @@ sub action_light {
 }
 sub aux {
     my ($self, $aux_id) = @_;
-
     my $log = $log->child('aux');
-
     $log->_7("getting aux information for $aux_id");
-
-    my $aux = $self->db->aux($aux_id);
-    return $aux;
+    return $self->db->aux($aux_id);
 }
 sub auxs {
     my $self = shift;
@@ -218,7 +215,7 @@ sub aux_override {
     }
 
     if (defined $override){
-        $log->_5("attempted override of aux: $aux_id");
+        $log->_5("attempting override of aux: $aux_id");
         my $toggle = $self->aux($aux_id)->{toggle};
 
         if ($toggle != 1){
@@ -227,13 +224,12 @@ sub aux_override {
             );
             return -1;
         }
+
+        $log->_5("override set operation called for $aux_id");
+        $self->db->update('aux', 'override', $override, 'id', $aux_id);
+        $log->_5("override set to $override for aux id: $aux_id");
     }
 
-    if (defined $override){
-        $log->_5("override set operation called for $aux_id");
-        $log->_5("override set to $override for aux id: $aux_id");
-        $self->db->update('aux', 'override', $override, 'id', $aux_id);
-    }
     return $self->aux($aux_id)->{override};
 }
 sub aux_pin {

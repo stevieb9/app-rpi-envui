@@ -79,7 +79,7 @@ sub aux {
 }
 
 unset_testing();
-#db_remove();
+db_remove();
 unconfig();
 done_testing();
 

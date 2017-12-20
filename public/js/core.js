@@ -165,11 +165,11 @@ function aux_update(){
 
     for(var i = 1; i < 9; i++){
         var aux = 'aux'+ i;
-        aux_state(aux);
+        aux_setup(aux);
     }
 }
 
-function aux_state(aux){
+function aux_setup(aux){
 
     $.ajax({
         async: true,
@@ -186,7 +186,6 @@ function aux_state(aux){
             var offText;
 
             if (parseInt(json.override) == 1 && (aux == 'aux1'||'aux2'||'aux3')){
-                console.log("in override")
                 onText = 'HOLD';
                 offText = 'HOLD';
             }
@@ -201,50 +200,52 @@ function aux_state(aux){
 
             $('div.ui-page-active #'+ aux).off('change');
 
-            $('div.ui-page-active #'+ aux).flipswitch("option", "onText",  onText);
-            $('div.ui-page-active #'+ aux).flipswitch("option", "offText", offText);
+            $('div.ui-page-active #'+ aux).flipswitch(
+                "option",
+                "onText",
+                onText
+            );
+            $('div.ui-page-active #'+ aux).flipswitch(
+                "option",
+                "offText",
+                offText
+            );
 
             $('div.ui-page-active #'+ aux).flipswitch('refresh');
-
-            $('div.ui-page-active #'+ aux).on('change', flip_change);
-
+            $('div.ui-page-active #'+ aux).on('change', aux_action);
         }
     });
 }
 
-function flip_change(e){
+function aux_action(e){
     var checked = $(this).prop('checked');
     var aux = $(this).attr('id');
-
-    $.get('/set_aux_state/'+ aux +'/'+ checked, function(set_state){
-        var set_state_json = $.parseJSON(set_state);
-
-        if (set_state_json.error){
-            console.log(set_state_json.error);
-        }
-    });
 
     $.get('/get_aux_override/'+ aux, function(get_override_data){
         var start_override_status = parseInt(get_override_data);
 
-        var new_override = ! start_override_status;
-
-        $.get('/set_aux_override/'+ aux +'/'+ new_override, function(set_override_data){
+        $.get('/set_aux_override/'+ aux +'/'+ ! start_override_status,
+        function(set_override_data){
             var set_override_json = $.parseJSON(set_override_data);
 
-            if (set_override_json.error){
-                console.log(set_override_json.error);
-            }
-
-            var override_status = parseInt(set_override_json.override);
-
-            if (override_status != -1){
-                $.get('/get_aux_override/'+ aux, function(validate_override_data){
-                    var validate_override_json = $.parseJSON(validate_override_data);
-                });
+            if (set_override_json.override == -1){
+                console.log("aux id " + aux + " toggling is disabled");
+                alert(
+                    "aux id " + aux + " toggling is disabled in the config file"
+                );
+                return;
             }
             else {
-                alert("aux id " + aux + " toggling is disabled in the config file");
+                // change state only after we know the override operation
+                // succeeded
+
+                $.get('/set_aux_state/'+ aux +'/'+ checked, function(set_state){
+                    var set_state_json = $.parseJSON(set_state);
+
+                    if (set_state_json.error){
+                        console.log(set_state_json.error);
+                    }
+                });
             }
         });
     });

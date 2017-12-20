@@ -80,9 +80,7 @@ sub aux {
     return $self->{aux_sth}->fetchrow_hashref;
 }
 sub auxs {
-    my ($self) = @_;
-
-    return $self->db->selectall_hashref(
+    return $_[0]->db->selectall_hashref(
         'SELECT * from aux',
         'id'
     );
