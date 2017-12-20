@@ -186,6 +186,7 @@ function aux_state(aux){
             var offText;
 
             if (parseInt(json.override) == 1 && (aux == 'aux1'||'aux2'||'aux3')){
+                console.log("in override")
                 onText = 'HOLD';
                 offText = 'HOLD';
             }
@@ -214,6 +215,14 @@ function aux_state(aux){
 function flip_change(e){
     var checked = $(this).prop('checked');
     var aux = $(this).attr('id');
+
+    $.get('/set_aux_state/'+ aux +'/'+ checked, function(data){
+        var json = $.parseJSON(data);
+
+        if (json.error){
+            console.log(json.error);
+        }
+    });
 
     $.get('/set_aux_override/'+ aux +'/'+ checked, function(data){
         var json = $.parseJSON(data);
