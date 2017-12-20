@@ -224,6 +224,19 @@ function flip_change(e){
         }
     });
 
+    var start_override_status;
+
+    console.log("override status: " + start_override_status);
+
+    $.get('/get_aux_override/'+ aux, function(data){
+        var json = $.parseJSON(data);
+        if (json.error){
+            console.log(json.error);
+        }
+
+        start_override_status = parseInt(json.override);
+    });
+
     $.get('/set_aux_override/'+ aux +'/'+ checked, function(data){
         var json = $.parseJSON(data);
 
