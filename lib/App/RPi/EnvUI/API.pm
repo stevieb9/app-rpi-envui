@@ -564,12 +564,19 @@ sub _args {
     $self->test_mock($args{test_mock});
 }
 sub _bool {
-    # translates javascript true/false to 1/0
+    # translates javascript true/false and 1/0 to 1/0
 
     my ($self, $bool) = @_;
-    confess
-      "bool() needs either 'true' or 'false' as param\n" if ! defined $bool;
-    return $bool eq 'true' ? 1 : 0;
+   
+    if ($bool eq 'true' || $bool == 1){
+       return 1;
+    }
+    elsif ($bool eq 'false' || $bool == 0){
+        return 0;
+    }
+    else {
+        confess "\$bool param must be either true/false or 1/0\n";
+    }
 }
 sub _config_control {
     my ($self, $want) = @_;

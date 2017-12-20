@@ -37,7 +37,11 @@ Changes history for App::RPi::EnvUI
           state doesn't happen (fixes #54)
         - disabled "toggle" in the base config file for the light aux (updated
           tests)
-
+        - updated API::_bool() to allow the $bool param to be both true/false
+          and 1/0, as we do call it in both of those contexts, so we don't
+          have to translate the param in code before sending it in
+        - added new t/226 test for fully testing the set_aux_override route
+         
 0.29    2017-10-24
         - this project is still in BETA status and should not be used in a
           production growing environment without extreme monitoring

@@ -43,30 +43,38 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     # good call
     $res = $test->request( GET "/set_aux_override/aux1/0" );
     is $res->is_success, 1, "with two valid params, /set_aux_override ok";
-    $p = decode_json $res->content;
-  
-    is ref $p, 'HASH', "and is a href";
-    is keys %$p, 2, "...and has proper key count";
-    is exists $p->{override}, 1, "and override key exists";
-    is $p->{override}, 0, "and override has correct default value";
-    is exists $p->{aux}, 1, "and aux key exists";
-    is $p->{aux}, 'aux1', "and aux has correct default value";
     
     # loop over all auxs
 
     for (1..8){
         my $id = "aux$_";
 
-        my $override = aux($id)->{override};
-        is $override, 0, "$id has proper default override";
+        my $res = $test->request( GET "/set_aux_override/$id/1" );
+        $p = decode_json $res->content;
 
-        $res = $test->request( GET "/set_aux_override/$id/1" );
-        is $res->is_success, 1, "/set_aux_override $id ok";
+        is ref $p, 'HASH', "$id ret is a href";
+        is keys %$p, 2, "$id ret has proper key count";
+        is exists $p->{aux}, 1, "$id ret aux key exists";
+        is $p->{aux}, $id, "$id ret has correct default value";
+
+        my $aux = aux($id);
+
+        if ($_ != 3){
+            is exists $p->{override}, 1, "$id ret override key exists";
+            is $p->{override}, 1, "$id ret override has correct updated value";
+            is $aux->{override}, 1, "$id get_aux override has correct updated value";
+        }
+        else { # light aux
+            is exists $p->{override}, 1, "and override key exists";
+            is $p->{override}, -1, "and override is disabled correctly";
+            is $aux->{override}, 0, "$id get_aux override has not been updated";
+        }
     }
 }
 
 sub aux {
-    my $res = $test->request(GET "/get_aux/$_[0]");
+    my $id = shift;
+    my $res = $test->request(GET "/get_aux/$id");
     my $perl = decode_json $res->content;
 
     return {
@@ -76,8 +84,8 @@ sub aux {
     };
 }
 
-unset_testing();
-db_remove();
-unconfig();
+#unset_testing();
+#db_remove();
+#unconfig();
 done_testing();
 
