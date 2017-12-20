@@ -86,7 +86,7 @@ $(document).on('pageshow', '#home', function(){
 
     $.each(positions, function (id, pos){
         $('div.ui-page-active #'+ id).css(pos);
-    })
+    });
 
     $('div.ui-page-active .drag').draggable({
         handle: 'p.widget_handle',
