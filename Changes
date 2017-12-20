@@ -31,7 +31,9 @@ Changes history for App::RPi::EnvUI
         - added new config directive, "devel", if set to 1, we'll turn the
           background of the time display in the UI red to signify this isn't
           a production system (closes #47)
-                   
+        - fix logic bugs and other JS weirdness in core.js that was completely
+          breaking the UI's interpretation of aux override (fixes #53)
+
 0.29    2017-10-24
         - this project is still in BETA status and should not be used in a
           production growing environment without extreme monitoring
