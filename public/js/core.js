@@ -216,47 +216,52 @@ function flip_change(e){
     var checked = $(this).prop('checked');
     var aux = $(this).attr('id');
 
-    $.get('/set_aux_state/'+ aux +'/'+ checked, function(data){
-        var json = $.parseJSON(data);
+    console.log("new state: " + checked);
 
-        if (json.error){
-            console.log(json.error);
+    $.get('/set_aux_state/'+ aux +'/'+ checked, function(set_state){
+        var set_state_json = $.parseJSON(set_state);
+
+        if (set_state_json.error){
+            console.log(set_state_json.error);
         }
+    
+        console.log("set state: " + set_state_json.state);
     });
 
-    var start_override_status;
+    $.get('/get_aux_override/'+ aux, function(get_override_data){
+        var start_override_status = parseInt(get_override_data);
+        console.log("current override: " + start_override_status);
 
-    console.log("override status: " + start_override_status);
+        var new_override;
 
-    $.get('/get_aux_override/'+ aux, function(data){
-        var json = $.parseJSON(data);
-        if (json.error){
-            console.log(json.error);
-        }
-
-        start_override_status = parseInt(json.override);
-    });
-
-    $.get('/set_aux_override/'+ aux +'/'+ checked, function(data){
-        var json = $.parseJSON(data);
-
-        if (json.error){
-            console.log(json.error);
-        }
-
-        var override_status = parseInt(json.override);
-
-        if (override_status != -1){
-            $.get('/get_aux_override/'+ aux, function(data){
-                var json = $.parseJSON(data);
-                if (json.error){
-                    console.log(json.error);
-                }
-            });
+        if (start_override_status){
+            new_override = false;
         }
         else {
-            alert("aux id " + aux + " toggling is disabled in the config file");
+            new_override = true;
         }
+        console.log("new override: " + new_override);
+
+        $.get('/set_aux_override/'+ aux +'/'+ new_override, function(set_override_data){
+            var set_override_json = $.parseJSON(set_override_data);
+
+            if (set_override_json.error){
+                console.log(set_override_json.error);
+            }
+
+            var override_status = parseInt(set_override_json.override);
+            console.log("updated override: " + override_status);
+
+            if (override_status != -1){
+                $.get('/get_aux_override/'+ aux, function(validate_override_data){
+                    console.log(validate_override_data);
+                    var validate_override_json = $.parseJSON(validate_override_data);
+                });
+            }
+            else {
+                alert("aux id " + aux + " toggling is disabled in the config file");
+            }
+        });
     });
 }
 
