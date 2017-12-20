@@ -61,8 +61,6 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
         is $override, 0, "$id has proper default override";
 
         $res = $test->request( GET "/set_aux_override/$id/1" );
-        done_testing();
-        exit();
         is $res->is_success, 1, "/set_aux_override $id ok";
     }
 }

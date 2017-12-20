@@ -34,6 +34,7 @@ t/210-route_get_control.t
 t/215-route_get_aux.t
 t/220-route_fetch_env.t
 t/225-route_set_aux.t
+t/226-route_set_aux_override.t
 t/25-api_env_temp_hum.t
 t/30-api_config.t
 t/300-login_route.t

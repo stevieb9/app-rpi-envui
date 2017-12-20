@@ -39,7 +39,7 @@
   "aux3": {
     "pin": "-1",
     "desc": "light",
-    "toggle": "1"
+    "toggle": "0"
   },
   "aux4": {
     "pin": "-1",

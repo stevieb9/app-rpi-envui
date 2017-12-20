@@ -65,7 +65,7 @@ $(document).on('pageshow', '#home', function(){
 
     // button event
 
-    $('div.ui-page-active .button').on('change', flip_change);
+    $('div.ui-page-active .button').on('change', aux_action);
 
     // main menu
 
