@@ -634,6 +634,7 @@ sub _init {
     );
 
     $self->debug_level($self->_config_core('debug_level'));
+    $self->log_file($self->_config_core('log_file'));
     $self->_log;
 
     my $log = $log->child('_init()');
