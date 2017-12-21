@@ -41,6 +41,8 @@ Changes history for App::RPi::EnvUI
           and 1/0, as we do call it in both of those contexts, so we don't
           have to translate the param in code before sending it in
         - added new t/226 test for fully testing the set_aux_override route
+        - fix issue where when API::switch() was called, we were setting the
+          physical pin state even when the state hadn't changed (fixes #52)
          
 0.29    2017-10-24
         - this project is still in BETA status and should not be used in a

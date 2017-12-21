@@ -388,15 +388,20 @@ sub switch {
     my $pin = $self->aux_pin($aux_id);
 
     if ($pin != -1){
-        if ($state){
-            $log->_6("set $pin state to HIGH");
-            pin_mode($pin, OUTPUT);
-            write_pin($pin, HIGH);
+        if (read_pin($pin) != $state){
+            if ($state){
+                $log->_6("set $pin state to HIGH");
+                pin_mode($pin, OUTPUT);
+                write_pin($pin, HIGH);
+            }
+            else {
+                $log->_6("set $pin state to LOW");
+                pin_mode($pin, OUTPUT);
+                write_pin($pin, LOW);
+            }
         }
         else {
-            $log->_6("set $pin state to LOW");
-            pin_mode($pin, OUTPUT);
-            write_pin($pin, LOW);
+            $log->_6("pin $pin state already set properly");
         }
     }
 }
