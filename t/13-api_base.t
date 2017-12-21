@@ -68,13 +68,19 @@ is $api->{testing}, 1, "testing param to new() ok";
 
 { # bool()
 
-    my $ok = eval { $api->_bool; 1; };
-    is $ok, undef, "bool() dies if a param isn't sent in";
-    like $@, qr/'true' or 'false'/, "...and the error is correct";
+    my $ok_no_param = eval { $api->_bool; 1; };
+    is $ok_no_param, undef, "bool() dies if a param isn't sent in";
+    like $@, qr/param must be present/, "...and the error is correct";
 
     is $api->_bool('true'), 1, "bool('true') ok";
     is $api->_bool('false'), 0, "bool('false') ok";
 
+    is $api->_bool(1), 1, "bool(1) ok";
+    is $api->_bool(0), 0, "bool(0) ok";
+
+    my $ok_invalid_param = eval { $api->_bool('a'); 1; };
+    is $ok_invalid_param, undef, "bool() dies if an invalid param passed in";
+    like $@, qr/param must be either/, "...and the error is correct";
 }
 
 { # _reset()

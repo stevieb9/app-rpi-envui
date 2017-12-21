@@ -567,16 +567,17 @@ sub _bool {
     # translates javascript true/false and 1/0 to 1/0
 
     my ($self, $bool) = @_;
-   
-    if ($bool eq 'true' || $bool == 1){
-       return 1;
+
+    if (! defined $bool){ 
+        confess 
+          "\$bool param must be present and must be 'true', 'false', 1 or 0";
     }
-    elsif ($bool eq 'false' || $bool == 0){
-        return 0;
-    }
-    else {
-        confess "\$bool param must be either true/false or 1/0\n";
-    }
+
+    return $bool ? 1 : 0 if $bool =~ /\d/;
+    return 1 if $bool eq 'true';
+    return 0 if $bool eq 'false';
+
+    confess "\$bool param must be either true/false or 1/0";
 }
 sub _config_control {
     my ($self, $want) = @_;
