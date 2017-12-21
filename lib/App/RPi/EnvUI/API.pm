@@ -24,9 +24,9 @@ BEGIN {
 }
 
 # mocked sub handles for when we're in testing mode
-# writePin() and pinMode() from wiringPi
+# readPin(), writePin() and pinMode() from wiringPi
 
-our ($temp_sub, $hum_sub, $wp_sub, $pm_sub);
+our ($temp_sub, $hum_sub, $rp_sub, $wp_sub, $pm_sub);
 
 # class variables
 
@@ -686,6 +686,10 @@ sub _test_mode {
         $pm_sub = $mock->mock(
             'App::RPi::EnvUI::API::pin_mode',
             return_value => 'ok'
+        );
+
+        $rp_sub = $mock->mock(
+            'App::RPi::EnvUI::API::read_pin',
         );
 
         $wp_sub = $mock->mock(
