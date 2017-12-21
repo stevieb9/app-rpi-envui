@@ -2,7 +2,7 @@ package App::RPi::EnvUI::Event;
 
 use Async::Event::Interval;
 
-our $VERSION = '0.30';
+our $VERSION = '0.99_01';
 
 sub new {
     my ($class, %args) = @_;

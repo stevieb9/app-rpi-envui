@@ -13,7 +13,7 @@ use Logging::Simple;
 use Mock::Sub no_warnings => 1;
 use RPi::Const qw(:all);
 
-our $VERSION = '0.30';
+our $VERSION = '0.99_01';
 
 # configure handlers
 

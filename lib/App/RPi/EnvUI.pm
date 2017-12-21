@@ -8,7 +8,7 @@ use Data::Dumper;
 use Mock::Sub no_warnings => 1;
 use POSIX qw(tzset);
 
-our $VERSION = '0.30';
+our $VERSION = '0.99_01';
 
 my $db = App::RPi::EnvUI::DB->new;
 my $api = App::RPi::EnvUI::API->new(db => $db);
