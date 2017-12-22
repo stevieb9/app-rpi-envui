@@ -688,19 +688,21 @@ sub _test_mode {
             return_value => 'ok'
         );
 
+        $log->_6( "mocked WiringPi::API::pin_mode" );
+
         $rp_sub = $mock->mock(
             'App::RPi::EnvUI::API::read_pin',
         );
+
+        $log->_6( "mocked WiringPi::API::read_pin" );
 
         $wp_sub = $mock->mock(
             'App::RPi::EnvUI::API::write_pin',
             return_value => 'ok'
         );
-    }
 
-    $log->_5(
-        "mocked WiringPi::write_pin as App::RPi::EnvUI::API::write_pin"
-    );
+        $log->_6( "mocked WiringPi::API::write_pin" );
+    }
 
     warn "API in test mode\n";
 
