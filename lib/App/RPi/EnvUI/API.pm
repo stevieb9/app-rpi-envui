@@ -169,8 +169,7 @@ sub action_light {
     if (! $light_on_hours || $dt_now > $dt_light_off){
         $log = $log->child("light off");
         if ($self->aux_state($aux)){
-            $log->_6("turning light off");
-            $log->_6("light aux state: " . $self->aux_state($aux));
+            $log->_5("turning light off");
             $self->aux_state($aux, OFF);
             pin_mode($pin, OUTPUT);
             write_pin($pin, LOW);
@@ -695,7 +694,7 @@ sub _test_mode {
         $log->_6( "mocked WiringPi::API::pin_mode" );
 
         $rp_sub = $mock->mock(
-            'WiringPi::API::read_pin'
+            'App::RPi::EnvUI::API::read_pin',
         );
 
         $log->_6( "mocked WiringPi::API::read_pin" );
