@@ -40,7 +40,7 @@ sub env_action {
     my $db = App::RPi::EnvUI::DB->new(testing => $self->{testing});
     my $api = App::RPi::EnvUI::API->new(
         testing => $self->{testing},
-        test_mock => 0
+        test_mock => 1
     );
 
     $api->{db} = $db;

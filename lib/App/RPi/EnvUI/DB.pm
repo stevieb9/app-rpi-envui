@@ -77,6 +77,7 @@ sub aux {
     }
 
     $self->{aux_sth}->execute($aux_id);
+
     return $self->{aux_sth}->fetchrow_hashref;
 }
 sub auxs {
@@ -95,6 +96,7 @@ sub config_control {
     }
 
     $self->{config_control_sth}->execute($want);
+
     return $self->{config_control_sth}->fetchrow_hashref->{value};
 }
 sub config_core {
@@ -106,6 +108,7 @@ sub config_core {
         );
     }
     $self->{config_core_sth}->execute($want);
+
     return $self->{config_core_sth}->fetchrow_hashref->{value};
 }
 sub config_light {
@@ -133,8 +136,10 @@ sub env {
             'SELECT * FROM stats WHERE id=?'
         );
     }
+
     my $sth = $self->{env_sth};
     $sth->execute($id);
+
     return $sth->fetchrow_hashref;
 }
 sub db {

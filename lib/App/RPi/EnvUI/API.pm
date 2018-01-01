@@ -129,10 +129,6 @@ sub action_temp {
 sub action_light {
     my ($self) = @_;
 
-    #FIXME: remove set_light_times() from here and docs
-    # - modify/remove the light times from the db and db API (and docs)
-    # - figure out better method for class vars that belong in here
-
     my $log = $log->child('action_light');
     my $aux      = $self->_config_control('light_aux');
     my $pin      = $self->aux_pin($aux);
@@ -149,7 +145,6 @@ sub action_light {
         $log->_5("initializing light");
 
         $light_on_hours = $self->_config_light('on_hours');
-
         $light_on_at = $self->_config_light('on_at');
 
         $log->_6("light on: $light_on_at, light hours: $light_on_hours");
@@ -161,8 +156,10 @@ sub action_light {
     }
 
     if ($light_on_hours == 24 || $dt_now > $dt_light_on){
+        $log = $log->child("light on");
         if (! $self->aux_state($aux)){
             $log->_6("turning light on");
+            $log->_6("light aux state: " . $self->aux_state($aux));
             $self->aux_state($aux, ON);
             pin_mode($pin, OUTPUT);
             write_pin($pin, HIGH);
@@ -170,8 +167,10 @@ sub action_light {
     }
 
     if (! $light_on_hours || $dt_now > $dt_light_off){
+        $log = $log->child("light off");
         if ($self->aux_state($aux)){
             $log->_6("turning light off");
+            $log->_6("light aux state: " . $self->aux_state($aux));
             $self->aux_state($aux, OFF);
             pin_mode($pin, OUTPUT);
             write_pin($pin, LOW);
@@ -203,10 +202,9 @@ sub aux_id {
     return $aux->{id};
 }
 sub aux_override {
-    my $self = shift;
     # sets a manual override flag if an aux is turned on manually (via button)
 
-    my ($aux_id, $override) = @_;
+    my ($self, $aux_id, $override) = @_;
 
     my $log = $log->child('aux_override');
 
@@ -233,9 +231,9 @@ sub aux_override {
     return $self->aux($aux_id)->{override};
 }
 sub aux_pin {
-    my $self = shift;
     # returns the auxillary's GPIO pin number
-    my ($aux_id, $pin) = @_;
+
+    my ($self, $aux_id, $pin) = @_;
 
     if (! defined $aux_id || $aux_id !~ /^aux/){
         confess "aux_pin() requires an aux ID as its first param\n";
@@ -244,13 +242,13 @@ sub aux_pin {
     if (defined $pin){
         $self->db->update('aux', 'pin', $pin, 'id', $aux_id);
     }
+
     return $self->aux($aux_id)->{pin};
 }
 sub aux_state {
-    my $self = shift;
     # maintains the auxillary state (on/off)
 
-    my ($aux_id, $state) = @_;
+    my ($self, $aux_id, $state) = @_;
 
     my $log = $log->child('aux_state');
 
@@ -265,13 +263,13 @@ sub aux_state {
 
     $state = $self->aux($aux_id)->{state};
     $log->_6("$aux_id state = $state");
+
     return $state;
 }
 sub aux_time {
-    my $self = shift;
     # maintains the auxillary on time
 
-    my ($aux_id, $time) = @_;
+    my ($self, $aux_id, $time) = @_;
 
     if (! defined $aux_id || $aux_id !~ /^aux/){
         confess "aux_time() requires an aux ID as its first param\n";
@@ -283,9 +281,12 @@ sub aux_time {
 
     my $on_time = $self->aux($aux_id)->{on_time};
     my $on_length = time() - $on_time;
+
     return $on_time == 0 ? 0 : $on_length;
 }
 sub env {
+    # fetches environment data
+
     my ($self, $temp, $hum) = @_;
 
     if (@_ != 1 && @_ != 3){
@@ -315,13 +316,14 @@ sub env {
         }
     }
 
-    my $ret = $self->db->env;
+    my $env_data = $self->db->env;
 
-    return {temp => -1, humidity => -1, error => $event_error} if ! defined $ret;
+    return {temp => -1, humidity => -1, error => $event_error}
+      if ! defined $env_data;
 
-    $ret->{error} = $event_error;
+    $env_data->{error} = $event_error;
 
-    return $ret;
+    return $env_data;
 }
 sub graph_data {
     my ($self) = @_;
@@ -361,11 +363,12 @@ sub graph_data {
     return \%data;
 }
 sub humidity {
-    my $self = shift;
-    return $self->env->{humidity};
+    return $_[0]->env->{humidity};
 }
 sub read_sensor {
-    my $self = shift;
+    # poll the DHT11 sensor
+
+    my ($self) = @_;
 
     my $log = $log->child('read_sensor');
 
@@ -403,6 +406,7 @@ sub switch {
         else {
             $log->_6("pin $pin state already set properly");
         }
+        print $rp_sub->called_with . " $x\n";
     }
 }
 sub temp {
@@ -445,7 +449,7 @@ sub events {
     $log->_5("events successfully started");
 }
 sub log {
-    my $self = shift;
+    my ($self) = @_;
     $master_log->file($self->log_file) if $self->log_file;
     $master_log->level($self->debug_level);
     return $master_log;
@@ -691,7 +695,7 @@ sub _test_mode {
         $log->_6( "mocked WiringPi::API::pin_mode" );
 
         $rp_sub = $mock->mock(
-            'App::RPi::EnvUI::API::read_pin',
+            'WiringPi::API::read_pin'
         );
 
         $log->_6( "mocked WiringPi::API::read_pin" );
