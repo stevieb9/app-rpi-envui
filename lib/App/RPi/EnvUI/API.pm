@@ -48,6 +48,8 @@ sub new {
 
     # return the stored object if we've already run new()
 
+    my $log = $log->child('new');
+
     if (defined $api){
         $log->_5('returning stored API object');
         return $api if defined $api;
@@ -234,13 +236,18 @@ sub aux_pin {
 
     my ($self, $aux_id, $pin) = @_;
 
+    my $log = $log->child('aux_pin');
+
     if (! defined $aux_id || $aux_id !~ /^aux/){
         confess "aux_pin() requires an aux ID as its first param\n";
     }
 
     if (defined $pin){
+        $log->_6("setting pin $pin as aux ID $aux_id");
         $self->db->update('aux', 'pin', $pin, 'id', $aux_id);
     }
+
+    $log->_7("returning aux ID $aux_id");
 
     return $self->aux($aux_id)->{pin};
 }
@@ -270,16 +277,21 @@ sub aux_time {
 
     my ($self, $aux_id, $time) = @_;
 
+    my $log = $log->child('aux_time');
+
     if (! defined $aux_id || $aux_id !~ /^aux/){
         confess "aux_time() requires an aux ID as its first param\n";
     }
 
     if (defined $time) {
+        $log->_6("setting on_time for aux $aux_id to $time");
         $self->db->update('aux', 'on_time', $time, 'id', $aux_id);
     }
 
     my $on_time = $self->aux($aux_id)->{on_time};
     my $on_length = time() - $on_time;
+
+    $log->_7("returning on time: $on_time");
 
     return $on_time == 0 ? 0 : $on_length;
 }
@@ -287,6 +299,8 @@ sub env {
     # fetches environment data
 
     my ($self, $temp, $hum) = @_;
+
+    my $log = $log->child('env');
 
     if (@_ != 1 && @_ != 3){
         confess "env() requires either zero params, or two\n";
@@ -302,6 +316,7 @@ sub env {
     }
 
     if (defined $temp){
+        $log->_7("setting hum: $hum, temp: $temp");
         $self->db->insert_env($temp, $hum);
     }
 
