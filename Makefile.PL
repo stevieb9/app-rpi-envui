@@ -90,7 +90,7 @@ WriteMakefile(
         'Digest::SHA1' => 0,
         'JSON::XS' => 0,
         'Logging::Simple' => '1.01',
-        'Mock::Sub' => '1.07',
+        'Mock::Sub' => '1.10',
         'Plack::Test' => 0,
         'RPi::DHT11' => '1.01',
         'RPi::Const' => '1.02',
