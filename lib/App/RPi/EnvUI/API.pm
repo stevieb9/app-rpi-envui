@@ -296,7 +296,7 @@ sub aux_time {
     return $on_time == 0 ? 0 : $on_length;
 }
 sub env {
-    # fetches environment data
+    # sets/gets environment data
 
     my ($self, $temp, $hum) = @_;
 
@@ -430,6 +430,8 @@ sub temp {
 # public core operational methods
 
 sub auth {
+    #FIXME: this may be internal only and not for real use
+
     my ($self, $user, $pw) = @_;
 
     if (! defined $user){
@@ -440,6 +442,7 @@ sub auth {
         confess "\n\nauth() requires a password sent in\n\n";
 
     }
+
     my $csh = Crypt::SaltedHash->new(algorithm => 'SHA1');
 
     my $crypted = $self->db->user($user)->{pass};
@@ -447,7 +450,7 @@ sub auth {
     return $csh->validate($crypted, $pw);
 }
 sub events {
-    my $self = shift;
+    my ($self) = @_;
 
     my $log = $log->child('events');
 
@@ -468,6 +471,8 @@ sub log {
     return $master_log;
 }
 sub passwd {
+    #FIXME: this may be internal only and not for real use
+
     my ($self, $pw) = @_;
 
     if (! defined $pw){
@@ -538,39 +543,62 @@ sub log_file {
 sub debug_level {
     my ($self, $level) = @_;
 
+    my $log = $log->child('debug_level');
+
     if (defined $level){
+        $log->_7("attempting to set level to $level");
+
         if ($level < -1 || $level > 7){
             warn "log level has to be between 0 and 7... disabling logging\n";
+            $log->_7("log level $level invalid, disabling all logging");
             $level = -1;
         }
         $self->{debug_level} = $level;
     }
 
+    $log->_7("log level is $self->{debug_level}");
+
     return $self->{debug_level};
 }
 sub sensor {
     my ($self, $sensor) = @_;
-    $self->{sensor} = $sensor if defined $sensor;
+
+    my $log = $log->child("sensor");
+
+    if (defined $sensor){
+        $log->_7("setting env sensor");
+        $self->{sensor} = $sensor;
+    }
     return $self->{sensor};
 }
 sub testing {
     my ($self, $bool) = @_;
 
+    my $log = $log->child('testing');
+
     if (defined $bool){
+        $log->_7("setting testing to $bool");
         $self->{testing} = $bool;
     }
 
     $self->{testing} = 1 if _ui_test_mode();
+
+    $log->_7("testing == $self->{testing}");
 
     return $self->{testing};
 }
 sub test_mock {
     my ($self, $mock) = @_;
 
+    my $log = $log->child('test_mock');
+
     if (defined $mock){
+        $log->_7("setting mock to $bool");
         $self->{test_mock} = $mock;
     }
+
     $self->{test_mock} = 1 if ! defined $self->{test_mock};
+
     return $self->{test_mock};
 }
 
@@ -578,6 +606,10 @@ sub test_mock {
 
 sub _args {
     my ($self, %args) = @_;
+
+    my $log = $log->child('_args');
+    $log->_7("setting object params");
+
     $self->debug_sensor($args{debug_sensor});
     $self->config($args{config_file});
     $self->log_file($args{log_file});
