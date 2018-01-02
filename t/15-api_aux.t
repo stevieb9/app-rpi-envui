@@ -32,9 +32,9 @@ is $api->{testing}, 1, "testing param to new() ok";
         my $aux = $api->aux($name);
 
         is ref $aux, 'HASH', "aux() returns $name as an href";
-        is keys %$aux, 7, "$name has proper key count";
+        is keys %$aux, 9, "$name has proper key count";
 
-        for (qw(id desc pin state override on_time)){
+        for (qw(id desc pin state override on_time last_on last_off)){
             is exists $aux->{$_}, 1, "$name has directive $_";
         }
     }
@@ -44,6 +44,7 @@ is $api->{testing}, 1, "testing param to new() ok";
 
     $aux = $api->aux('aux0');
     is $aux, undef, "aux0 doesn't exist";
+
 }
 { # auxs()
 
@@ -81,16 +82,24 @@ is $api->{testing}, 1, "testing param to new() ok";
         my $aux_id = "aux$_";
         my $state = $api->aux_state($aux_id);
 
+        my $time = DateTime->now(time_zone => 'local')->strftime(
+            '%Y-%m-%d %H:%M'
+        );
+
         is $state,
             0,
             "aux_state() returns correct default state value for $aux_id";
 
-        $state = $api->aux_state($aux_id, 1);
+        # on
 
+        $state = $api->aux_state($aux_id, 1);
+        like $api->aux_last_on($aux_id), qr/$time/, "aux $aux_id last on ok" ;
         is $state, 1, "aux_state() correctly sets state for $aux_id";
 
-        $state = $api->aux_state($aux_id, 0);
+        # off
 
+        $state = $api->aux_state($aux_id, 0);
+        like $api->aux_last_on($aux_id), qr/$time/, "aux $aux_id last off ok" ;
         is $state, 0, "aux_state() can re-set state for $aux_id";
     }
 
@@ -185,6 +194,31 @@ is $api->{testing}, 1, "testing param to new() ok";
     like $@, qr/requires an aux ID/, "...and has the correct error message";
 }
 
+{ # aux_last_on
+
+    my $ok;
+
+    $ok = eval {$api->aux_last_on; 1;};
+    is $ok, undef, "aux_last_on() requires an aux id";
+    like $@, qr/aux_last_on/, "...and error is sane";
+
+    $ok = eval {$api->aux_last_off; 1;};
+    is $ok, undef, "aux_last_off() requires an aux id";
+    like $@, qr/aux_last_off/, "...and error is sane";
+
+    my $time = DateTime->now(time_zone => 'local')->strftime(
+        '%Y-%m-%d %H:%M'
+    );
+
+    for (1..8){
+        $api->aux_state("aux$_", 1);
+        like $api->aux_last_on("aux$_"), qr/$time/, "last on time for aux$_ ok";
+
+        $api->aux_state("aux$_", 0);
+        like $api->aux_last_off("aux$_"), qr/$time/, "last off time for aux$_ ok";
+    }
+
+}
 unconfig();
 #db_remove();
 done_testing();

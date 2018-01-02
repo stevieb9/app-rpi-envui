@@ -9,7 +9,8 @@
     "debug_sensor": "0",
     "log_file": "",
     "debug_level": "-1",
-    "devel": "0"
+    "devel": "0",
+    "display_aux_state_time": "0"
   },
   "control": {
     "temp_limit": "80",

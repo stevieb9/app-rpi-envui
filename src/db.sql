@@ -14,17 +14,19 @@ CREATE TABLE aux (
     state TINYINT(1),
     override TINYINT(1),
     toggle TINYINT(1),
-    on_time INTEGER
+    on_time INTEGER,
+    last_on VARCHAR(20),
+    last_off VARCHAR(20)
 );
 
-INSERT INTO aux VALUES ('aux1', 'temp', -1, 0, 0, 0, 1);
-INSERT INTO aux VALUES ('aux2', 'humidity', -1, 0, 0, 0, 1);
-INSERT INTO aux VALUES ('aux3', 'light', -1, 0, 0, 0, 1);
-INSERT INTO aux VALUES ('aux4', '', -1, 0, 0, 0, 1);
-INSERT INTO aux VALUES ('aux5', '', -1, 0, 0, 0, 1);
-INSERT INTO aux VALUES ('aux6', '', -1, 0, 0, 0, 1);
-INSERT INTO aux VALUES ('aux7', '', -1, 0, 0, 0, 1);
-INSERT INTO aux VALUES ('aux8', '', -1, 0, 0, 0, 1);
+INSERT INTO aux VALUES ('aux1', 'temp', -1, 0, 0, 0, 1, '', '');
+INSERT INTO aux VALUES ('aux2', 'humidity', -1, 0, 0, 0, 1, '', '');
+INSERT INTO aux VALUES ('aux3', 'light', -1, 0, 0, 0, 1, '', '');
+INSERT INTO aux VALUES ('aux4', '', -1, 0, 0, 0, 1, '', '');
+INSERT INTO aux VALUES ('aux5', '', -1, 0, 0, 0, 1, '', '');
+INSERT INTO aux VALUES ('aux6', '', -1, 0, 0, 0, 1, '', '');
+INSERT INTO aux VALUES ('aux7', '', -1, 0, 0, 0, 1, '', '');
+INSERT INTO aux VALUES ('aux8', '', -1, 0, 0, 0, 1, '', '');
 
 DROP TABLE IF EXISTS control;
 
@@ -60,7 +62,7 @@ INSERT INTO core VALUES ('testing', 0);
 INSERT INTO core VALUES ('debug_sensor', 0);
 INSERT INTO core VALUES ('log_file', "");
 INSERT INTO core VALUES ('debug_level', -1);
-INSERT INTO core VALUES ('devel', 0);
+INSERT INTO core VALUES ('display_aux_state_time', 0);
 
 DROP TABLE IF EXISTS light;
 

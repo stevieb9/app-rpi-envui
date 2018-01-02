@@ -49,7 +49,7 @@ my $api = App::RPi::EnvUI::API->new(
         my $name = "aux$_";
         my $aux = $db->aux($name);
         is ref $aux, 'HASH', "aux() returns an href for $name";
-        is keys %$aux, 7, "aux() $name has proper count keys";
+        is keys %$aux, 9, "aux() $name has proper count keys";
     }
 }
 
@@ -77,13 +77,30 @@ my $api = App::RPi::EnvUI::API->new(
 
 { # config_core()
 
+    # log_file removed due to empty string comparison
+
     my @directives = qw(
-        event_fetch_timer event_action_timer event_display_timer
-        sensor_pin testing time_zone
+        event_fetch_timer
+        event_action_timer
+        event_display_timer
+        time_zone
+        sensor_pin
+        testing
+        debug_sensor
+        debug_level
+        display_aux_state_time
     );
 
     my @values = qw(
-        15 3 4 -1 0 America/Vancouver
+        15
+        3
+        4
+        America/Vancouver
+        -1
+        0
+        0
+        -1
+        0
     );
 
     my $i = 0;

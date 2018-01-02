@@ -251,6 +251,32 @@ sub aux_pin {
 
     return $self->aux($aux_id)->{pin};
 }
+sub aux_last_off {
+    my ($self, $aux_id) = @_;
+
+    my $log = $log->child('aux_last_off');
+
+    if (! defined $aux_id || $aux_id !~ /^aux/){
+        confess "aux_last_on() requires an aux ID as its first param\n";
+    }
+
+    $log->_7("getting last off time for aux $aux_id");
+
+    return $self->aux($aux_id)->{last_on};
+}
+sub aux_last_on {
+    my ($self, $aux_id) = @_;
+
+    my $log = $log->child('aux_last_on');
+
+    if (! defined $aux_id || $aux_id !~ /^aux/){
+        confess "aux_last_on() requires an aux ID as its first param\n";
+    }
+
+    $log->_7("getting last on time for aux $aux_id");
+
+    return $self->aux($aux_id)->{last_on};
+}
 sub aux_state {
     # maintains the auxillary state (on/off)
 
@@ -263,8 +289,17 @@ sub aux_state {
     }
 
     if (defined $state){
-        $log->_5("setting state to $state for $aux_id");
+        my $dt = DateTime->now(time_zone => 'local');
+        my $time = $dt->strftime('%Y-%m-%d %H:%M:%S');
+
+        $log->_5("setting state to $state for $aux_id at $time");
         $self->db->update('aux', 'state', $state, 'id', $aux_id);
+
+        # set last on/off time
+
+        $state
+            ? $self->db->update('aux', 'last_on',  $time, 'id', $aux_id)
+            : $self->db->update('aux', 'last_off', $time, 'id', $aux_id);
     }
 
     $state = $self->aux($aux_id)->{state};

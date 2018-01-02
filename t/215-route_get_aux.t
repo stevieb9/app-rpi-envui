@@ -32,7 +32,7 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
         my $p = decode_json $j;
 
         is ref $p, 'HASH', "/get_aux/$id return an href in JSON";
-        is keys %$p, 7, "$id has ok key count";
+        is keys %$p, 9, "$id has ok key count";
 
         $i++;
     }
