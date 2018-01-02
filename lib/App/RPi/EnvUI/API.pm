@@ -68,15 +68,15 @@ sub new {
 
     $log->_5("successfully initialized the system");
 
-    if (! $self->testing && ! defined $events){
-        $self->events;
+    if (! $api->testing && ! defined $events){
+        $api->events;
         $log->_5('successfully created new async events')
     }
     else {
         $log->_5("async events have already been spawned");
     }
 
-    return $self;
+    return $api;
 }
 sub action_humidity {
     my ($self, $aux_id, $humidity) = @_;
@@ -543,11 +543,7 @@ sub log_file {
 sub debug_level {
     my ($self, $level) = @_;
 
-    my $log = $log->child('debug_level');
-
     if (defined $level){
-        $log->_7("attempting to set level to $level");
-
         if ($level < -1 || $level > 7){
             warn "log level has to be between 0 and 7... disabling logging\n";
             $log->_7("log level $level invalid, disabling all logging");
@@ -555,8 +551,6 @@ sub debug_level {
         }
         $self->{debug_level} = $level;
     }
-
-    $log->_7("log level is $self->{debug_level}");
 
     return $self->{debug_level};
 }
@@ -574,26 +568,18 @@ sub sensor {
 sub testing {
     my ($self, $bool) = @_;
 
-    my $log = $log->child('testing');
-
     if (defined $bool){
-        $log->_7("setting testing to $bool");
         $self->{testing} = $bool;
     }
 
     $self->{testing} = 1 if _ui_test_mode();
-
-    $log->_7("testing == $self->{testing}");
 
     return $self->{testing};
 }
 sub test_mock {
     my ($self, $mock) = @_;
 
-    my $log = $log->child('test_mock');
-
     if (defined $mock){
-        $log->_7("setting mock to $bool");
         $self->{test_mock} = $mock;
     }
 
@@ -606,9 +592,6 @@ sub test_mock {
 
 sub _args {
     my ($self, %args) = @_;
-
-    my $log = $log->child('_args');
-    $log->_7("setting object params");
 
     $self->debug_sensor($args{debug_sensor});
     $self->config($args{config_file});
@@ -678,8 +661,17 @@ sub _init {
 
     $self->db(App::RPi::EnvUI::DB->new(testing => $self->testing));
 
-    $self->debug_level($self->_config_core('debug_level'));
-    $self->log_file($self->_config_core('log_file'));
+    my $debug_level = defined $self->debug_level
+        ? $self->debug_level
+        : $self->_config_core('debug_level');
+
+    my $log_file = defined $self->log_file
+        ? $self->log_file
+        : $self->_config_core('log_file');
+
+    $self->debug_level($debug_level);
+    $self->log_file($log_file);
+
     $self->_log;
 
     my $log = $log->child('_init');
@@ -692,6 +684,13 @@ sub _init {
         $log->_5('in prod mode');
         $self->_prod_mode;
     }
+
+    # reset the log so we retain values set in new()
+
+    $self->debug_level($debug_level);
+    $self->log_file($log_file);
+
+    $self->_log;
 }
 sub _init_light_time {
     my ($dt_now, $on_at, $on_hours) = @_;
@@ -713,7 +712,6 @@ sub _test_mode {
     $self->db(App::RPi::EnvUI::DB->new(testing => 1));
     $self->config('t/envui.json');
     $self->_parse_config;
-
 
     if ($self->test_mock) {
         my $mock = Mock::Sub->new;
