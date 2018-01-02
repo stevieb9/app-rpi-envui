@@ -160,8 +160,8 @@ sub action_light {
     if ($light_on_hours == 24 || $dt_now > $dt_light_on){
         $log = $log->child("light on");
         if (! $self->aux_state($aux)){
-            $log->_6("turning light on");
             $log->_6("light aux state: " . $self->aux_state($aux));
+            $log->_6("turning light on");
             $self->aux_state($aux, ON);
             pin_mode($pin, OUTPUT);
             write_pin($pin, HIGH);

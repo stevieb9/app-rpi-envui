@@ -15,7 +15,8 @@ use Test::More;
 
 my $api = App::RPi::EnvUI::API->new(
     testing => 1,
-    config_file => 't/envui.json'
+    config_file => 't/envui.json',
+    debug_level => 6
 );
 
 my $db = App::RPi::EnvUI::DB->new(testing => 1);
