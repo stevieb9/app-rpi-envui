@@ -644,17 +644,13 @@ sub _config_light {
 sub _init {
     my ($self) = @_;
 
-    $self->db(
-        App::RPi::EnvUI::DB->new(
-            testing => $self->testing
-        )
-    );
+    $self->db(App::RPi::EnvUI::DB->new(testing => $self->testing));
 
     $self->debug_level($self->_config_core('debug_level'));
     $self->log_file($self->_config_core('log_file'));
     $self->_log;
 
-    my $log = $log->child('_init()');
+    my $log = $log->child('_init');
 
     if ($self->testing){
         $log->_5('in test mode');
@@ -667,6 +663,10 @@ sub _init {
 }
 sub _init_light_time {
     my ($dt_now, $on_at, $on_hours) = @_;
+
+    my $log = $log->child('_init_light_time');
+    $log->_6("initializing light timing schedule");
+
     $dt_light_on = _set_light_on_time($dt_now, $on_at);
     $dt_light_off = _set_light_off_time($dt_light_on, $on_hours);
     return ($dt_light_on, $dt_light_off);
@@ -691,34 +691,34 @@ sub _test_mode {
             return_value => 80
         );
 
-        $log->_6( "mocked RPi::DHT11::temp" );
+        $log->_6("mocked RPi::DHT11::temp");
 
         $hum_sub = $mock->mock(
             'RPi::DHT11::humidity',
             return_value => 20
         );
 
-        $log->_6( "mocked RPi::DHT11::humidity" );
+        $log->_6("mocked RPi::DHT11::humidity");
 
         $pm_sub = $mock->mock(
             'App::RPi::EnvUI::API::pin_mode',
             return_value => 'ok'
         );
 
-        $log->_6( "mocked WiringPi::API::pin_mode" );
+        $log->_6("mocked WiringPi::API::pin_mode");
 
         $rp_sub = $mock->mock(
             'App::RPi::EnvUI::API::read_pin',
         );
 
-        $log->_6( "mocked WiringPi::API::read_pin" );
+        $log->_6("mocked WiringPi::API::read_pin");
 
         $wp_sub = $mock->mock(
             'App::RPi::EnvUI::API::write_pin',
             return_value => 'ok'
         );
 
-        $log->_6( "mocked WiringPi::API::write_pin" );
+        $log->_6("mocked WiringPi::API::write_pin");
     }
 
     warn "API in test mode\n";
@@ -767,6 +767,7 @@ sub _log {
     );
 
     $log = $master_log->child('API');
+    $log->_7("instantiated the master log object");
 }
 sub _parse_config {
     my ($self, $config) = @_;
@@ -878,12 +879,20 @@ sub _reset {
 }
 sub _set_light_off_time {
     my ($dt_on, $on_time) = @_;
+
+    my $log = $log->child('_set_light_off_time');
+    $log->_6("setting light off time");
+
     my $dt_off = $dt_on->clone;
     $dt_off->add(hours => $on_time);
     return $dt_off;
 }
 sub _set_light_on_time {
     my ($dt_now, $on_at) = @_;
+
+    my $log = $log->child('_set_light_on_time');
+    $log->_6("setting light on time");
+
     my $dt_on = $dt_now->clone;
     $dt_on->set_second(0);
     $dt_on->set_hour((split(/:/, $on_at))[0]);

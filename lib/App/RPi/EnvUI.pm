@@ -24,13 +24,15 @@ my $log = $api->log->child('webapp');
 
 get '/' => sub {
         my $log = $log->child('/');
-        $log->_5("in /home");
+        $log->_5("returning main template");
         return template 'main';
     };
 
 # fetch graph code
 
 get '/graph_data' => sub {
+        my $log = $log->child('/graph_data');
+        $log->_5("returning graph template");
         return to_json $api->graph_data;
     };
 
@@ -51,11 +53,15 @@ post '/login' => sub {
     };
 
 any '/logout' => sub {
+        my $log = $log->child("/logout");
+        $log->_4("logging out");
         app->destroy_session;
         redirect '/';
     };
 
 get '/logged_in' => sub {
+        my $log = $log->child("/logged_in");
+        $log->_7("checking if user is logged in");
         if (session 'logged_in_user' || request->address eq '127.0.0.1'){
             return to_json { status => 1 };
         }
@@ -65,6 +71,8 @@ get '/logged_in' => sub {
 get '/time' => sub {
         my ($y, $m, $d, $h, $min) = (localtime)[5, 4, 3, 2, 1];
 
+        my $log = $log->child("/time");
+
         $y += 1900;
         $m++;
 
@@ -72,10 +80,16 @@ get '/time' => sub {
             $_ = "0$_" if length $_ < 2;
         }
 
-        return "$y-$m-$d $h:$min";
+        my $time = "$y-$m-$d $h:$min";
+
+        $log->_7("time is $time");
+
+        return $time;
     };
 
 get '/stats' => sub {
+        my $log = $log->child("/stats");
+        $log->_7("returning template stats");
         return template 'stats';
     };
 
@@ -137,10 +151,13 @@ get '/fetch_env' => sub {
 #
 
 get '/set_aux_state/:aux/:state' => sub {
-        
+
+        my $log = $log->child('/set_aux_state');
+
         if (
             (request->address ne '127.0.0.1' && ! session 'logged_in_user')
             || $ENV{UNIT_TEST}){
+            $log->_1("attempted call of a 'set' operation while not logged in");
             return to_json {
                     error => 'unauthorized request. You must be logged in'
             };
@@ -149,7 +166,6 @@ get '/set_aux_state/:aux/:state' => sub {
         my $aux_id = params->{aux};
         my $state = $api->_bool(params->{state});
 
-        my $log = $log->child('/set_aux_state');
         $log->_5("aux_id: $aux_id, state: $state");
 
         $state = $api->aux_state($aux_id, $state);
