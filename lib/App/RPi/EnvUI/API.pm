@@ -48,8 +48,6 @@ sub new {
 
     # return the stored object if we've already run new()
 
-    my $log = $log->child('new');
-
     if (defined $api){
         $log->_5('returning stored API object');
         return $api if defined $api;
@@ -65,6 +63,8 @@ sub new {
     $self->_init;
 
     $api = $self;
+
+    my $log = $log->child('new');
 
     $log->_5("successfully initialized the system");
 
@@ -420,7 +420,6 @@ sub switch {
         else {
             $log->_6("pin $pin state already set properly");
         }
-        print $rp_sub->called_with . " $x\n";
     }
 }
 sub temp {
