@@ -774,6 +774,7 @@ sub _test_mode {
 
         $rp_sub = $mock->mock(
             'App::RPi::EnvUI::API::read_pin',
+            return_value => 'params'
         );
 
         $log->_6("mocked WiringPi::API::read_pin");

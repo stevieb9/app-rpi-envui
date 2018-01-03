@@ -42,6 +42,7 @@ t/40-api_action.t
 t/45-api_logging.t
 t/50-api_light.t
 t/55-api_events.t
+t/60-debug.t
 t/800-manifest.t
 t/805-pod.t
 t/810-pod-coverage.t
