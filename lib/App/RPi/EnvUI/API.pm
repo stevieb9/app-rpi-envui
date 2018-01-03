@@ -929,21 +929,26 @@ sub _reset {
     # reset dynamic db attributes
 
     my $log = $log->child('_reset');
-    $log->_5("reset() called");
 
     $self->db->update_bulk_all(
         'aux', 'state', [0]
     );
+    $log->_5('reset state on all auxs');
+
     $self->db->update_bulk_all(
         'aux', 'override', [0]
     );
+    $log->_5('reset override on all auxs');
+
     $self->db->update_bulk_all(
         'aux', 'on_time', [0]
     );
+    $log->_5('reset on_time on all auxs');
 
     # remove all statistics
 
     $self->db->delete('stats');
+    $log->_5('reset the stats db table');
 }
 sub _set_light_off_time {
     my ($dt_on, $on_time) = @_;
