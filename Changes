@@ -8,8 +8,8 @@ Changes history for App::RPi::EnvUI
         - added five second delay between manual button toggles to combat the
           override issues we've been having (fixes #59)
         - we now display each aux's last on and off time within the widget if
-          the "display_aux_state_time" is enabled in the config file 
-          (closes #60)
+          the "display_aux_state_time" is enabled in the config file so long as
+          there's at least one last_on or last_off time stored (closes #60)
         - we now log the caller when fetching a cached API object
 
 0.30    2017-12-21

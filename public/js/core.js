@@ -224,10 +224,15 @@ function aux_setup(aux){
             );
 
             if (parseInt(display_state_time) == '1'){
-                $('div.ui-page-active #'+ aux + '_last_on').text("Last on: ");
-                $('div.ui-page-active #'+ aux + '_last_on_time').text(json.last_on);
-                $('div.ui-page-active #'+ aux + '_last_off').text("Last off: ");
-                $('div.ui-page-active #'+ aux + '_last_off_time').text(json.last_off);
+                var last_on = json.last_on;
+                var last_off = json.last_off;
+
+                if (last_on || last_off){
+                    $('div.ui-page-active #'+ aux + '_last_on').text("Last on: ");
+                    $('div.ui-page-active #'+ aux + '_last_on_time').text(json.last_on);
+                    $('div.ui-page-active #'+ aux + '_last_off').text("Last off: ");
+                    $('div.ui-page-active #'+ aux + '_last_off_time').text(json.last_off);
+                }
             }
     
             $('div.ui-page-active #'+ aux).flipswitch('refresh');
