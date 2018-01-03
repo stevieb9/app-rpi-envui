@@ -50,7 +50,8 @@ sub new {
 
     if (defined $api){
         my $log = $log->child('new');
-        $log->_5('returning stored API object');
+        my $caller = (caller(1))[3];
+        $log->_5("returning stored API object to $caller");
         return $api if defined $api;
     }
 
@@ -629,8 +630,8 @@ sub test_mock {
 sub _args {
     my ($self, %args) = @_;
 
-    $self->debug_sensor($args{debug_sensor});
     $self->config($args{config_file});
+    $self->debug_sensor($args{debug_sensor});
     $self->log_file($args{log_file});
     $self->debug_level($args{debug_level});
     $self->testing($args{testing});
