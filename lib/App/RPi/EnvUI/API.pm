@@ -725,7 +725,10 @@ sub _init {
     # reset the log so we retain values set in new()
 
     $self->debug_level($debug_level);
+    $log->_5("set the debug log level to: $debug_level");
+
     $self->log_file($log_file);
+    $log->_5("set the log file to: $log_file") if $log_file;
 
     $self->_log;
 }
