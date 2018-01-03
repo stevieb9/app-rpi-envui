@@ -220,12 +220,23 @@ function aux_setup(aux){
 function aux_action(e){
     var checked = $(this).prop('checked');
     var aux = $(this).attr('id');
+    var button = $(this);
 
     $.get('/get_aux_override/'+ aux, function(get_override_data){
         var start_override_status = parseInt(get_override_data);
 
         $.get('/set_aux_override/'+ aux +'/'+ ! start_override_status,
         function(set_override_data){
+
+            // disable the button for 5 seconds to prevent
+            // override toggle issues
+
+            button.flipswitch("option", "disabled", true);
+            
+            setTimeout(function(){
+                button.flipswitch("option", "disabled", false);
+            }, 5000);
+
             var set_override_json = $.parseJSON(set_override_data);
 
             if (set_override_json.override == -1){
@@ -236,6 +247,7 @@ function aux_action(e){
                 return;
             }
             else {
+
                 // change state only after we know the override operation
                 // succeeded
 
