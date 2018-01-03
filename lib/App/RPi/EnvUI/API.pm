@@ -50,8 +50,11 @@ sub new {
 
     if (defined $api){
         my $log = $log->child('new');
-        my $caller = (caller(1))[3];
-        $log->_5("returning stored API object to $caller");
+        my $sub = (caller(1))[3];
+        $sub = (split /::/, $sub)[-1];
+        my $pkg = (caller)[0];
+        my $line = (caller)[2];
+        $log->_5("returning stored API object to $pkg, ${sub}(), line $line");
         return $api if defined $api;
     }
 
