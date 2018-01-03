@@ -65,7 +65,16 @@
                     <td style="text-align: center;"><input type="checkbox" data-role="flipswitch" id="aux1" class="button" style="width:120px;height:30px"></td>
                 </tr>
                 <tr>
-<!--                    <td colspan="2"><div class="graph_container"><div id="temp_chart" class="graph" width="600" height="200"></div></div></td>-->
+                    <th style="text-align: center;"><font size="3"><div class="data" id="aux1_last_on"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux1_last_on_time"></div></td>
+                </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><b><div class="data" id="aux1_last_off"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux1_last_off_time"></div></td>
                 </tr>
             </table>
         </div>
@@ -87,6 +96,18 @@
                         <th style="text-align: center;"><font size="3">Hours on</font></th>
                         <td><div id="light_on_hours"></div></td>
                     </tr>
+                    <tr>
+                        <th style="text-align: center;"><font size="3"><div class="data" id="aux3_last_on"></div></font></th>
+                    </tr>
+                    <tr>
+                        <td><div id="aux3_last_on_time"></div></td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: center;"><font size="3"><b><div class="data" id="aux3_last_off"></div></font></th>
+                    </tr>
+                    <tr>
+                        <td><div id="aux3_last_off_time"></div></td>
+                    </tr>
                 </table>
             </div>
         </td>
@@ -106,6 +127,19 @@
                 <tr>
 <!--                    <td colspan="2"><div class="graph_container"><div id="humidity_chart" class="graph" width="600" height="200"></div></div></td>-->
                 </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><div class="data" id="aux2_last_on"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux2_last_on_time"></div></td>
+                </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><b><div class="data" id="aux2_last_off"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux2_last_off_time"></div></td>
+                </tr>
+
             </table>
             </div>
         </td>
@@ -123,6 +157,19 @@
                 <tr>
                     <td style="text-align: center;"><input type="checkbox" data-role="flipswitch" id="aux4" class="button" style="width:120px;height:30px"></td>
                 </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><div class="data" id="aux4_last_on"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux4_last_on_time"></div></td>
+                </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><b><div class="data" id="aux4_last_off"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux4_last_off_time"></div></td>
+                </tr>
+
             </table>
         </div>
         </td>
@@ -133,6 +180,19 @@
                 <tr>
                     <td style="text-align: center;"><input id="aux5" class="button" style="width:120px;height:30px" type="checkbox" data-role="flipswitch"></td>
                 </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><div class="data" id="aux5_last_on"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux5_last_on_time"></div></td>
+                </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><b><div class="data" id="aux5_last_off"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux5_last_off_time"></div></td>
+                </tr>
+
             </table>
             </div>
         </td>
@@ -143,6 +203,19 @@
                 <tr>
                     <td style="text-align: center;"><input type="checkbox" data-role="flipswitch" id="aux6" class="button" style="width:120px;height:30px"></td>
                 </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><div class="data" id="aux6_last_on"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux6_last_on_time"></div></td>
+                </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><b><div class="data" id="aux6_last_off"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux6_last_off_time"></div></td>
+                </tr>
+
             </table>
         </div>
         </td>
@@ -153,6 +226,19 @@
                 <tr>
                     <td style="text-align: center;"><input id="aux7" class="button" style="width:120px;height:30px" type="checkbox" data-role="flipswitch"></td>
                 </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><div class="data" id="aux7_last_on"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux7_last_on_time"></div></td>
+                </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><b><div class="data" id="aux7_last_off"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux7_last_off_time"></div></td>
+                </tr>
+
             </table>
             </div>
         </td>
@@ -163,6 +249,19 @@
                 <tr>
                     <td style="text-align: center;"><input type="checkbox" data-role="flipswitch" id="aux8" class="button" style="width:120px;height:30px"></td>
                 </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><div class="data" id="aux8_last_on"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux8_last_on_time"></div></td>
+                </tr>
+                <tr>
+                    <th style="text-align: center;"><font size="3"><b><div class="data" id="aux8_last_off"></div></font></th>
+                </tr>
+                <tr>
+                    <td><div id="aux8_last_off_time"></div></td>
+                </tr>
+
             </table>
         </div>
         </td>

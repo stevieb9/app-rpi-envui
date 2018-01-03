@@ -7,6 +7,9 @@ Changes history for App::RPi::EnvUI
           set in new() (fixes #62)
         - added five second delay between manual button toggles to combat the
           override issues we've been having (fixes #59)
+        - we now display each aux's last on and off time within the widget if
+          the "display_aux_state_time" is enabled in the config file 
+          (closes #60)
 
 0.30    2017-12-21
         - this will be the last beta release. The next release will be 1.00,

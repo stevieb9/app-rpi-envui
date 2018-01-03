@@ -4,6 +4,7 @@ var temp_limit = -1;
 var humidity_limit = -1;
 var logged_in;
 var graph_event = null; // graph interval timer
+var display_state_time;
 
 $(document).on('pageshow', '#home', function(){
 
@@ -29,6 +30,17 @@ $(document).on('pageshow', '#home', function(){
         $('div.ui-page-active #auth').text('Login');
         $('div.ui-page-active #auth').attr('href', '/login');
     }
+
+    // display state on/off time
+
+    $.ajax({
+        async: false,
+        type: 'GET',
+        url: '/get_config/display_aux_state_time',
+        success: function(data){
+            display_state_time = data;
+        }
+    });
 
     // aux buttons
 
@@ -211,6 +223,13 @@ function aux_setup(aux){
                 offText
             );
 
+            if (parseInt(display_state_time) == '1'){
+                $('div.ui-page-active #'+ aux + '_last_on').text("Last on: ");
+                $('div.ui-page-active #'+ aux + '_last_on_time').text(json.last_on);
+                $('div.ui-page-active #'+ aux + '_last_off').text("Last off: ");
+                $('div.ui-page-active #'+ aux + '_last_off_time').text(json.last_off);
+            }
+    
             $('div.ui-page-active #'+ aux).flipswitch('refresh');
             $('div.ui-page-active #'+ aux).on('change', aux_action);
         }
