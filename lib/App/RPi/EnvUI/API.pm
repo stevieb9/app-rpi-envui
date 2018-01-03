@@ -49,6 +49,7 @@ sub new {
     # return the stored object if we've already run new()
 
     if (defined $api){
+        my $log = $log->child('new');
         $log->_5('returning stored API object');
         return $api if defined $api;
     }
