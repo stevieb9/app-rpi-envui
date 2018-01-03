@@ -222,6 +222,10 @@ function aux_action(e){
     var aux = $(this).attr('id');
     var button = $(this);
 
+    setTimeout(function(){
+        button.flipswitch("option", "disabled", false);
+    }, 5000);
+
     $.get('/get_aux_override/'+ aux, function(get_override_data){
         var start_override_status = parseInt(get_override_data);
 
@@ -233,10 +237,6 @@ function aux_action(e){
 
             button.flipswitch("option", "disabled", true);
             
-            setTimeout(function(){
-                button.flipswitch("option", "disabled", false);
-            }, 5000);
-
             var set_override_json = $.parseJSON(set_override_data);
 
             if (set_override_json.override == -1){
