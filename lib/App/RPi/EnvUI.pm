@@ -128,7 +128,7 @@ get '/get_aux_override/:aux' => sub {
         my $aux_id = params->{aux};
         my $log = $log->child('/get_aux_override');
         $log->_7("fetching aux override value for $aux_id");
-        return to_json $api->aux_override($aux_id);
+        return $api->aux_override($aux_id);
     };
 get '/fetch_env' => sub {
         my $log = $log->child('/fetch_env');
