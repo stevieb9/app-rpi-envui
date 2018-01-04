@@ -245,6 +245,11 @@ function aux_action(e){
     var checked = $(this).prop('checked');
     var aux = $(this).attr('id');
     var button = $(this);
+    
+    // disable the button for 5 seconds to prevent
+    // override toggle issues
+
+    button.flipswitch("option", "disabled", true);
 
     setTimeout(function(){
         button.flipswitch("option", "disabled", false);
@@ -253,13 +258,9 @@ function aux_action(e){
     $.get('/get_aux_override/'+ aux, function(get_override_data){
         var start_override_status = parseInt(get_override_data);
 
+        console.log(start_override_status);
         $.get('/set_aux_override/'+ aux +'/'+ ! start_override_status,
         function(set_override_data){
-
-            // disable the button for 5 seconds to prevent
-            // override toggle issues
-
-            button.flipswitch("option", "disabled", true);
             
             var set_override_json = $.parseJSON(set_override_data);
 
