@@ -17,6 +17,8 @@ BEGIN {
 
 our $VERSION = '0.99_01';
 
+my $log;
+
 sub new {
     my ($class, %args) = @_;
 
@@ -51,6 +53,9 @@ sub new {
     );
 
     return $self;
+}
+sub log {
+    $log = $_[1] if defined $_[1];
 }
 sub user {
     my ($self, $user) = @_;

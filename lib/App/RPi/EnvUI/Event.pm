@@ -17,7 +17,7 @@ sub env_to_db {
         test_mock => 0
     );
 
-    $api->{db} = $db;
+    $api->db($db);
     $self->{db} = $db;
     $self->{timeout} = $api->_config_control('event_timeout');
 
@@ -43,7 +43,7 @@ sub env_action {
         test_mock => 1
     );
 
-    $api->{db} = $db;
+    $api->db($db);
     $self->{db} = $db;
 
     my $event = Async::Event::Interval->new(

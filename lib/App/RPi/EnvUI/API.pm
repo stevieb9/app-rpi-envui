@@ -559,6 +559,7 @@ sub config {
 sub db {
     my ($self, $db) = @_;
     $self->{db} = $db if defined $db;
+    $self->{db}->log($log);
     return $self->{db};
 }
 sub debug_sensor {
