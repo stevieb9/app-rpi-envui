@@ -55,7 +55,7 @@ sub new {
     return $self;
 }
 sub log {
-    $log = $_[1] if defined $_[1];
+    $log = $_[1]->child('DB') if defined $_[1];
 }
 sub user {
     my ($self, $user) = @_;
