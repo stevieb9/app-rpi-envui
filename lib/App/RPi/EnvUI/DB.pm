@@ -94,7 +94,10 @@ sub auxs {
 sub config_control {
     my ($self, $want) = @_;
 
+    my $log = $log->child('config_control');
+
     if (! $self->{config_control_sth}){
+        $log->_5('setting the conf control statement handle');
         $self->{config_control_sth} = $self->db->prepare(
             'SELECT value FROM control WHERE id=?'
         );
