@@ -32,7 +32,7 @@ get '/' => sub {
 
 get '/graph_data' => sub {
         my $log = $log->child('/graph_data');
-        $log->_5("returning graph template");
+        $log->_7("returning graph data");
         return to_json $api->graph_data;
     };
 
@@ -89,7 +89,7 @@ get '/time' => sub {
 
 get '/stats' => sub {
         my $log = $log->child("/stats");
-        $log->_7("returning template stats");
+        $log->_5("returning stats template");
         return template 'stats';
     };
 
