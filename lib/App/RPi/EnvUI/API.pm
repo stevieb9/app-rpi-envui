@@ -558,6 +558,8 @@ sub config {
 }
 sub db {
     my ($self, $db) = @_;
+    my $log = $log->child('db');
+    $log->_5('configuring the database');
     $self->{db} = $db if defined $db;
     $self->{db}->log($master_log);
     return $self->{db};
