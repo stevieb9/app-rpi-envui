@@ -12,6 +12,9 @@ Changes history for App::RPi::EnvUI
           there's at least one last_on or last_off time stored (closes #60)
         - we now log the caller when fetching a cached API object
         - all jquery code is now loaded locally from the public/js directory
+        - DB now gets its own class-level log object through the API->db() call.
+          It is imperative that anything using its own DB register it through
+          this API call (Event now uses API->db($db) as opposed to API->{db})
 
 0.30    2017-12-21
         - this will be the last beta release. The next release will be 1.00,
