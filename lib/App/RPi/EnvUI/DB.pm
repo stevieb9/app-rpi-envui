@@ -54,24 +54,6 @@ sub new {
 
     return $self;
 }
-sub log {
-    $log = $_[1]->child('DB') if defined $_[1];
-}
-sub user {
-    my ($self, $user) = @_;
-
-    my $sth = $self->db->prepare(
-        "SELECT * FROM auth WHERE user=?;"
-    );
-
-    $sth->execute($user);
-
-    my $res = $sth->fetchrow_hashref;
-
-    return ref $res ne 'HASH'
-        ? {user => $user, pass => ''}
-        : $res;
-}
 sub aux {
     my ($self, $aux_id) = @_;
 
@@ -90,6 +72,12 @@ sub auxs {
         'SELECT * from aux',
         'id'
     );
+}
+sub begin {
+    $_[0]->{db}->begin_work;
+}
+sub commit {
+    $_[0]->{db}->commit;
 }
 sub config_control {
     my ($self, $want) = @_;
@@ -196,6 +184,9 @@ sub last_id {
 
     return defined $id_list ? $id_list->[0] : 0;
 }
+sub log {
+    $log = $_[1]->child('DB') if defined $_[1];
+}
 sub update {
     my ($self, $table, $col, $value, $where_col, $where_val) = @_;
 
@@ -229,11 +220,20 @@ sub update_bulk_all {
     );
     $sth->execute(@$data);
 }
-sub begin {
-    $_[0]->{db}->begin_work;
-}
-sub commit {
-    $_[0]->{db}->commit;
+sub user {
+    my ($self, $user) = @_;
+
+    my $sth = $self->db->prepare(
+        "SELECT * FROM auth WHERE user=?;"
+    );
+
+    $sth->execute($user);
+
+    my $res = $sth->fetchrow_hashref;
+
+    return ref $res ne 'HASH'
+        ? {user => $user, pass => ''}
+        : $res;
 }
 
 true;
