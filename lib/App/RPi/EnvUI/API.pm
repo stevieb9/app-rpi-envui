@@ -510,7 +510,7 @@ sub log {
     return $master_log;
 }
 sub passwd {
-    #FIXME: this may be internal only and not for real use
+    # used for generating passwords for this program's authentication
 
     my ($self, $pw) = @_;
 
@@ -1264,6 +1264,20 @@ Optional, L<App::RPi::EnvUI::DB> object instance.
 
 Returns: The currently loaded DB object instance.
 
+=head2 debug_level($level)
+
+Sets/gets the current debug logging level.
+
+Parameters:
+
+    $level
+
+Optional, Integer. Sets the logging level between C<0-7>.
+
+Return: Integer, the current level.
+
+Default: C<-1> (logging disabled)
+
 =head2 debug_sensor($bool)
 
 Enable/disable L<RPi::DHT11> sensor's debug print output.
@@ -1359,20 +1373,6 @@ effect when used in user space, and is mainly a convenience method. It's used
 when instantiating a new object.
 
 Return: The string name of the currently in-use log file, if set.
-
-=head2 debug_level($level)
-
-Sets/gets the current debug logging level.
-
-Parameters:
-
-    $level
-
-Optional, Integer. Sets the logging level between C<0-7>.
-
-Return: Integer, the current level.
-
-Default: C<-1> (logging disabled)
 
 =head2 passwd($pw)
 
