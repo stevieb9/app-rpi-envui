@@ -1,7 +1,6 @@
 bin/app.pl
 Changes
 config.yml
-db/envui.db
 lib/App/RPi/EnvUI.pm
 lib/App/RPi/EnvUI/API.pm
 lib/App/RPi/EnvUI/Auth.pm
@@ -17,6 +16,9 @@ public/css/flipswitch.struct.css
 public/js/core.js
 public/js/flot.js
 public/js/flot.threshold.js
+public/js/jquery-1.12.4.js
+public/js/jquery-ui-1.12.1.js
+public/js/jquery.mobile-1.4.5.min.js
 README
 src/db.sql
 src/envui-dist.db
