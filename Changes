@@ -1,7 +1,7 @@
 Changes history for App::RPi::EnvUI
 
 0.99_01 UNREL
-        - bump version of Mock::Sub prereq to 1.10 due to enhancements there 
+        - bump version of Mock::Sub prereq to 1.09 due to enhancements there
         - light on/off switch is now level 5 debug as opposed to level 6
         - fix bug where debug_level and log_file were not being retained when
           set in new() (fixes #62)
