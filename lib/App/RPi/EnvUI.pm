@@ -11,11 +11,7 @@ use POSIX qw(tzset);
 our $VERSION = '0.99_01';
 
 my $api = App::RPi::EnvUI::API->new;
-my $testing;
-if ($api->testing){
-    $testing = 1;
-}
-my $db = App::RPi::EnvUI::DB->new(testing => $testing);
+my $db = App::RPi::EnvUI::DB->new(testing => $api->testing);
 $api->db($db);
 
 $ENV{TZ} = $api->_config_core('time_zone');

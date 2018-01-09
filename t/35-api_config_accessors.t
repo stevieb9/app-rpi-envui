@@ -13,8 +13,6 @@ use App::RPi::EnvUI::DB;
 use Data::Dumper;
 use Test::More;
 
-#FIXME: add tests to test overrides for hum and temp
-
 my $api = App::RPi::EnvUI::API->new(
     testing => 1,
     config_file => 't/envui.json'
@@ -42,7 +40,6 @@ is $api->{testing}, 1, "testing param to new() ok";
 }
 
 { # debug sensor
-
     is $api->debug_sensor(0), 0, "debug_sensor() is disabled by default";
     is $api->debug_sensor(1), 1, "debug_sensor() is enabled with a 1";
     is $api->debug_sensor(0), 0, "debug_sensor() is disabled with a param of 0";
