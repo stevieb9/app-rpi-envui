@@ -50,8 +50,18 @@ sub new {
 
     if (defined $api){
         my $log = $log->child('new');
+
         my $sub = (caller(1))[3];
-        $sub = (split /::/, $sub)[-1];
+
+        if ($sub){
+            if ($sub =~ /::/){
+                $sub = (split /::/, $sub)[-1];
+            }
+        }
+        else {
+            $sub = '';
+        }
+
         my $pkg = (caller)[0];
         my $line = (caller)[2];
         $log->_5("returning stored API object to $pkg, ${sub}(), line $line");
@@ -1155,6 +1165,28 @@ Parameters:
 Mandatory, href. A hash reference as returned from a call to C<aux()>.
 
 Return: String. The name/ID of the specified auxillary channel.
+
+=head2 aux_last_off($aux)
+
+Returns the date/time as a string the last time the auxillary channel turned
+off.
+
+Parameters:
+
+    $aux_id
+
+Mandatory, String. The string name of an auxillary channel (eg: C<aux1>).
+
+=head2 aux_last_on($aux)
+
+Returns the date/time as a string the last time the auxillary channel turned
+on.
+
+Parameters:
+
+    $aux_id
+
+Mandatory, String. The string name of an auxillary channel (eg: C<aux1>).
 
 =head2 aux_override($aux_id, $override)
 

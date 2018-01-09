@@ -15,9 +15,6 @@ BEGIN {
 
 use Mock::Sub no_warnings => 1;
 
-#my $m = Mock::Sub->new;
-#my $switch_sub = $m->mock('App::RPi::EnvUI::API::switch');
-
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 
@@ -43,7 +40,7 @@ my $test = Plack::Test->create(App::RPi::EnvUI->to_app);
     # good call
     $res = $test->request( GET "/set_aux_override/aux1/0" );
     is $res->is_success, 1, "with two valid params, /set_aux_override ok";
-    
+
     # loop over all auxs
 
     for (1..8){

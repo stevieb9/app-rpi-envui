@@ -21,6 +21,8 @@ use Test::More;
 
     # this test must be run prior to generating the cached API object
 
+    $SIG{__WARN__} = sub {};
+
     unconfig();
     is -e 't/envui.json', undef, "for testing, config file has been removed ok";
 

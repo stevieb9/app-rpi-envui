@@ -17,6 +17,8 @@ Changes history for App::RPi::EnvUI
           this API call (Event now uses API->db($db) as opposed to API->{db})
         - we no longer warn when API or DB is in test mode
         - Makefile.PL no longer attempts to copy the config file on install
+        - overhaul to both code and test files to clean up test output in prep
+          for v1.00 release (catch warnings etc)
 
 0.30    2017-12-21
         - this will be the last beta release. The next release will be 1.00,

@@ -224,6 +224,8 @@ my $api = App::RPi::EnvUI::API->new(
 
 { # crash the connect()
 
+    local $SIG{__WARN__} = sub {};
+
     my $ok = eval {
         App::RPi::EnvUI::DB->new(
             db_file => '/',

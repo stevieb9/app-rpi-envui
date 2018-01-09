@@ -233,6 +233,7 @@ sub user {
         ? {user => $user, pass => ''}
         : $res;
 }
+sub __placeholder{}
 
 true;
 __END__
@@ -388,6 +389,16 @@ Mandatory, Integer: The humidity.
 =head2 last_id
 
 Returns the ID of the last row entered into the C<stats> database table.
+
+=head2 log($log)
+
+Configures the DB object with a pre-configured L<Logging::Simple> log object.
+
+Parameters:
+
+    $log
+
+Mandatory, L<Logging::Simple> object that's already been set up.
 
 =head2 update($table, $column, $value, $where_col, $where_val)
 
