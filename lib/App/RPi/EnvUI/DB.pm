@@ -30,8 +30,6 @@ sub new {
 
     $db_file = $self->{db_file} if defined $self->{db_file};
 
-    warn "DB in test mode\n" if $self->{testing};
-
     $self->{db} = DBI->connect(
         "dbi:SQLite:dbname=$db_file",
         "",

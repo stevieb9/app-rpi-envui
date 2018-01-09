@@ -63,8 +63,6 @@ sub new {
     my $caller = (caller)[0];
     $self->_args(@_, caller => $caller);
 
-    warn "API in test mode\n" if $self->testing;
-
     $self->_init;
 
     $api = $self;
@@ -794,8 +792,6 @@ sub _test_mode {
 
         $log->_6("mocked WiringPi::API::write_pin");
     }
-
-    warn "API in test mode\n";
 
     $self->sensor(bless {}, 'RPi::DHT11');
 
