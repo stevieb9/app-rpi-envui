@@ -55,7 +55,10 @@ sub new {
 sub aux {
     my ($self, $aux_id) = @_;
 
+    my $log = $log->child('aux');
+
     if (! $self->{aux_sth}) {
+        $log->_5('setting stored statement handle');
         $self->{aux_sth} = $self->db->prepare(
             'SELECT * from aux WHERE id=?'
         );
@@ -63,18 +66,27 @@ sub aux {
 
     $self->{aux_sth}->execute($aux_id);
 
+    $log->_7("fetched data for aux $aux_id");
+
     return $self->{aux_sth}->fetchrow_hashref;
 }
 sub auxs {
+    my $log = $log->child('auxs');
+    $log->_7("fetched data for all auxs");
+
     return $_[0]->db->selectall_hashref(
         'SELECT * from aux',
         'id'
     );
 }
 sub begin {
+    my $log = $log->child('begin');
+    $log->_5('beginning a bulk transaction');
     $_[0]->{db}->begin_work;
 }
 sub commit {
+    my $log = $log->child('commit');
+    $log->_5('committing a bulk transaction');
     $_[0]->{db}->commit;
 }
 sub config_control {
@@ -89,6 +101,8 @@ sub config_control {
         );
     }
 
+    $log->_7("fetching value for '$want'");
+
     $self->{config_control_sth}->execute($want);
 
     return $self->{config_control_sth}->fetchrow_hashref->{value};
@@ -96,11 +110,17 @@ sub config_control {
 sub config_core {
     my ($self, $want) = @_;
 
+    my $log = $log->child('config_core');
+
     if (! $self->{config_core_sth}) {
+        $log->_5('setting the conf core statement handle');
         $self->{config_core_sth} = $self->db->prepare(
             'SELECT * FROM core WHERE id = ?'
         );
     }
+
+    $log->_7("fetching value for '$want'");
+
     $self->{config_core_sth}->execute($want);
 
     return $self->{config_core_sth}->fetchrow_hashref->{value};
@@ -108,28 +128,37 @@ sub config_core {
 sub config_light {
     my ($self, $want) = @_;
 
+    my $log = $log->child('config_light');
+
     my $light = $self->db->selectall_hashref(
         'SELECT * FROM light',
         'id'
     );
 
     if (defined $want){
+        $log->_7("fetching value for '$want'");
         return $light->{$want}{value};
     }
     else {
+        $log->_7("fetching all values");
         return $light;
     }
 }
 sub env {
     my ($self) = @_;
 
+    my $log = $log->child('env');
+
     my $id = $self->last_id;
 
     if (! $self->{env_sth}) {
+        $log->_5('setting statement handle');
         $self->{env_sth} = $self->db->prepare(
             'SELECT * FROM stats WHERE id=?'
         );
     }
+
+    $log->_7("fetching env data at id: $id");
 
     my $sth = $self->{env_sth};
     $sth->execute($id);
@@ -137,10 +166,15 @@ sub env {
     return $sth->fetchrow_hashref;
 }
 sub db {
+    $log->child('db');
+    $log->_7('returning DB object');
     return $_[0]->{db};
 }
 sub delete {
     my ($self, $table) = @_;
+
+    my $log = $log->child('delete');
+    $log->_5("deleting all data in table '$table'");
 
     my $sth = $self->db->prepare(
         "DELETE FROM $table;"
@@ -151,7 +185,10 @@ sub delete {
 sub graph_data {
     my ($self) = @_;
 
+    my $log = $log->child('graph_data');
+
     if (! $self->{graph_sth}){
+        $log->_5('setting statement handle');
         $self->{graph_sth} = $self->db->prepare(
             "select * from (
                 select * from stats order by id DESC limit 5760
@@ -160,6 +197,8 @@ sub graph_data {
         );
     }
 
+    $log->_7('returning graph data');
+
     my $sth = $self->{graph_sth};
     $sth->execute;
     return $sth->fetchall_arrayref;
@@ -167,18 +206,27 @@ sub graph_data {
 sub insert_env {
     my ($self, $temp, $hum) = @_;
 
+    my $log = $log->child('insert_env');
+
     if (! $self->{insert_env_sth}){
+        $log->_5('setting statement handle');
         $self->{insert_env_sth} = $self->db->prepare(
             'INSERT INTO stats VALUES (?, CURRENT_TIMESTAMP, ?, ?)'
         );
     }
+    $log->_7("inserting env data, temp: $temp, hum: $hum");
+
     $self->{insert_env_sth}->execute(undef, $temp, $hum);
 }
 sub last_id {
     my $self = shift;
+    my $log = $log->child('last_id');
+
     my $id_list = $self->db->selectrow_arrayref(
         "select seq from sqlite_sequence where name='stats';"
     );
+
+    $log->_7('fetching last id for table stats');
 
     return defined $id_list ? $id_list->[0] : 0;
 }
@@ -188,11 +236,19 @@ sub log {
 sub update {
     my ($self, $table, $col, $value, $where_col, $where_val) = @_;
 
+    my $log = $log->child('update');
+
     if (! defined $where_col) {
+        $log->_7("updating table: '$table', col: $col, value: $value");
         my $sth = $self->db->prepare("UPDATE $table SET $col=?");
         $sth->execute($value);
     }
     else {
+        $log->_7(
+            "updating table: '$table', col: $col, value: $value, .
+             where: $where_col == $where_val"
+        );
+
         my $sth = $self->db->prepare(
             "UPDATE $table SET $col=? WHERE $where_col=?"
         );
@@ -201,6 +257,9 @@ sub update {
 }
 sub update_bulk {
     my ($self, $table, $col, $where_col, $data) = @_;
+
+    my $log = $log->child('update_bulk');
+    $log->_7('doing bulk table update on individual values');
 
     my $sth = $self->db->prepare(
         "UPDATE $table SET $col=? WHERE $where_col=?"
@@ -213,6 +272,9 @@ sub update_bulk {
 sub update_bulk_all {
     my ($self, $table, $col, $data) = @_;
 
+    my $log = $log->child('update_bulk_all');
+    $log->_7('doing bulk table update on all values');
+
     my $sth = $self->db->prepare(
         "UPDATE $table SET $col=?;"
     );
@@ -221,9 +283,13 @@ sub update_bulk_all {
 sub user {
     my ($self, $user) = @_;
 
+    my $log = $log->child('user');
+
     my $sth = $self->db->prepare(
         "SELECT * FROM auth WHERE user=?;"
     );
+
+    $log->_5("fetching login info for user '$user'");
 
     $sth->execute($user);
 
