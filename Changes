@@ -16,7 +16,8 @@ Changes history for App::RPi::EnvUI
           It is imperative that anything using its own DB register it through
           this API call (Event now uses API->db($db) as opposed to API->{db})
         - we no longer warn when API or DB is in test mode
-        - Makefile.PL no longer attempts to copy the config file on install
+        - Makefile.PL no longer attempts to copy the config file in the shell
+          commands, we do it with Perl instead
         - overhaul to both code and test files to clean up test output in prep
           for v1.00 release (catch warnings etc)
 

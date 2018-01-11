@@ -16,6 +16,17 @@ if (! grep { -x "$_/sqlite3" } split /:/, $ENV{PATH}) {
     die "sqlite3 must be installed to continue\n";
 }
 
+if (-f glob '~/envui/config/envui.json'){
+    print "Copying live config file to home directory\n";
+    copy '~/envui/envui.json', '~/';
+}
+
+END {
+    if (-f glob '~/envui.json'){
+    print "Copying original config file from home dir to ~/envui/config\n";
+    copy '~/envui.json', '~/envui/envui.json';
+    }
+}
 sub MY::postamble {
 return <<EOF;
 
