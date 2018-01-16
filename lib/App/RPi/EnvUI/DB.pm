@@ -166,8 +166,6 @@ sub env {
     return $sth->fetchrow_hashref;
 }
 sub db {
-    $log->child('db');
-    $log->_7('returning DB object');
     return $_[0]->{db};
 }
 sub delete {

@@ -1,38 +1,34 @@
-use strict;
-use warnings;
+use strict; use warnings;
 
-use ExtUtils::MakeMaker;
-use File::Copy;
+use ExtUtils::MakeMaker; use File::Copy;
 
 if ($^O =~ /MSWin/){
     print "this distribution is not meant to run on MS Windows\n";
     exit;
 }
 
-my $eumm_version = $ExtUtils::MakeMaker::VERSION;
-$eumm_version =~ s/_//;
+my $eumm_version = $ExtUtils::MakeMaker::VERSION; $eumm_version =~ s/_//;
 
 if (! grep { -x "$_/sqlite3" } split /:/, $ENV{PATH}) {
     die "sqlite3 must be installed to continue\n";
 }
 
-if (-f glob '~/envui/config/envui.json'){
-    print "Copying live config file to home directory\n";
-    copy '~/envui/envui.json', '~/';
-}
+#if (-f glob '~/envui/config/envui.json'){
+#    print "Copying live config file to home directory\n";
+#    copy glob('~/envui/config/envui.json'), glob('~/');
+#}
 
-END {
-    if (-f glob '~/envui.json'){
-    print "Copying original config file from home dir to ~/envui/config\n";
-    copy '~/envui.json', '~/envui/envui.json';
-    }
-}
-sub MY::postamble {
-return <<EOF;
+sub MY::postamble { return <<EOF;
 
 install:: all local
 
 local:
+
+	if [-e ~/envui/config/envui.json]
+	then
+		echo "backing up existing config file"
+		copy ~/envui/config/envui.json ~
+	fi
 
 	rm -rf ~/envui
 	mkdir ~/envui
@@ -60,21 +56,33 @@ local:
 	mkdir ~/envui/views
 	cp views/* ~/envui/views
 
-	cp config.yml ~/envui
+	if [-e ~/envui.json]
+	then
+		echo "restoring existing config file"
+		copy ~/envui.json ~/envui/config/
+	fi
+	cp config.yml ~/envui 
 EOF
+#END {
+#    if (-f glob '~/envui.json'){
+#        print "Copying original config file from home dir to ~/envui/config\n"; copy glob('~/envui.json'), 
+#        glob('~/envui/config/envui.json');
+#    }
+#}
+
 }
 
 WriteMakefile(
-    NAME                => 'App::RPi::EnvUI',
-    AUTHOR              => q{Steve Bertrand <steveb@cpan.org>},
-    VERSION_FROM        => 'lib/App/RPi/EnvUI.pm',
-    ABSTRACT_FROM            => 'lib/App/RPi/EnvUI.pm',
+    NAME => 'App::RPi::EnvUI',
+    AUTHOR => q{Steve Bertrand <steveb@cpan.org>},
+    VERSION_FROM => 'lib/App/RPi/EnvUI.pm',
+    ABSTRACT_FROM => 'lib/App/RPi/EnvUI.pm',
     ($eumm_version >= 6.3001
         ? ('LICENSE'=> 'perl')
         : ()),
     META_MERGE => {
         'meta-spec' => { version => 2 },
-        resources   => {
+        resources => {
             bugtracker => {
                 web => 'https://github.com/stevieb9/app-rpi-envui/issues',
             },
@@ -85,15 +93,15 @@ WriteMakefile(
             },
         },
     },
-    PL_FILES            => {},
+    PL_FILES => {},
     PREREQ_PM => {
         'Async::Event::Interval' => 0.05,
         'Crypt::SaltedHash' => 0,
-        'Dancer2'     => 0.203001,
+        'Dancer2' => 0.203001,
         'Dancer2::Plugin::Auth::Extensible' => 0,
         'Dancer2::Plugin::Auth::Extensible::Provider::Base' => 0,
         'Dancer2::Session::JSON' => 0,
-        'DateTime'  => 0,
+        'DateTime' => 0,
         'DBI' => 0,
         'DBD::SQLite' => 0,
         'Digest::SHA1' => 0,
@@ -106,6 +114,5 @@ WriteMakefile(
         'Test::More' => 0,
         'WiringPi::API' => '1.04',
     },
-    dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean               => { FILES => 'wui-*' },
-);
+    dist => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
+    clean => { FILES => 'wui-*' }, );
