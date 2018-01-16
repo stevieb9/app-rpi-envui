@@ -13,22 +13,16 @@ if (! grep { -x "$_/sqlite3" } split /:/, $ENV{PATH}) {
     die "sqlite3 must be installed to continue\n";
 }
 
-#if (-f glob '~/envui/config/envui.json'){
-#    print "Copying live config file to home directory\n";
-#    copy glob('~/envui/config/envui.json'), glob('~/');
-#}
+if (-f glob '~/envui/config/envui.json'){
+    print "Copying live config file to home directory\n";
+    copy glob('~/envui/config/envui.json'), glob('~/');
+}
 
 sub MY::postamble { return <<EOF;
 
 install:: all local
 
 local:
-
-	if [-e ~/envui/config/envui.json]
-	then
-		echo "backing up existing config file"
-		copy ~/envui/config/envui.json ~
-	fi
 
 	rm -rf ~/envui
 	mkdir ~/envui
@@ -37,7 +31,7 @@ local:
 	cp bin/* ~/envui/bin
 
 	mkdir ~/envui/config
-	cp src/envui-dist.json ~/envui/config/envui.json
+	cp src/envui-dist.json ~/envui/config/envui-dist.json
 
 	mkdir ~/envui/db
 	cp src/envui-dist.db ~/envui/db/envui.db
@@ -56,11 +50,6 @@ local:
 	mkdir ~/envui/views
 	cp views/* ~/envui/views
 
-	if [-e ~/envui.json]
-	then
-		echo "restoring existing config file"
-		copy ~/envui.json ~/envui/config/
-	fi
 	cp config.yml ~/envui 
 EOF
 #END {

@@ -707,6 +707,8 @@ sub _config_light {
 sub _init {
     my ($self) = @_;
 
+    $self->_log;
+    
     $self->db(App::RPi::EnvUI::DB->new(testing => $self->testing));
 
     my $debug_level = defined $self->debug_level
@@ -719,8 +721,6 @@ sub _init {
 
     $self->debug_level($debug_level);
     $self->log_file($log_file);
-
-    $self->_log;
 
     my $log = $log->child('_init');
 
