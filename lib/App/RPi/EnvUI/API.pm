@@ -104,13 +104,18 @@ sub action_humidity {
 
     if (! $self->aux_override($aux_id) && $humidity != -1){
         if ($humidity < $limit && $self->aux_time($aux_id) == 0) {
-            $log->_5("humidity limit reached turning $aux_id to HIGH");
+            $log->_5(
+                "humidity limit $limit reached ($humidity), turning " .
+                "$aux_id to HIGH"
+            );
             $self->aux_state($aux_id, HIGH);
             $self->aux_time($aux_id, time());
         }
         if ($humidity >= $limit && $self->aux_time($aux_id) >= $min_run) {
-            $log->_5("humidity above limit setting $aux_id to LOW");
-
+            $log->_5(
+                "humidity ($humidity) above limit $limit; setting $aux_id " .
+                "to LOW"
+            );
             $self->aux_state($aux_id, LOW);
             $self->aux_time($aux_id, 0);
         }
@@ -129,12 +134,18 @@ sub action_temp {
 
     if (! $self->aux_override($aux_id) && $temp != -1){
         if ($temp > $limit && $self->aux_time($aux_id) == 0){
-            $log->_5("temp limit reached turning $aux_id to HIGH");
+            $log->_5(
+                "temp limit $limit reached ($temp), turning " .
+                "$aux_id to HIGH"
+            );
             $self->aux_state($aux_id, HIGH);
             $self->aux_time($aux_id, time);
         }
         elsif ($temp <= $limit && $self->aux_time($aux_id) >= $min_run){
-            $log->_5("temp below limit setting $aux_id to LOW");
+            $log->_5(
+                "temp ($temp) below limit $limit; setting $aux_id " .
+                "to LOW"
+            );
             $self->aux_state($aux_id, LOW);
             $self->aux_time($aux_id, 0);
         }
